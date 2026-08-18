@@ -19,14 +19,18 @@ export const hero = {
     { label: 'FOR FOUNDERS', href: '#solutions', variant: 'primary' as const },
     { label: 'FOR INVESTORS', href: '#solutions', variant: 'secondary' as const },
   ],
-  /** Orbiting category pills. `primary` ones are the accent-outlined pair. */
+  /**
+   * Orbiting category pills. Icons are the design's own vectors, exported from
+   * Figma; `w`/`h` are each glyph's leaf size on the artboard and must stay
+   * explicit — the six are not a uniform set.
+   */
   pills: [
-    { label: 'LEAGUES', icon: 'trophy', primary: false },
-    { label: 'TEAMS', icon: 'users', primary: false },
-    { label: 'MEDIA', icon: 'radio', primary: false },
-    { label: 'ATHLETES', icon: 'activity', primary: false },
-    { label: 'FOUNDERS', icon: 'rocket', primary: true },
-    { label: 'INVESTORS', icon: 'trending', primary: true },
+    { label: 'LEAGUES', icon: '/icons/pill-leagues.svg', w: 14.375, h: 14.5, primary: false },
+    { label: 'TEAMS', icon: '/icons/pill-teams.svg', w: 10, h: 11, primary: false },
+    { label: 'MEDIA', icon: '/icons/pill-media.svg', w: 10, h: 10, primary: false },
+    { label: 'ATHLETES', icon: '/icons/pill-media.svg', w: 10, h: 10, primary: false },
+    { label: 'FOUNDERS', icon: '/icons/pill-founders.svg', w: 12, h: 12, primary: true },
+    { label: 'INVESTORS', icon: '/icons/pill-investors.svg', w: 14, h: 8, primary: true },
   ],
 };
 

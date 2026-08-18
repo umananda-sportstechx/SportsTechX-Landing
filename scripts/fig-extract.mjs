@@ -297,6 +297,9 @@ function slim(n) {
   }
 
   if (n.effects?.length) {
+    // Keep the full effect payload. Figma's NOISE and DROP_SHADOW effects carry
+    // the page's grain and all of its depth; dropping their parameters is how
+    // the first build ended up looking flat and untextured.
     o.effects = n.effects
       .filter((e) => e.visible !== false)
       .map((e) => ({
@@ -305,6 +308,10 @@ function slim(n) {
         color: e.color ? hex(e.color) : undefined,
         alpha: round(e.color?.a ?? 1),
         offset: e.offset,
+        spread: round(e.spread),
+        noiseSize: round(e.noiseSize),
+        density: round(e.density),
+        secondaryColor: e.secondaryColor ? hex(e.secondaryColor) : undefined,
       }));
   }
   return o;
@@ -377,6 +384,12 @@ if (process.argv.includes('--check')) {
   // the angle makes every vertical rule read as a horizontal one.
   const rotated = nodes.filter((n) => n.type === 'LINE' && n.rotation);
   assert.ok(rotated.length > 10, `expected rotated LINE dividers, found ${rotated.length}`);
+
+  // The grain on the dark surfaces and every shadow on the page come from
+  // effects. Losing them is invisible in the data but obvious on screen.
+  const withEffect = (t) => nodes.filter((n) => (n.effects ?? []).some((e) => e.type === t));
+  assert.ok(withEffect('NOISE').length > 5, 'NOISE effects missing — the dark surfaces lose their grain');
+  assert.ok(withEffect('DROP_SHADOW').length > 20, 'DROP_SHADOW effects missing — the page loses its depth');
   console.log(
     `ok — ${nodes.length} nodes (${hidden.length} hidden), ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts`
   );

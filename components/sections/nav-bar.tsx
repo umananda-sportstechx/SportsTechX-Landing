@@ -17,7 +17,7 @@ export function NavBar() {
       <BrandLogo className="h-[38px] lg:h-[54px]" priority />
 
       <div className="flex items-center gap-5">
-        <nav className="hidden items-center gap-9 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-2 pr-2.5 pl-[35px] lg:flex">
+        <nav className="hidden items-center gap-9 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-2 pr-2.5 pl-[35px] shadow-nav lg:flex">
           {nav.links.map((link) => (
             <a
               key={link.label}

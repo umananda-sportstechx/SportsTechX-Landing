@@ -6,7 +6,7 @@ import { stats } from '@/lib/content';
  */
 export function Stats() {
   return (
-    <section className="section-y bg-stats">
+    <section className="noise section-y bg-stats [--noise-alpha:0.10]">
       <div className="container-page">
         {/* Four equal columns with a rule between and on both outer edges,
             matching the five "Breaker" lines on the artboard. */}

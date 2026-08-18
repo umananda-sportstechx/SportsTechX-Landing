@@ -98,8 +98,10 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
   return (
     <article
       className={cn(
-        'relative overflow-hidden rounded-[20px]',
-        dark ? 'bg-linear-to-b from-card-dark-from to-card-dark-to' : 'bg-card-light'
+        'relative overflow-hidden rounded-[20px] shadow-panel',
+        dark
+          ? 'noise [--noise-alpha:0.09] bg-linear-to-b from-card-dark-from to-card-dark-to'
+          : 'bg-card-light'
       )}
     >
       {dark && <CardMotif />}
@@ -156,7 +158,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
         <div
           aria-hidden
           className={cn(
-            'min-h-[240px] flex-1 rounded-[20px] border lg:min-h-[478px]',
+            'min-h-[240px] flex-1 rounded-[20px] border shadow-preview backdrop-blur-[4px] lg:min-h-[478px]',
             dark ? 'border-[#373b49] bg-[#020716]/60' : 'border-black/10 bg-[#f4f6fb]'
           )}
         />

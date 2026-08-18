@@ -14,7 +14,7 @@ const ACTION_ICONS = { mail: Mail, audio: Volume2, doc: FileText, ticket: Ticket
  */
 export function Media() {
   return (
-    <section id="media" className="section-y bg-band-2">
+    <section id="media" className="noise section-y bg-band-2 [--noise-alpha:0.03] dark:[--noise-alpha:0.14]">
       <div className="container-page">
         <SectionIntro title={media.title} subtitle={media.subtitle} />
 
@@ -26,7 +26,7 @@ export function Media() {
             <a
               key={item.category}
               href={item.href}
-              className="group grid overflow-hidden rounded-[6px] bg-surface transition-shadow hover:shadow-lg sm:grid-cols-2"
+              className="group grid overflow-hidden rounded-[6px] bg-surface shadow-card transition-shadow hover:shadow-panel sm:grid-cols-2"
             >
               <div className="flex flex-col justify-between gap-6 p-[27px]">
                 <div className="flex flex-col gap-3">
