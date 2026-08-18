@@ -212,7 +212,15 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
           arrowClassName={dark ? 'text-white/70' : undefined}
         >
           {card.testimonials.map((t, i) => (
-            <figure key={i} className="w-full shrink-0 snap-start px-8 text-center lg:w-1/2">
+            <figure
+              key={i}
+              className={cn(
+                'w-full shrink-0 snap-start px-8 text-center lg:w-1/2',
+                // 228px hairline between the two stories, per the design's
+                // "Story Strip" divider.
+                i > 0 && 'lg:border-l lg:border-[#6b6b6b]/50'
+              )}
+            >
               <blockquote
                 className={cn(
                   'font-sans text-quote leading-[1.4] font-medium',

@@ -32,8 +32,14 @@ export function Footer() {
             </div>
           </div>
 
+          {/* The design's "Cloud grid" rules the footer: a hairline above the
+              columns (below), one below them (the newsletter border-t), and a
+              vertical between each pair of link columns. */}
           {footer.columns.map((column) => (
-            <div key={column.title} className="flex flex-col gap-[21px]">
+            <div
+              key={column.title}
+              className="flex flex-col gap-[21px] lg:-ml-[47px] lg:border-l lg:border-line lg:pl-[47px]"
+            >
               <h2 className="tracked font-display text-eyebrow leading-[1.45] text-fg uppercase">{column.title}</h2>
               <ul className="flex flex-col">
                 {column.links.map((link) => {

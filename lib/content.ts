@@ -40,16 +40,20 @@ export const stats = [
 export const trustedBy = {
   title: 'TRUSTED BY',
   subtitle: 'founders, investors, sports organizations',
-  /** Eight partner headshots extracted from the design. */
+  /**
+   * Eight partner headshots extracted from the design. `logo` is the white
+   * wordmark the design overlays on each photo — placeholder branding in the
+   * artboard, so swap these for real partner marks when they exist.
+   */
   partners: [
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/17495777b6f3.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/b3d04779161b.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/389d48c3df5e.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/94ce770cf9e8.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/d9507786c8d8.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/75683fd57261.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/68e925ea570d.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', photo: '/images/4b66197f9eb7.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/17495777b6f3.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/b3d04779161b.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/389d48c3df5e.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/94ce770cf9e8.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/d9507786c8d8.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/75683fd57261.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/68e925ea570d.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/4b66197f9eb7.jpg' },
   ],
 };
 
@@ -163,6 +167,8 @@ export type MediaItem = {
   /** Absent where the design hides the card's "Product Title" layer. */
   kicker?: string;
   kickerFont?: 'mono' | 'mono-alt';
+  /** Glyph beside the action label; the design gives each card its own. */
+  icon: 'mail' | 'audio' | 'doc' | 'ticket';
   title: string;
   image: string;
   href: string;
@@ -174,6 +180,7 @@ export const media = {
   items: ([
     {
       category: 'NEWSLETTER',
+      icon: 'mail',
       action: 'SUBSCRIBE',
       kicker: 'SPORTSTECHX WEEKLY',
       kickerFont: 'mono-alt' as const,
@@ -183,6 +190,7 @@ export const media = {
     },
     {
       category: 'PODCAST',
+      icon: 'audio',
       action: 'LISTEN',
       kicker: 'STX ALLSTARS PODCAST',
       kickerFont: 'mono' as const,
@@ -192,6 +200,7 @@ export const media = {
     },
     {
       category: 'REPORTS',
+      icon: 'doc',
       action: 'READ',
       // no kicker: the design hides this card's "Product Title" layer
       title: 'Football Tech Report 2006',
@@ -200,6 +209,7 @@ export const media = {
     },
     {
       category: 'EVENTS',
+      icon: 'ticket',
       action: 'ATTEND',
       // no kicker: the design hides this card's "Product Title" layer
       title: 'The NextGen Sportstech\nSummit 2026',

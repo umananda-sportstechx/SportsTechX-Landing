@@ -242,7 +242,15 @@ function slim(n) {
   // puts artwork on the page that the design deliberately hides.
   if (n.visible === false) o.hidden = true;
   if (n.size) o.size = { w: round(n.size.x), h: round(n.size.y) };
-  if (n.transform) o.at = { x: round(n.transform.m02), y: round(n.transform.m12) };
+  if (n.transform) {
+    o.at = { x: round(n.transform.m02), y: round(n.transform.m12) };
+    // Rotation matters more than it looks: Figma draws every divider as a LINE
+    // that is 0px tall and rotated 90deg. Without the angle a vertical rule is
+    // indistinguishable from a horizontal one in this data, which is how a dozen
+    // of them got skipped when the sections were first built.
+    const angle = Math.round((Math.atan2(n.transform.m10, n.transform.m00) * 180) / Math.PI);
+    if (angle) o.rotation = angle;
+  }
 
   const fills = (n.fillPaints ?? []).map(paint).filter(Boolean);
   if (fills.length) o.fills = fills;
@@ -364,6 +372,11 @@ if (process.argv.includes('--check')) {
     hidden.some((n) => n.name === 'Noise Textiure'),
     'the hero noise layer is hidden in the design but did not come through marked hidden'
   );
+
+  // Guard for the same class of bug: dividers are rotated LINEs, and dropping
+  // the angle makes every vertical rule read as a horizontal one.
+  const rotated = nodes.filter((n) => n.type === 'LINE' && n.rotation);
+  assert.ok(rotated.length > 10, `expected rotated LINE dividers, found ${rotated.length}`);
   console.log(
     `ok — ${nodes.length} nodes (${hidden.length} hidden), ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts`
   );

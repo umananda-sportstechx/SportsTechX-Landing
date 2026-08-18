@@ -14,9 +14,13 @@ const ICONS = {
 
 /**
  * Six concentric rings — 1586, 1164, 882, 652, 454, 270 on the 1512 artboard,
- * kept as a share of the largest so the motif scales as one piece.
+ * kept as a share of the largest so the motif scales as one piece. The 882 ring
+ * is the one the design dims (fill opacity 0.32 against the others' 0.59).
  */
-const RINGS = [1, 1164 / 1586, 882 / 1586, 652 / 1586, 454 / 1586, 270 / 1586];
+const RINGS = [1586, 1164, 882, 652, 454, 270].map((d) => ({
+  scale: d / 1586,
+  dim: d === 882,
+}));
 
 /**
  * Pill placement as a share of the "Pills" frame it lives in — 984x204 on
@@ -47,15 +51,23 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute bottom-[57px] left-1/2 -z-10 aspect-square w-[230%] -translate-x-1/2 translate-y-1/2 sm:w-[150%] lg:w-[105%]"
       >
-        {RINGS.map((scale, i) => (
+        {RINGS.map(({ scale, dim }, i) => (
           <span
             key={i}
             style={{
               width: `${scale * 100}%`,
               height: `${scale * 100}%`,
-              backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(75,175,142,0.09), rgba(255,253,253,0) 70%)',
+              // Figma stacks six near-white discs, each with an offset green
+              // blob, and lets them composite. Replicating that literally in CSS
+              // gives six tiny dots — the arcs in the artboard come from the
+              // discs overlapping. Approximated instead as one offset green
+              // wash per ring, tuned to match the rendered artboard.
+              backgroundImage:
+                'radial-gradient(circle at 56% 60%, var(--ring-from), transparent 55%)',
+              opacity: dim ? 'calc(var(--ring-fill-opacity) * 0.09)' : 'calc(var(--ring-fill-opacity) * 0.16)',
+              borderColor: 'var(--ring-stroke)',
             }}
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px] border-white/80 dark:border-white/[0.07]"
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[2.5px]"
           />
         ))}
         {/* The pink S, cropped out of the design's own logo asset so it keeps

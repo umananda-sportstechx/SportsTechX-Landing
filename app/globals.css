@@ -47,6 +47,15 @@
   --pill-border: #c3c3c3;
   --pill-fg: #828282;
 
+  /* Hero "Epicentre" rings. Each of the six ellipses carries the same radial
+   * gradient, offset to 71.6%/59% with a radius of ~18% of the ellipse — that
+   * offset is what gives the motif its layered glow rather than a flat wash. */
+  --ring-from: #4baf8e;
+  --ring-to: #fffdfd;
+  --ring-stop: 62%;
+  --ring-fill-opacity: 0.59;
+  --ring-stroke: rgb(255 255 255 / 1);
+
   /* Brand — identical in both themes */
   --accent: #ec1e5f;
   --accent-2: #ed1a5e;
@@ -113,6 +122,12 @@
   --fg-2: #cccccc;
   --fg-muted: #a6a6a6;
   --heading: #ffffff;
+
+  --ring-from: #186f52;
+  --ring-to: #0d1220;
+  --ring-stop: 59%;
+  --ring-fill-opacity: 1;
+  --ring-stroke: rgb(255 255 255 / 0.09);
 
   --line: #353a4b;
   --nav-bg: #1b202f;
