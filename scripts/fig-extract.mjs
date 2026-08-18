@@ -1,0 +1,420 @@
+#!/usr/bin/env node
+/**
+ * Decode STX-Figma.fig into design tokens, a slim node tree, and image assets.
+ *
+ * A .fig is a zip:  canvas.fig + thumbnail.png + meta.json + images/<sha1>
+ * canvas.fig is Figma's "fig-kiwi" container:
+ *   "fig-kiwi" magic, uint32 version, then length-prefixed blocks.
+ *   block 0 = the kiwi schema (raw deflate)
+ *   block 1 = the document Message (zstd, needs Node >= 23.8)
+ * Everything is decoded with node:zlib — no dependencies.
+ *
+ * Usage:  node scripts/fig-extract.mjs [--check]
+ */
+import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { inflateRawSync, zstdDecompressSync } from 'node:zlib';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import assert from 'node:assert/strict';
+
+const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
+const FIG = resolve(ROOT, 'STX-Figma.fig');
+
+/* ---------- zip ---------- */
+
+function unzip(buf) {
+  // End-of-central-directory, scanned backwards. No zip64 handling: this file
+  // is 28MB / 33 entries, far under the 4GB / 65535 thresholds.
+  let eocd = buf.length - 22;
+  while (eocd >= 0 && buf.readUInt32LE(eocd) !== 0x06054b50) eocd--;
+  assert.ok(eocd >= 0, 'not a zip: no end-of-central-directory record');
+
+  const count = buf.readUInt16LE(eocd + 10);
+  let p = buf.readUInt32LE(eocd + 16);
+  const entries = new Map();
+
+  for (let i = 0; i < count; i++) {
+    assert.equal(buf.readUInt32LE(p), 0x02014b50, `bad central directory entry ${i}`);
+    const method = buf.readUInt16LE(p + 10);
+    const compSize = buf.readUInt32LE(p + 20);
+    const nameLen = buf.readUInt16LE(p + 28);
+    const extraLen = buf.readUInt16LE(p + 30);
+    const commentLen = buf.readUInt16LE(p + 32);
+    const localAt = buf.readUInt32LE(p + 42);
+    const name = buf.toString('utf8', p + 46, p + 46 + nameLen);
+    p += 46 + nameLen + extraLen + commentLen;
+    if (name.endsWith('/')) continue;
+    // The local header repeats name/extra with its own lengths — trust those.
+    const dataAt = localAt + 30 + buf.readUInt16LE(localAt + 26) + buf.readUInt16LE(localAt + 28);
+    const raw = buf.subarray(dataAt, dataAt + compSize);
+    entries.set(name, method === 0 ? raw : inflateRawSync(raw));
+  }
+  return entries;
+}
+
+/* ---------- kiwi ---------- */
+
+class Reader {
+  constructor(b) {
+    this.b = b;
+    this.i = 0;
+  }
+  uint() {
+    let v = 0, s = 0, c;
+    do {
+      c = this.b[this.i++];
+      v |= (c & 127) << s;
+      s += 7;
+    } while (c & 128);
+    return v >>> 0;
+  }
+  int() {
+    const v = this.uint();
+    return v & 1 ? ~(v >>> 1) : v >>> 1;
+  }
+  uint64() {
+    let v = 0n, s = 0n, c;
+    do {
+      c = this.b[this.i++];
+      v |= BigInt(c & 127) << s;
+      s += 7n;
+    } while (c & 128);
+    return v;
+  }
+  int64() {
+    const v = this.uint64();
+    return v & 1n ? -((v >> 1n) + 1n) : v >> 1n;
+  }
+  byte() {
+    return this.b[this.i++];
+  }
+  bool() {
+    return !!this.b[this.i++];
+  }
+  // kiwi varfloat: a lone 0 byte means 0.0, otherwise 4 bytes rotated left by 23
+  float() {
+    if (this.b[this.i] === 0) {
+      this.i++;
+      return 0;
+    }
+    let bits =
+      this.b[this.i] | (this.b[this.i + 1] << 8) | (this.b[this.i + 2] << 16) | (this.b[this.i + 3] << 24);
+    this.i += 4;
+    bits = (bits << 23) | (bits >>> 9);
+    const tmp = Buffer.allocUnsafe(4);
+    tmp.writeInt32LE(bits | 0);
+    return tmp.readFloatLE(0);
+  }
+  string() {
+    const s = this.i;
+    while (this.b[this.i]) this.i++;
+    const v = this.b.toString('utf8', s, this.i);
+    this.i++;
+    return v;
+  }
+}
+
+const PRIMS = ['bool', 'byte', 'int', 'uint', 'float', 'string', 'int64', 'uint64'];
+const ENUM = 0;
+const STRUCT = 1;
+
+function parseSchema(buf) {
+  const r = new Reader(buf);
+  const n = r.uint();
+  const defs = [];
+  for (let d = 0; d < n; d++) {
+    const name = r.string();
+    const kind = r.byte();
+    const fc = r.uint();
+    const fields = [];
+    for (let f = 0; f < fc; f++) {
+      fields.push({ name: r.string(), type: r.int(), isArray: r.bool(), value: r.uint() });
+    }
+    defs.push({ name, kind, fields, byId: new Map(fields.map((f) => [f.value, f])) });
+  }
+  return defs;
+}
+
+function makeDecoder(defs) {
+  const array = (r, type) => {
+    const n = r.uint();
+    const a = new Array(n);
+    for (let k = 0; k < n; k++) a[k] = value(r, type);
+    return a;
+  };
+
+  const message = (r, def) => {
+    const o = {};
+    for (;;) {
+      const id = r.uint();
+      if (id === 0) return o;
+      const f = def.byId.get(id);
+      assert.ok(f, `unknown field ${id} in ${def.name} at byte ${r.i}`);
+      o[f.name] = f.isArray ? array(r, f.type) : value(r, f.type);
+    }
+  };
+
+  const value = (r, type) => {
+    if (type < 0) {
+      switch (PRIMS[-type - 1]) {
+        case 'bool': return r.bool();
+        case 'byte': return r.byte();
+        case 'int': return r.int();
+        case 'uint': return r.uint();
+        case 'float': return r.float();
+        case 'string': return r.string();
+        case 'int64': return Number(r.int64());
+        case 'uint64': return Number(r.uint64());
+      }
+    }
+    const def = defs[type];
+    if (def.kind === ENUM) {
+      const v = r.uint();
+      return def.fields.find((f) => f.value === v)?.name ?? v;
+    }
+    if (def.kind === STRUCT) {
+      const o = {};
+      for (const f of def.fields) o[f.name] = f.isArray ? array(r, f.type) : value(r, f.type);
+      return o;
+    }
+    return message(r, def);
+  };
+
+  return message;
+}
+
+function decodeCanvas(canvas) {
+  assert.equal(canvas.toString('latin1', 0, 8), 'fig-kiwi', 'canvas.fig is not fig-kiwi');
+  const blocks = [];
+  let off = 12; // 8 byte magic + uint32 version
+  while (off + 4 <= canvas.length) {
+    const n = canvas.readUInt32LE(off);
+    off += 4;
+    if (!n || off + n > canvas.length) break;
+    const raw = canvas.subarray(off, off + n);
+    off += n;
+    // zstd magic 28 b5 2f fd, otherwise raw deflate
+    blocks.push(raw[0] === 0x28 && raw[1] === 0xb5 ? zstdDecompressSync(raw) : inflateRawSync(raw));
+  }
+  assert.equal(blocks.length, 2, `expected schema + document, got ${blocks.length} blocks`);
+
+  const defs = parseSchema(blocks[0]);
+  const message = makeDecoder(defs);
+  const r = new Reader(blocks[1]);
+  const doc = message(r, defs.find((d) => d.name === 'Message'));
+  // A correct decode consumes every byte. Short of that we misread a field and
+  // everything downstream is silently garbage, so fail loudly here.
+  assert.equal(r.i, blocks[1].length, `decode consumed ${r.i}/${blocks[1].length} bytes`);
+  return doc;
+}
+
+/* ---------- shaping ---------- */
+
+const gid = (g) => (g ? `${g.sessionID}:${g.localID}` : null);
+const hex = (c) => '#' + [c.r, c.g, c.b].map((v) => Math.round(v * 255).toString(16).padStart(2, '0')).join('');
+const round = (n) => (typeof n === 'number' ? Math.round(n * 100) / 100 : n);
+
+function paint(p) {
+  if (p.visible === false) return null;
+  const base = { type: p.type, opacity: round(p.opacity ?? 1) };
+  if (p.type === 'SOLID' && p.color) return { ...base, color: hex(p.color), alpha: round(p.color.a ?? 1) };
+  if (p.image?.hash) return { ...base, image: Buffer.from(p.image.hash).toString('hex'), scaleMode: p.imageScaleMode };
+  if (p.stops) {
+    return {
+      ...base,
+      stops: p.stops.map((s) => ({ at: round(s.position), color: hex(s.color), alpha: round(s.color.a ?? 1) })),
+      transform: p.transform,
+    };
+  }
+  return base;
+}
+
+function slim(n) {
+  const o = {
+    id: gid(n.guid),
+    parent: gid(n.parentIndex?.guid),
+    order: n.parentIndex?.position,
+    type: n.type,
+    name: n.name,
+  };
+  if (n.size) o.size = { w: round(n.size.x), h: round(n.size.y) };
+  if (n.transform) o.at = { x: round(n.transform.m02), y: round(n.transform.m12) };
+
+  const fills = (n.fillPaints ?? []).map(paint).filter(Boolean);
+  if (fills.length) o.fills = fills;
+
+  const strokes = (n.strokePaints ?? []).map(paint).filter(Boolean);
+  if (strokes.length) {
+    o.strokes = strokes;
+    o.strokeWeight = round(n.strokeWeight);
+  }
+
+  if (n.cornerRadius != null) o.radius = round(n.cornerRadius);
+  if (n.rectangleTopLeftCornerRadius != null) {
+    o.radii = [
+      n.rectangleTopLeftCornerRadius,
+      n.rectangleTopRightCornerRadius,
+      n.rectangleBottomRightCornerRadius,
+      n.rectangleBottomLeftCornerRadius,
+    ].map(round);
+  }
+  if (n.opacity != null && n.opacity !== 1) o.opacity = round(n.opacity);
+
+  if (n.stackMode && n.stackMode !== 'NONE') {
+    o.layout = {
+      dir: n.stackMode,
+      gap: round(n.stackSpacing),
+      pad: [n.stackVerticalPadding, n.stackPaddingRight, n.stackPaddingBottom, n.stackHorizontalPadding].map(round),
+      align: n.stackCounterAlignItems,
+      justify: n.stackPrimaryAlignItems,
+    };
+  }
+
+  if (n.textData?.characters) {
+    o.text = {
+      chars: n.textData.characters,
+      family: n.fontName?.family,
+      style: n.fontName?.style,
+      size: round(n.fontSize),
+      letterSpacing: n.letterSpacing ? { v: round(n.letterSpacing.value), units: n.letterSpacing.units } : null,
+      lineHeight: n.lineHeight ? { v: round(n.lineHeight.value), units: n.lineHeight.units } : null,
+      align: n.textAlignHorizontal,
+      case: n.textCase,
+      deco: n.textDecoration,
+    };
+  }
+
+  if (n.effects?.length) {
+    o.effects = n.effects
+      .filter((e) => e.visible !== false)
+      .map((e) => ({
+        type: e.type,
+        radius: round(e.radius),
+        color: e.color ? hex(e.color) : undefined,
+        alpha: round(e.color?.a ?? 1),
+        offset: e.offset,
+      }));
+  }
+  return o;
+}
+
+function tokens(nodes) {
+  const colors = new Map();
+  const radii = new Map();
+  const type = new Map();
+  const fonts = new Map();
+  const tally = (m, k) => m.set(k, (m.get(k) ?? 0) + 1);
+
+  for (const n of nodes) {
+    for (const f of [...(n.fills ?? []), ...(n.strokes ?? [])]) {
+      if (f.color) tally(colors, f.color + (f.alpha < 1 ? `/${f.alpha}` : ''));
+      for (const s of f.stops ?? []) tally(colors, s.color + (s.alpha < 1 ? `/${s.alpha}` : ''));
+    }
+    if (n.radius) tally(radii, n.radius);
+    for (const r of n.radii ?? []) if (r) tally(radii, r);
+    if (n.text?.family) {
+      tally(fonts, `${n.text.family} ${n.text.style}`);
+      const ls = n.text.letterSpacing;
+      const lh = n.text.lineHeight;
+      tally(
+        type,
+        JSON.stringify({
+          font: `${n.text.family} ${n.text.style}`,
+          size: n.text.size,
+          letterSpacing: ls ? `${ls.v}${ls.units === 'PERCENT' ? '%' : 'px'}` : '0',
+          lineHeight: lh ? `${lh.v}${lh.units === 'PERCENT' ? '%' : 'px'}` : 'auto',
+        })
+      );
+    }
+  }
+
+  const sorted = (m) => [...m.entries()].sort((a, b) => b[1] - a[1]);
+  return {
+    fonts: Object.fromEntries(sorted(fonts)),
+    colors: Object.fromEntries(sorted(colors)),
+    radii: Object.fromEntries(sorted(radii)),
+    typeScale: sorted(type).map(([k, count]) => ({ ...JSON.parse(k), count })),
+  };
+}
+
+/* ---------- run ---------- */
+
+const zip = unzip(readFileSync(FIG));
+const doc = decodeCanvas(zip.get('canvas.fig'));
+const nodes = doc.nodeChanges.map(slim);
+const tok = tokens(nodes);
+
+if (process.argv.includes('--check')) {
+  assert.ok(nodes.length > 2000, `expected >2000 nodes, got ${nodes.length}`);
+  assert.ok(tok.colors['#ec1e5f'], 'brand pink #ec1e5f missing — is this the right design file?');
+  assert.ok(tok.fonts['Bebas Neue Regular'], 'Bebas Neue missing');
+  assert.ok(nodes.some((n) => n.name === 'Intro Hero'), 'Intro Hero frame missing');
+  assert.ok(nodes.filter((n) => n.text).length > 400, 'expected >400 text nodes');
+  console.log(`ok — ${nodes.length} nodes, ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts`);
+  process.exit(0);
+}
+
+mkdirSync(resolve(ROOT, 'design'), { recursive: true });
+mkdirSync(resolve(ROOT, 'public/images'), { recursive: true });
+writeFileSync(resolve(ROOT, 'design/tokens.json'), JSON.stringify(tok, null, 2));
+writeFileSync(resolve(ROOT, 'design/nodes.json'), JSON.stringify(nodes));
+
+// Images: only the ones a fill actually references.
+const usedBy = new Map();
+for (const n of nodes) {
+  for (const f of n.fills ?? []) {
+    if (!f.image) continue;
+    if (!usedBy.has(f.image)) usedBy.set(f.image, []);
+    usedBy.get(f.image).push(n.name);
+  }
+}
+
+const sniff = (b) =>
+  b[0] === 0x89 && b[1] === 0x50 ? 'png' : b[0] === 0xff && b[1] === 0xd8 ? 'jpg' : b[0] === 0x47 ? 'gif' : 'bin';
+
+// Figma exports photographs as PNG, so several are 5-8MB. next/image would
+// optimise them at request time anyway, but there is no reason to carry that
+// weight in the repo. sharp is already present as a Next dependency — if a
+// future Next drops it, fall through and keep the original bytes.
+const RECODE_OVER = 300 * 1024;
+let sharp = null;
+try {
+  ({ default: sharp } = await import('sharp'));
+} catch {
+  console.warn('sharp unavailable — keeping original image encodings');
+}
+
+const manifest = {};
+for (const [hash, names] of usedBy) {
+  const data = zip.get(`images/${hash}`);
+  if (!data) {
+    console.warn(`missing image ${hash}`);
+    continue;
+  }
+
+  let bytes = data;
+  let ext = sniff(data);
+  if (sharp && data.length > RECODE_OVER) {
+    const webp = await sharp(data).webp({ quality: 82 }).toBuffer();
+    if (webp.length < data.length) {
+      bytes = webp;
+      ext = 'webp';
+    }
+  }
+
+  const file = `${hash.slice(0, 12)}.${ext}`;
+  writeFileSync(resolve(ROOT, 'public/images', file), bytes);
+  manifest[hash] = {
+    file: `/images/${file}`,
+    bytes: bytes.length,
+    originalBytes: data.length,
+    usedBy: [...new Set(names)],
+  };
+}
+writeFileSync(resolve(ROOT, 'design/images.json'), JSON.stringify(manifest, null, 2));
+
+console.log(`nodes      ${nodes.length}`);
+console.log(`text       ${nodes.filter((n) => n.text).length}`);
+console.log(`colors     ${Object.keys(tok.colors).length}`);
+console.log(`type scale ${tok.typeScale.length} combinations`);
+console.log(`images     ${Object.keys(manifest).length} written to public/images/`);

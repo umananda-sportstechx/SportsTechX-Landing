@@ -1,0 +1,215 @@
+@import "tailwindcss";
+
+/* next-themes is configured with attribute="data-theme", so Tailwind's built-in
+ * `dark:` (which expects .dark or prefers-color-scheme) has to be redefined.
+ * Most colours come from the tokens below; `dark:` is for the handful of
+ * one-off treatments that have no token. */
+@custom-variant dark ([data-theme="dark"] &);
+
+/* ============================================================================
+ * SportsTechX landing page tokens.
+ *
+ * Every value here was decoded out of landing/STX-Figma.fig by
+ * scripts/fig-extract.mjs — see design/tokens.json for the raw counts. Light
+ * values come from the "Green Option #4" desktop artboard, dark from
+ * "Green Option #1 (Desktop)". Do not eyeball new values; look them up with
+ *   node scripts/fig-inspect.mjs "<frame name>"
+ *
+ * The type ramp is fluid between the two artboard widths (402px and 1512px),
+ * so each step hits the designed size exactly at both ends:
+ *   clamp(<mobile>, <intercept> + <slope>vw, <desktop>)
+ * ========================================================================= */
+
+:root {
+  /* Surfaces — light */
+  --page: #ffffff;
+  --hero: #fffdfd;
+  --surface: #ffffff;
+  --band: #f6f0e5;      /* Trusted by */
+  --band-2: #f8f4ec;    /* Media */
+  --stats: #181c28;
+  /* Solution cards: Playmakers is the dark gradient, Atlas the pale one. */
+  --card-dark-from: #141e3a;
+  --card-dark-to: #080e22;
+  --card-light: #ffffff;
+
+  /* Text — light */
+  --fg: #000000;
+  --fg-2: #252525;
+  --fg-muted: #828282;
+  --heading: #091539;   /* section headings sit on navy, not pure black */
+
+  /* Lines / chrome — light */
+  --line: #bababa;
+  --nav-bg: #ffffff;
+  --nav-border: #000000;
+  --pill-bg: #d9d9d9;
+  --pill-border: #c3c3c3;
+  --pill-fg: #828282;
+
+  /* Brand — identical in both themes */
+  --accent: #ec1e5f;
+  --accent-2: #ed1a5e;
+  --accent-fg: #ffffff;
+  --navy: #091539;
+  --slate: #3b435e;
+  --green: #2b7468;
+  --green-2: #32a08e;
+  --mint: #2ac792;
+
+  /* Type ramp — desktop 1512 / mobile 402 */
+  --fs-headline: clamp(58px, 37px + 5.225vw, 116px);
+  --fs-stat: clamp(54px, 47.48px + 1.622vw, 72px);
+  --fs-section: clamp(48px, 39.31px + 2.162vw, 72px);
+  --fs-card: clamp(38px, 31.48px + 1.622vw, 56px);
+  --fs-card-sm: clamp(32px, 25.48px + 1.622vw, 50px);
+  --fs-label-lg: clamp(32px, 28.38px + 0.901vw, 42px);
+  --fs-eyebrow: 22px;
+  --fs-body-lg: clamp(18px, 14.38px + 0.901vw, 28px);
+  --fs-quote: clamp(21px, 19.91px + 0.27vw, 24px);
+  --fs-feature: clamp(19px, 17.19px + 0.45vw, 24px);
+  --fs-card-title: clamp(18px, 16.91px + 0.27vw, 21px);
+  --fs-body: clamp(16px, 15.28px + 0.18vw, 18px);
+  --fs-body-sm: clamp(14px, 13.28px + 0.18vw, 16px);
+  --fs-cta: clamp(16px, 14.19px + 0.45vw, 21px);
+  --fs-label: clamp(14px, 13.28px + 0.18vw, 16px);
+  --fs-micro: clamp(11px, 9.91px + 0.27vw, 14px);
+  --fs-legal: clamp(11px, 10.28px + 0.18vw, 13px);
+  --fs-mono-eyebrow: clamp(12px, 10.55px + 0.36vw, 16px);
+
+  /* Layout — 1512 artboard has 78px gutters around a 1350px content column */
+  --content: 1350px;
+  --gutter: clamp(20px, 0.9px + 4.75vw, 78px);
+}
+
+[data-theme="dark"] {
+  --page: #000000;
+  --hero: #12141b;
+  --surface: #12141b;
+  --band: #202531;
+  --band-2: #202531;
+  --stats: #31384c;
+  --card-dark-from: #293044;
+  --card-dark-to: #23293e;
+  --card-light: #dce3f4;
+
+  --fg: #ffffff;
+  --fg-2: #cccccc;
+  --fg-muted: #a6a6a6;
+  --heading: #ffffff;
+
+  --line: #353a4b;
+  --nav-bg: #1b202f;
+  --nav-border: #2e354a;
+  --pill-bg: #232833;
+  --pill-border: #3a4152;
+  --pill-fg: #a6a6a6;
+}
+
+@theme inline {
+  --color-page: var(--page);
+  --color-hero: var(--hero);
+  --color-surface: var(--surface);
+  --color-band: var(--band);
+  --color-band-2: var(--band-2);
+  --color-stats: var(--stats);
+  --color-card-dark-from: var(--card-dark-from);
+  --color-card-dark-to: var(--card-dark-to);
+  --color-card-light: var(--card-light);
+
+  --color-fg: var(--fg);
+  --color-fg-2: var(--fg-2);
+  --color-fg-muted: var(--fg-muted);
+  --color-heading: var(--heading);
+
+  --color-line: var(--line);
+  --color-nav-bg: var(--nav-bg);
+  --color-nav-border: var(--nav-border);
+  --color-pill-bg: var(--pill-bg);
+  --color-pill-border: var(--pill-border);
+  --color-pill-fg: var(--pill-fg);
+
+  --color-accent: var(--accent);
+  --color-accent-2: var(--accent-2);
+  --color-accent-fg: var(--accent-fg);
+  --color-navy: var(--navy);
+  --color-slate: var(--slate);
+  --color-green: var(--green);
+  --color-green-2: var(--green-2);
+  --color-mint: var(--mint);
+
+  --font-display: var(--font-bebas-neue), "Bebas Neue", Impact, sans-serif;
+  --font-sans: var(--font-new-frank), ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  /* Commit Mono comes from @fontsource (imported in layout.tsx), not next/font,
+   * so it is named directly rather than through a generated variable. */
+  --font-mono: "Commit Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --font-mono-alt: var(--font-space-mono), ui-monospace, Menlo, monospace;
+
+  --text-headline: var(--fs-headline);
+  --text-stat: var(--fs-stat);
+  --text-section: var(--fs-section);
+  --text-card: var(--fs-card);
+  --text-card-sm: var(--fs-card-sm);
+  --text-label-lg: var(--fs-label-lg);
+  --text-eyebrow: var(--fs-eyebrow);
+  --text-body-lg: var(--fs-body-lg);
+  --text-quote: var(--fs-quote);
+  --text-feature: var(--fs-feature);
+  --text-card-title: var(--fs-card-title);
+  --text-body: var(--fs-body);
+  --text-body-sm: var(--fs-body-sm);
+  --text-cta: var(--fs-cta);
+  --text-label: var(--fs-label);
+  --text-micro: var(--fs-micro);
+  --text-legal: var(--fs-legal);
+  --text-mono-eyebrow: var(--fs-mono-eyebrow);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--page);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Every display/mono label in this design is tracked out by 10%. */
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@utility container-page {
+  width: 100%;
+  max-width: calc(var(--content) + 2 * var(--gutter));
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+/* The design tracks display type and all mono labels at 10%. */
+@utility tracked {
+  letter-spacing: 0.1em;
+}
