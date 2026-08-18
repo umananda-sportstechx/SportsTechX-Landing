@@ -6,7 +6,7 @@ import { stats } from '@/lib/content';
  */
 export function Stats() {
   return (
-    <section className="bg-stats py-[60px] lg:py-[78px]">
+    <section className="section-y bg-stats">
       <div className="container-page">
         {/* Four equal columns with a rule between and on both outer edges,
             matching the five "Breaker" lines on the artboard. */}

@@ -11,7 +11,7 @@
  *
  * Usage:  node scripts/fig-extract.mjs [--check]
  */
-import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, unlinkSync } from 'node:fs';
 import { inflateRawSync, zstdDecompressSync } from 'node:zlib';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -237,6 +237,10 @@ function slim(n) {
     type: n.type,
     name: n.name,
   };
+  // Layers the designer switched off. They are kept in the tree so the decode
+  // stays lossless, but everything downstream must ignore them — rendering one
+  // puts artwork on the page that the design deliberately hides.
+  if (n.visible === false) o.hidden = true;
   if (n.size) o.size = { w: round(n.size.x), h: round(n.size.y) };
   if (n.transform) o.at = { x: round(n.transform.m02), y: round(n.transform.m12) };
 
@@ -306,6 +310,7 @@ function tokens(nodes) {
   const tally = (m, k) => m.set(k, (m.get(k) ?? 0) + 1);
 
   for (const n of nodes) {
+    if (n.hidden) continue; // a switched-off layer must not pollute the palette or type scale
     for (const f of [...(n.fills ?? []), ...(n.strokes ?? [])]) {
       if (f.color) tally(colors, f.color + (f.alpha < 1 ? `/${f.alpha}` : ''));
       for (const s of f.stops ?? []) tally(colors, s.color + (s.alpha < 1 ? `/${s.alpha}` : ''));
@@ -350,7 +355,18 @@ if (process.argv.includes('--check')) {
   assert.ok(tok.fonts['Bebas Neue Regular'], 'Bebas Neue missing');
   assert.ok(nodes.some((n) => n.name === 'Intro Hero'), 'Intro Hero frame missing');
   assert.ok(nodes.filter((n) => n.text).length > 400, 'expected >400 text nodes');
-  console.log(`ok — ${nodes.length} nodes, ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts`);
+
+  // Regression guard: hidden layers were once extracted as if they were live,
+  // which put a grain wash and a fade over the hero that the design switched off.
+  const hidden = nodes.filter((n) => n.hidden);
+  assert.ok(hidden.length > 0, 'no hidden nodes found — is node-level `visible` still being read?');
+  assert.ok(
+    hidden.some((n) => n.name === 'Noise Textiure'),
+    'the hero noise layer is hidden in the design but did not come through marked hidden'
+  );
+  console.log(
+    `ok — ${nodes.length} nodes (${hidden.length} hidden), ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts`
+  );
   process.exit(0);
 }
 
@@ -359,9 +375,10 @@ mkdirSync(resolve(ROOT, 'public/images'), { recursive: true });
 writeFileSync(resolve(ROOT, 'design/tokens.json'), JSON.stringify(tok, null, 2));
 writeFileSync(resolve(ROOT, 'design/nodes.json'), JSON.stringify(nodes));
 
-// Images: only the ones a fill actually references.
+// Images: only the ones a fill on a *visible* node actually references.
 const usedBy = new Map();
 for (const n of nodes) {
+  if (n.hidden) continue;
   for (const f of n.fills ?? []) {
     if (!f.image) continue;
     if (!usedBy.has(f.image)) usedBy.set(f.image, []);
@@ -413,8 +430,18 @@ for (const [hash, names] of usedBy) {
 }
 writeFileSync(resolve(ROOT, 'design/images.json'), JSON.stringify(manifest, null, 2));
 
+// Drop assets that no visible node references any more, so re-extracting after a
+// design change cannot leave orphans behind (a hidden layer's image, a replaced photo).
+const keep = new Set(Object.values(manifest).map((m) => m.file.replace('/images/', '')));
+let pruned = 0;
+for (const file of readdirSync(resolve(ROOT, 'public/images'))) {
+  if (keep.has(file)) continue;
+  unlinkSync(resolve(ROOT, 'public/images', file));
+  pruned++;
+}
+
 console.log(`nodes      ${nodes.length}`);
 console.log(`text       ${nodes.filter((n) => n.text).length}`);
 console.log(`colors     ${Object.keys(tok.colors).length}`);
 console.log(`type scale ${tok.typeScale.length} combinations`);
-console.log(`images     ${Object.keys(manifest).length} written to public/images/`);
+console.log(`images     ${Object.keys(manifest).length} written to public/images/${pruned ? ` (${pruned} orphan${pruned > 1 ? 's' : ''} pruned)` : ''}`);

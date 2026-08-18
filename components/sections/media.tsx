@@ -10,7 +10,7 @@ import { cn } from '@/lib/utils';
  */
 export function Media() {
   return (
-    <section id="media" className="bg-band-2 py-[70px] lg:py-[100px]">
+    <section id="media" className="section-y bg-band-2">
       <div className="container-page">
         <SectionIntro title={media.title} subtitle={media.subtitle} />
 
@@ -23,15 +23,20 @@ export function Media() {
             >
               <div className="flex flex-col justify-between gap-6 p-[27px]">
                 <div className="flex flex-col gap-3">
-                  <p
-                    className={cn(
-                      'text-[14px] leading-[19px] uppercase',
-                      item.kickerFont === 'mono' ? 'font-mono text-green' : 'font-mono-alt text-mint'
-                    )}
-                  >
-                    {item.kicker}
-                  </p>
-                  <span aria-hidden className="block h-px w-full bg-[#6b6b6b]/40" />
+                  {/* REPORTS and EVENTS hide their kicker and its rule in the design. */}
+                  {item.kicker && (
+                    <>
+                      <p
+                        className={cn(
+                          'text-[14px] leading-[19px] uppercase',
+                          item.kickerFont === 'mono' ? 'font-mono text-green' : 'font-mono-alt text-mint'
+                        )}
+                      >
+                        {item.kicker}
+                      </p>
+                      <span aria-hidden className="block h-px w-full bg-[#6b6b6b]/40" />
+                    </>
+                  )}
                   <p className="font-sans text-card-title leading-[1.43] font-medium whitespace-pre-line text-heading">
                     {item.title}
                   </p>

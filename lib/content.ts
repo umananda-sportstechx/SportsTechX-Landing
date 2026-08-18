@@ -157,10 +157,21 @@ export const solutions = {
   ] satisfies SolutionCard[],
 };
 
+export type MediaItem = {
+  category: string;
+  action: string;
+  /** Absent where the design hides the card's "Product Title" layer. */
+  kicker?: string;
+  kickerFont?: 'mono' | 'mono-alt';
+  title: string;
+  image: string;
+  href: string;
+};
+
 export const media = {
   title: 'MEDIA',
   subtitle: 'What the insiders read and listen to',
-  items: [
+  items: ([
     {
       category: 'NEWSLETTER',
       action: 'SUBSCRIBE',
@@ -182,8 +193,7 @@ export const media = {
     {
       category: 'REPORTS',
       action: 'READ',
-      kicker: 'SPORTSTECHX WEEKLY',
-      kickerFont: 'mono-alt' as const,
+      // no kicker: the design hides this card's "Product Title" layer
       title: 'Football Tech Report 2006',
       image: '/images/198f122078d1.webp',
       href: '#reports',
@@ -191,13 +201,12 @@ export const media = {
     {
       category: 'EVENTS',
       action: 'ATTEND',
-      kicker: 'SPORTSTECHX WEEKLY',
-      kickerFont: 'mono-alt' as const,
+      // no kicker: the design hides this card's "Product Title" layer
       title: 'The NextGen Sportstech\nSummit 2026',
       image: '/images/dd889ac2c460.webp',
       href: '#events',
     },
-  ],
+  ] as MediaItem[]),
 };
 
 export const footer = {

@@ -6,9 +6,9 @@ import { footer } from '@/lib/content';
 
 export function Footer() {
   return (
-    <footer id="about" className="relative overflow-hidden bg-surface pt-[70px] pb-8 lg:pt-[100px]">
+    <footer id="about" className="section-y relative overflow-hidden bg-surface pb-8">
       {/* The "Cloud grid" rules that frame the footer content. */}
-      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[70px] container-page">
+      <div aria-hidden className="pointer-events-none absolute inset-x-0 top-[var(--section-y)] container-page">
         <div className="h-px w-full bg-line" />
       </div>
 

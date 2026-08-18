@@ -77,9 +77,25 @@
   --fs-legal: clamp(11px, 10.28px + 0.18vw, 13px);
   --fs-mono-eyebrow: clamp(12px, 10.55px + 0.36vw, 16px);
 
-  /* Layout — 1512 artboard has 78px gutters around a 1350px content column */
-  --content: 1350px;
-  --gutter: clamp(20px, 0.9px + 4.75vw, 78px);
+  /* Layout. The artboard is a 1350px column with 78px gutters; both are pulled
+   * in for the web (see the scale knobs below) and every value is fluid between
+   * the two artboard widths, so it locks at its ceiling above 1512px. */
+  --content: 1200px;
+  --gutter: clamp(20px, 4.06px + 3.964vw, 64px);
+  --section-y: clamp(48px, 36.41px + 2.883vw, 80px);
+  --card-p: clamp(24px, 16.76px + 1.802vw, 44px);
+
+  /* ---- Scale knobs -------------------------------------------------------
+   * The --fs-* ramp above is the design verbatim. It is NOT what ships: the
+   * design's display type runs ~1.5x mainstream web scale (116px headline,
+   * 72px section headings) while its body type is already correct at 18px, so
+   * a single multiplier would wreck the body copy. Three tiers instead, applied
+   * at the @theme bridge below. Turn these to retune; the ramp stays traceable
+   * to the .fig. --fs-micro / --fs-legal are deliberately left alone; 0.94
+   * would push them under 11px. */
+  --scale-display: 0.72;  /* Bebas display steps */
+  --scale-lead: 0.82;     /* sub-heads, pull quotes, feature titles, eyebrows */
+  --scale-text: 0.94;     /* body copy, buttons, labels */
 }
 
 [data-theme="dark"] {
@@ -145,24 +161,24 @@
   --font-mono: "Commit Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-mono-alt: var(--font-space-mono), ui-monospace, Menlo, monospace;
 
-  --text-headline: var(--fs-headline);
-  --text-stat: var(--fs-stat);
-  --text-section: var(--fs-section);
-  --text-card: var(--fs-card);
-  --text-card-sm: var(--fs-card-sm);
-  --text-label-lg: var(--fs-label-lg);
-  --text-eyebrow: var(--fs-eyebrow);
-  --text-body-lg: var(--fs-body-lg);
-  --text-quote: var(--fs-quote);
-  --text-feature: var(--fs-feature);
-  --text-card-title: var(--fs-card-title);
-  --text-body: var(--fs-body);
-  --text-body-sm: var(--fs-body-sm);
-  --text-cta: var(--fs-cta);
-  --text-label: var(--fs-label);
+  --text-headline: calc(var(--fs-headline) * var(--scale-display));
+  --text-stat: calc(var(--fs-stat) * var(--scale-display));
+  --text-section: calc(var(--fs-section) * var(--scale-display));
+  --text-card: calc(var(--fs-card) * var(--scale-display));
+  --text-card-sm: calc(var(--fs-card-sm) * var(--scale-display));
+  --text-label-lg: calc(var(--fs-label-lg) * var(--scale-display));
+  --text-eyebrow: calc(var(--fs-eyebrow) * var(--scale-lead));
+  --text-body-lg: calc(var(--fs-body-lg) * var(--scale-lead));
+  --text-quote: calc(var(--fs-quote) * var(--scale-lead));
+  --text-feature: calc(var(--fs-feature) * var(--scale-lead));
+  --text-card-title: calc(var(--fs-card-title) * var(--scale-text));
+  --text-body: calc(var(--fs-body) * var(--scale-text));
+  --text-body-sm: calc(var(--fs-body-sm) * var(--scale-text));
+  --text-cta: calc(var(--fs-cta) * var(--scale-text));
+  --text-label: calc(var(--fs-label) * var(--scale-text));
   --text-micro: var(--fs-micro);
   --text-legal: var(--fs-legal);
-  --text-mono-eyebrow: var(--fs-mono-eyebrow);
+  --text-mono-eyebrow: calc(var(--fs-mono-eyebrow) * var(--scale-text));
 }
 
 @layer base {
@@ -207,6 +223,16 @@
   max-width: calc(var(--content) + 2 * var(--gutter));
   margin-inline: auto;
   padding-inline: var(--gutter);
+}
+
+/* Vertical rhythm between page sections, and the padding inside a solution
+ * card. Both were hardcoded per component before the rescale. */
+@utility section-y {
+  padding-block: var(--section-y);
+}
+
+@utility card-p {
+  padding: var(--card-p);
 }
 
 /* The design tracks display type and all mono labels at 10%. */

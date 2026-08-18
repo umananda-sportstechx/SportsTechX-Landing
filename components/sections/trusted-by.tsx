@@ -12,7 +12,7 @@ export function TrustedBy() {
   const rows = [trustedBy.partners, [...trustedBy.partners.slice(4), ...trustedBy.partners.slice(0, 4)]];
 
   return (
-    <section className="bg-band py-[86px] lg:py-[110px]">
+    <section className="section-y bg-band">
       <div className="container-page">
         <SectionIntro title={trustedBy.title} subtitle={trustedBy.subtitle} />
 

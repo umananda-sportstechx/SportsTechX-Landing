@@ -42,6 +42,19 @@ node scripts/fig-inspect.mjs --text "Footer"      # just the copy
 Repeated frame names (each section exists six times — desktop/mobile/menu x light/dark)
 are printed with their ancestor chain so you can tell them apart.
 
+### Hidden layers
+
+**19 nodes in the file are `visible: false`** — layers the designer switched off but left in
+place. They are still in `design/nodes.json` (the decode stays lossless) but carry
+`hidden: true`, `fig-inspect` prints `[HIDDEN]` next to them, and they are excluded from the
+token scan and the image export. **Never implement one.** Two of them — the hero's
+`Noise Textiure` grain wash and its `Gradient Overlay` — were built and shipped before this
+flag was read, which put a speckled cream tint over a hero the design wants flat. The
+`design:check` assertions exist to catch exactly that regression.
+
+The same applies to individual layers inside a component: REPORTS and EVENTS hide their
+`Product Title`, which is why only two of the four media cards carry a kicker.
+
 ## Layout conventions
 
 - Tokens live in `app/globals.css`: raw vars on `:root`, overridden under

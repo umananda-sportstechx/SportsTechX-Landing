@@ -31,6 +31,8 @@ const maxDepth = Number(rest[1] ?? 3);
 
 const label = (n) => {
   const parts = [n.type.toLowerCase(), n.name];
+  // Switched off in Figma — never implement these.
+  if (n.hidden) parts.push('[HIDDEN]');
   if (n.size) parts.push(`${n.size.w}x${n.size.h}`);
   if (n.at) parts.push(`@${n.at.x},${n.at.y}`);
   if (n.radius) parts.push(`r${n.radius}`);

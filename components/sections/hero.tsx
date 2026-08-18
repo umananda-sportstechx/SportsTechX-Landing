@@ -34,15 +34,10 @@ const PILLS: Record<string, { d: [number, number]; m?: [number, number] }> = {
 
 export function Hero() {
   return (
-    <section className="relative isolate overflow-hidden bg-hero pb-16 lg:pb-24">
-      {/* Cream wash + tiled noise. In the design these are two fills on one
-          rect: solid #f3eee3 at full opacity with the noise image over it at
-          17%. Light theme only — the dark artboard has no tint. */}
-      <div aria-hidden className="absolute inset-0 -z-30 bg-[#f3eee3] dark:hidden" />
-      <div
-        aria-hidden
-        className="absolute inset-0 -z-20 bg-[url('/images/538b788edc5d.webp')] bg-repeat opacity-[0.17] dark:hidden"
-      />
+    <section className="relative isolate overflow-hidden bg-hero pb-12 lg:pb-16">
+      {/* The artboard's "Noise Textiure" (cream wash + grain) and "Gradient
+          Overlay" layers are both visible:false in the .fig — the designer
+          switched them off. The hero is the flat --hero colour plus the motif. */}
 
       {/* Epicentre motif. On the artboard the 1586px circle is centred at
           (757, 947) in a 1512x1004 hero — horizontally centred, and 57px above
@@ -68,16 +63,14 @@ export function Hero() {
         <span className="absolute top-1/2 left-1/2 h-[80px] w-[57px] -translate-x-1/2 -translate-y-1/2 bg-[url('/images/dfb510ecda05.png')] bg-[length:291px_80px] bg-left bg-no-repeat" />
       </div>
 
-      {/* Fade the motif into the band below. */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 -z-10 h-[220px] bg-linear-to-b from-transparent to-hero"
-      />
-
       <NavBar />
 
-      <div className="container-page relative mt-[70px] flex flex-col items-center text-center lg:mt-[81px]">
-        <h1 className="tracked max-w-[1260px] font-display text-headline leading-[1.08] text-fg uppercase">
+      <div className="container-page relative mt-[48px] flex flex-col items-center text-center lg:mt-[58px]">
+        <h1
+          // max-width in em, not px, so the designed two-line break ("…ACCESS TO /
+          // SPORTS TECH & VENTURE") survives the fluid type scale at every width.
+          className="tracked max-w-[11em] font-display text-headline leading-[1.08] text-fg uppercase"
+        >
           {hero.headline}
         </h1>
 
@@ -102,7 +95,7 @@ export function Hero() {
       </div>
 
       {/* Category pills scattered over the motif, positioned exactly as designed. */}
-      <div className="relative mx-auto mt-14 h-[169px] w-[350px] lg:mt-20 lg:h-[204px] lg:w-[984px]">
+      <div className="relative mx-auto mt-10 h-[122px] w-[350px] lg:mt-14 lg:h-[147px] lg:w-[984px]">
         {hero.pills.map((pill) => {
           const pos = PILLS[pill.label];
           const Icon = ICONS[pill.icon as keyof typeof ICONS];

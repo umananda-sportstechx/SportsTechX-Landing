@@ -11,7 +11,7 @@ export function Solutions() {
   const [sector, setSector] = useState(solutions.sectors[0].id);
 
   return (
-    <section id="solutions" className="bg-surface py-[70px] lg:py-[100px]">
+    <section id="solutions" className="section-y bg-surface">
       <div className="container-page">
         <SectionIntro title={solutions.title} tracking="tracking-[0.05em]">
           <div className="mt-1 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
@@ -53,6 +53,44 @@ export function Solutions() {
   );
 }
 
+/**
+ * "Group 5" from the Playmakers card — ten 328.43px squares stepping by roughly
+ * (96, 60) across a 1195x856 group that sits at (169, -321) in the 1350-wide
+ * card, so it runs off the top edge and is clipped by the card's rounding.
+ * Positions below are the artboard offsets as a share of the group, so the
+ * whole motif scales with the card instead of drifting at other widths.
+ */
+const MOTIF = [
+  [0, 0],
+  [95, 54],
+  [192, 114],
+  [288, 174],
+  [385, 234],
+  [482, 294],
+  [578, 354],
+  [675, 414],
+  [771, 474],
+  [867, 528],
+].map(([x, y]) => [(x / 1195.25) * 100, (y / 856.1) * 100]);
+
+function CardMotif() {
+  return (
+    <div
+      aria-hidden
+      className="pointer-events-none absolute top-0 left-[12.5%] aspect-[1195/856] w-[88.5%] -translate-y-[37.5%]
+                 [mask-image:linear-gradient(160deg,#000_15%,transparent_78%)]"
+    >
+      {MOTIF.map(([left, top], i) => (
+        <span
+          key={i}
+          style={{ left: `${left}%`, top: `${top}%` }}
+          className="absolute aspect-square w-[27.5%] border border-[#ed1a5e]/35"
+        />
+      ))}
+    </div>
+  );
+}
+
 function SolutionBlock({ card }: { card: SolutionCard }) {
   // Playmakers is the dark card, Atlas the white one.
   const dark = card.id === 'playmakers';
@@ -60,12 +98,14 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
   return (
     <article
       className={cn(
-        'overflow-hidden rounded-[20px]',
+        'relative overflow-hidden rounded-[20px]',
         dark ? 'bg-linear-to-b from-card-dark-from to-card-dark-to' : 'bg-card-light'
       )}
     >
+      {dark && <CardMotif />}
+
       {/* Intro: wordmark, headline, blurb, CTA + the app preview panel. */}
-      <div className="flex flex-col gap-10 p-[30px] lg:flex-row lg:gap-[58px] lg:p-[58px]">
+      <div className="card-p relative flex flex-col gap-10 lg:flex-row lg:gap-[58px]">
         <div className="lg:w-[545px] lg:shrink-0">
           <span
             className={cn(
@@ -123,7 +163,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
       </div>
 
       {/* Feature columns on the green band. */}
-      <div className="bg-green px-[30px] py-10 lg:px-[57px] lg:py-16">
+      <div className="card-p bg-green">
         <div className="grid gap-10 lg:grid-cols-3 lg:gap-[51px]">
           {card.features.map((feature, i) => (
             <div
@@ -155,7 +195,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
       </div>
 
       {/* Testimonials. */}
-      <div className={cn('px-[30px] py-10 lg:px-[58px] lg:py-[54px]')}>
+      <div className={'card-p'}>
         <p
           className={cn(
             'tracked text-center font-mono text-label',
