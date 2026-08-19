@@ -42,7 +42,7 @@
   /* Lines / chrome — light */
   --line: #bababa;
   --nav-bg: #ffffff;
-  --nav-border: #000000;
+  --nav-border: rgb(0 0 0 / 0.09);   /* a 9% hairline, not solid black */
   --pill-bg: #d9d9d9;
   --pill-border: #c3c3c3;
   --pill-fg: #828282;
@@ -89,7 +89,10 @@
   /* Layout. The artboard is a 1350px column with 78px gutters; both are pulled
    * in for the web (see the scale knobs below) and every value is fluid between
    * the two artboard widths, so it locks at its ceiling above 1512px. */
-  --content: 1200px;
+  /* The artboard's column is 1350 of 1512 = 89.3%. A hard px cap made the page
+   * look marooned in the middle of a wide monitor, so track the viewport and
+   * only stop growing once it would get unreadably wide. */
+  --content: min(90vw, 1600px);
   --gutter: clamp(20px, 4.06px + 3.964vw, 64px);
   --section-y: clamp(48px, 36.41px + 2.883vw, 80px);
   --card-p: clamp(24px, 16.76px + 1.802vw, 44px);
@@ -180,7 +183,7 @@
   --color-mint: var(--mint);
 
   --font-display: var(--font-bebas-neue), "Bebas Neue", Impact, sans-serif;
-  --font-sans: var(--font-new-frank), ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
+  --font-sans: var(--font-sans-local), ui-sans-serif, system-ui, "Segoe UI", Helvetica, Arial, sans-serif;
   /* Commit Mono comes from @fontsource (imported in layout.tsx), not next/font,
    * so it is named directly rather than through a generated variable. */
   --font-mono: "Commit Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
@@ -287,6 +290,32 @@
     position: relative;
     z-index: 1;
   }
+}
+
+/* Category pills drift around the motif centre rather than sitting dead still.
+ * The wrapper swings a couple of degrees about the hero's centre and the label
+ * counter-swings by the same amount so the text stays upright. Each pill gets
+ * its own duration and a negative delay so they are already out of phase on
+ * first paint. */
+@keyframes orbit-swing {
+  0%, 100% { transform: rotate(-2.5deg); }
+  50%      { transform: rotate(2.5deg); }
+}
+
+@keyframes orbit-swing-back {
+  0%, 100% { transform: rotate(2.5deg); }
+  50%      { transform: rotate(-2.5deg); }
+}
+
+.orbit {
+  transform-origin: 50% 400%;
+  animation: orbit-swing var(--spin, 15s) ease-in-out infinite;
+  animation-delay: var(--spin-delay, 0s);
+}
+
+.orbit-body {
+  animation: orbit-swing-back var(--spin, 15s) ease-in-out infinite;
+  animation-delay: var(--spin-delay, 0s);
 }
 
 /* The design tracks display type and all mono labels at 10%. */

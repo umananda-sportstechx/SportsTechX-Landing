@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next';
 import '@fontsource/commit-mono/400.css';
 import './globals.css';
-import { bebasNeue, spaceMono } from './fonts';
+import { bebasNeue, sans, spaceMono } from './fonts';
 import { Providers } from './providers';
 
 export const metadata: Metadata = {
@@ -28,8 +28,11 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    // Add `newFrank.variable` here once the licensed files are in public/fonts/.
-    <html lang="en" className={`${bebasNeue.variable} ${spaceMono.variable}`} suppressHydrationWarning>
+    <html
+      lang="en"
+      className={`${bebasNeue.variable} ${spaceMono.variable} ${sans.variable}`}
+      suppressHydrationWarning
+    >
       <body>
         <Providers>{children}</Providers>
       </body>

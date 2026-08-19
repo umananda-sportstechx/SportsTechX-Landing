@@ -1,9 +1,9 @@
 import { Bebas_Neue, Space_Mono } from 'next/font/google';
-// import localFont from 'next/font/local';
+import localFont from 'next/font/local';
 
 /**
  * The design uses four families (counts are text nodes in the .fig):
- *   New Frank  276   body + UI                — commercial, self-hosted
+ *   New Frank  276   body + UI                — commercial, see the note below
  *   CommitMono  98   buttons, pills, labels   — @fontsource/commit-mono, imported in layout.tsx
  *   Bebas Neue  70   all display headlines    — Google
  *   Space Mono  28   eyebrows, attributions   — Google
@@ -24,21 +24,27 @@ export const spaceMono = Space_Mono({
 });
 
 /**
- * New Frank is licensed, so the files are not in the repo and next/font/local
- * would fail the build if they were missing. Until they land, --font-new-frank
- * stays undefined and `--font-sans` in globals.css falls through to the system
- * grotesque stack.
+ * Body face. The design specifies **New Frank**, which is a commercial typeface
+ * (Displaay / Adobe Fonts) — it needs a paid Creative Cloud plan or a purchased
+ * webfont licence, and Figma does not embed font binaries in a .fig, so it
+ * cannot come out of the design file either.
  *
- * To switch it on: drop NewFrank-Regular.woff2 and NewFrank-Medium.woff2 into
- * public/fonts/, uncomment the localFont import above and the block below, and
- * add `newFrank.variable` to the <html> className in layout.tsx. Nothing else
- * changes — every component already reads font-sans.
+ * Switzer stands in: a neo-grotesque of very similar proportions and colour,
+ * from Fontshare under the ITF Free Font License, which grants use "for personal
+ * or commercial purposes, free of charge" and permits self-hosting. The licence
+ * ships alongside the files at public/fonts/Switzer-LICENSE.txt.
+ *
+ * To swap in the real New Frank later: drop its woff2s into public/fonts/ and
+ * change the two `src` paths below. Nothing else needs to move — every component
+ * reads `font-sans`.
  */
-// export const newFrank = localFont({
-//   src: [
-//     { path: '../public/fonts/NewFrank-Regular.woff2', weight: '400', style: 'normal' },
-//     { path: '../public/fonts/NewFrank-Medium.woff2', weight: '500', style: 'normal' },
-//   ],
-//   display: 'swap',
-//   variable: '--font-new-frank',
-// });
+export const sans = localFont({
+  src: [
+    { path: '../public/fonts/Switzer-Regular.woff2', weight: '400', style: 'normal' },
+    { path: '../public/fonts/Switzer-Medium.woff2', weight: '500', style: 'normal' },
+    { path: '../public/fonts/Switzer-Semibold.woff2', weight: '600', style: 'normal' },
+    { path: '../public/fonts/Switzer-Bold.woff2', weight: '700', style: 'normal' },
+  ],
+  display: 'swap',
+  variable: '--font-sans-local',
+});

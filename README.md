@@ -74,16 +74,21 @@ The same applies to individual layers inside a component: REPORTS and EVENTS hid
 | Bebas Neue | `next/font/google` | ✅ |
 | Space Mono | `next/font/google` | ✅ |
 | CommitMono | `@fontsource/commit-mono` (OFL, not on Google Fonts) | ✅ |
-| **New Frank** | licensed, self-hosted | ⛔ **not included** |
+| **New Frank** | commercial — Displaay / Adobe Fonts | ⛔ **substituted** |
 
-New Frank is the body face (276 of the design's text nodes) and is commercial — Figma does
-not embed font binaries in a `.fig`, so it cannot come out of the export. Until the files
-are supplied the page falls back to the system grotesque stack.
+New Frank is the design's body face (276 of its text nodes) and is **paid**: it needs a Creative
+Cloud plan (Adobe's free tier is ~5,500 fonts and excludes premium foundry faces) or a purchased
+webfont licence. Figma does not embed font binaries in a `.fig`, so it cannot come out of the
+export either. The free-download sites that surface for it are unlicensed copies — not usable on
+a commercial site.
 
-**To switch it on:** drop `NewFrank-Regular.woff2` and `NewFrank-Medium.woff2` into
-`public/fonts/`, uncomment the `localFont` block in `app/fonts.ts` and its import, and add
-`newFrank.variable` to the `<html>` className in `app/layout.tsx`. Nothing else changes —
-every component already reads `font-sans`.
+**Switzer** stands in: a neo-grotesque of near-identical proportions from Fontshare, under the
+ITF Free Font License, which grants use *"for personal or commercial purposes, free of charge"*
+and permits self-hosting. The licence ships next to the files at `public/fonts/Switzer-LICENSE.txt`.
+
+**To swap in the real New Frank:** drop its woff2s into `public/fonts/` and change the two `src`
+paths in the `sans` export in `app/fonts.ts`. Nothing else moves — every component reads
+`font-sans`.
 
 ## Newsletter
 

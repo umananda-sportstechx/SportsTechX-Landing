@@ -10,7 +10,7 @@ import { nav } from '@/lib/content';
  */
 export function NavBar() {
   return (
-    <header className="container-page relative z-30 flex items-center justify-between pt-4 lg:pt-[60px]">
+    <header className="container-page relative z-30 flex items-center justify-between">
       {/* Mobile-only menu button; the desktop pill carries the links instead. */}
       <MobileMenuButton className="lg:hidden" />
 
