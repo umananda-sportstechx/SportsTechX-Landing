@@ -103,9 +103,10 @@ rather than pretending the address was stored.
 - **Wordmarks.** The Playmakers and Atlas logotypes are vector networks in the `.fig`,
   which the export does not expose as images. Both are set in type as a stand-in; drop in
   SVGs when the brand files exist.
-- **Logo.** The design's own logo asset is a single all-pink PNG while the mobile-menu
-  artboards show a monochrome mark, so no two-tone (pink mark + themed wordmark) file
-  exists. `components/brand-logo.tsx` uses the mono black/white pair from the app.
+- **Hero motif in dark mode.** The exported `epicentre-motif.svg` is the light artwork;
+  dark currently filters it. The artboard has genuinely different dark ring colours
+  (`#186f52 → #0d1220`), so the real fix is exporting the dark motif — blocked on the
+  Figma MCP call quota.
 - **Sector switch.** FOUNDERS / INVESTORS toggles, but the `.fig` only contains the
   FOUNDERS state — there is no INVESTORS variant to render, so both show the same two
   cards. The cards are data-driven in `lib/content.ts`, so adding the variant is a data
