@@ -106,6 +106,10 @@
    * to the .fig. --fs-micro / --fs-legal are deliberately left alone; 0.94
    * would push them under 11px. */
   --scale-display: 0.72;  /* Bebas display steps */
+  /* The hero headline and subhead run larger than the rest of the display type.
+   * `text-headline` and `text-body-lg` are used nowhere else, so this knob is
+   * hero-only by construction and leaves the section headings at 0.72. */
+  --scale-hero: 0.92;
   --scale-lead: 0.82;     /* sub-heads, pull quotes, feature titles, eyebrows */
   --scale-text: 0.94;     /* body copy, buttons, labels */
 }
@@ -189,14 +193,14 @@
   --font-mono: "Commit Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-mono-alt: var(--font-space-mono), ui-monospace, Menlo, monospace;
 
-  --text-headline: calc(var(--fs-headline) * var(--scale-display));
+  --text-headline: calc(var(--fs-headline) * var(--scale-hero));
   --text-stat: calc(var(--fs-stat) * var(--scale-display));
   --text-section: calc(var(--fs-section) * var(--scale-display));
   --text-card: calc(var(--fs-card) * var(--scale-display));
   --text-card-sm: calc(var(--fs-card-sm) * var(--scale-display));
   --text-label-lg: calc(var(--fs-label-lg) * var(--scale-display));
   --text-eyebrow: calc(var(--fs-eyebrow) * var(--scale-lead));
-  --text-body-lg: calc(var(--fs-body-lg) * var(--scale-lead));
+  --text-body-lg: calc(var(--fs-body-lg) * var(--scale-hero));
   --text-quote: calc(var(--fs-quote) * var(--scale-lead));
   --text-feature: calc(var(--fs-feature) * var(--scale-lead));
   --text-card-title: calc(var(--fs-card-title) * var(--scale-text));
@@ -307,13 +311,14 @@
  * a pill at r% of the motif radius is r/2 % here.
  */
 @keyframes orbit-arc {
-  0%, 100% { transform: translate(-50%, -50%) rotate(calc(var(--angle) - 8deg)); }
-  50%      { transform: translate(-50%, -50%) rotate(calc(var(--angle) + 8deg)); }
+  from { transform: translate(-50%, -50%) rotate(var(--angle)); }
+  to   { transform: translate(-50%, -50%) rotate(calc(var(--angle) + 360deg)); }
 }
 
+/* Counter-turn, so the label stays upright through the whole revolution. */
 @keyframes orbit-arc-upright {
-  0%, 100% { transform: translate(-50%, -50%) rotate(calc(8deg - var(--angle))); }
-  50%      { transform: translate(-50%, -50%) rotate(calc(-8deg - var(--angle))); }
+  from { transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle))); }
+  to   { transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle) - 360deg)); }
 }
 
 .orbit {
@@ -327,8 +332,9 @@
   /* The box is large and sits over the CTAs — it must never eat a click. */
   pointer-events: none;
   transform: translate(-50%, -50%) rotate(var(--angle));
-  animation: orbit-arc var(--dur, 20s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
+  /* linear, so orbital speed is constant rather than easing at the ends */
+  animation: orbit-arc var(--dur, 120s) linear infinite;
+  will-change: transform;
 }
 
 .orbit-pill {
@@ -337,8 +343,8 @@
   left: calc(50% + var(--radius));
   pointer-events: auto;
   transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
-  animation: orbit-arc-upright var(--dur, 20s) ease-in-out infinite;
-  animation-delay: var(--delay, 0s);
+  animation: orbit-arc-upright var(--dur, 120s) linear infinite;
+  will-change: transform;
 }
 
 /* The two artboards give the motif different proportions — 858 across an

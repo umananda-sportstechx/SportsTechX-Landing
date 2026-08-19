@@ -21,17 +21,21 @@ import { cn } from '@/lib/utils';
  *   TEAMS 52.7% / ATHLETES 52.8% / LEAGUES 57.1% / MEDIA 57.5% -> 882 ring (55.6%)
  * `r` is a share of the motif radius, `a` the angle in degrees with y down.
  * `mr`/`ma` are the mobile overrides; the design drops MEDIA and ATHLETES there.
+ *
+ * Duration is per RING, not per pill, so each ring turns as one body and keeps
+ * the artboard's spacing between its pills. The inner ring runs faster, the way
+ * orbits actually behave. No delays: the first painted frame is the artboard.
  */
-const PILLS: Record<
-  string,
-  { r: number; a: number; mr?: number; ma?: number; dur: number; delay: number }
-> = {
-  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: 21, delay: -3 },
-  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: 24, delay: -11 },
-  MEDIA: { r: 57.5, a: -173.4, dur: 19, delay: -6 },
-  ATHLETES: { r: 52.8, a: -10.8, dur: 26, delay: -14 },
-  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: 18, delay: 0 },
-  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: 22, delay: -8 },
+const OUTER = 120;
+const INNER = 80;
+
+const PILLS: Record<string, { r: number; a: number; mr?: number; ma?: number; dur: number }> = {
+  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: OUTER },
+  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: OUTER },
+  MEDIA: { r: 57.5, a: -173.4, dur: OUTER },
+  ATHLETES: { r: 52.8, a: -10.8, dur: OUTER },
+  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: INNER },
+  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: INNER },
 };
 
 export function Hero() {
@@ -99,10 +103,12 @@ export function Hero() {
                 '--a': `${p.ma ?? p.a}deg`,
                 '--a-lg': `${p.a}deg`,
                 '--dur': `${p.dur}s`,
-                '--delay': `${p.delay}s`,
               } as React.CSSProperties
             }
-            className={cn('orbit', !p.mr && 'hidden lg:block')}
+            // -z-10 puts the pills behind the headline and CTAs, so a full
+            // revolution tucks them under the text instead of covering it. They
+            // still sit above the motif, which is earlier in the DOM.
+            className={cn('orbit -z-10', !p.mr && 'hidden lg:block')}
           >
             <span className="orbit-pill" data-pill={pill.label}>
               <span
