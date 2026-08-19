@@ -1,6 +1,8 @@
 import type { Metadata, Viewport } from 'next';
 import '@fontsource/commit-mono/400.css';
 import './globals.css';
+import { MobileMenuPanel, MobileMenuProvider, MobileMenuShell } from '@/components/mobile-menu';
+import { NavBar } from '@/components/sections/nav-bar';
 import { bebasNeue, sans, spaceMono } from './fonts';
 import { Providers } from './providers';
 
@@ -34,7 +36,17 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <body>
-        <Providers>{children}</Providers>
+        <Providers>
+          {/* Nav and the mobile drawer live here rather than in a page, so they
+              are shared by every route and the nav can stay pinned. */}
+          <MobileMenuProvider>
+            <MobileMenuPanel />
+            <MobileMenuShell>
+              <NavBar />
+              {children}
+            </MobileMenuShell>
+          </MobileMenuProvider>
+        </Providers>
       </body>
     </html>
   );

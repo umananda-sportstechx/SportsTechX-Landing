@@ -1,5 +1,4 @@
 import Image from 'next/image';
-import { NavBar } from '@/components/sections/nav-bar';
 import { hero } from '@/lib/content';
 import { cn } from '@/lib/utils';
 
@@ -53,12 +52,7 @@ export function Hero() {
         />
       </div>
 
-      {/* Nav sits at y=85 of the 1004 frame on the artboard. */}
-      <div className="absolute inset-x-0 top-[3.5%] lg:top-[8.5%]">
-        <NavBar />
-      </div>
-
-      <div className="absolute inset-x-0 top-[15%] flex flex-col items-center px-5 text-center lg:top-[22.3%] lg:px-0">
+      <div className="absolute inset-x-0 top-[13%] flex flex-col items-center px-5 text-center lg:top-[18%] lg:px-0">
         <h1
           // max-width in em, not px, so the designed two-line break survives the
           // fluid type scale at every width.

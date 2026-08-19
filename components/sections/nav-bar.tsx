@@ -7,10 +7,18 @@ import { nav } from '@/lib/content';
  * Desktop (1512): logo 195x54, then a 426x58 pill holding the links plus the
  * night-mode switch, then a 270x58 outlined CTA. Mobile (402): hamburger,
  * centred logo, theme toggle.
+ *
+ * Rendered once in the root layout, not per page, so it is shared by every
+ * route. It is `fixed` rather than `sticky` on purpose: the hero is sized to
+ * 100svh, and a nav in normal flow would stack on top of that and push the page
+ * past the viewport — the exact problem that hid the hero's lower half before.
+ * Fixed also keeps it pinned while scrolling, and because the mobile drawer
+ * transforms its shell, the nav still slides with the page when the drawer opens.
  */
 export function NavBar() {
   return (
-    <header className="container-page relative z-30 flex items-center justify-between">
+    <header className="fixed inset-x-0 top-4 z-50 lg:top-6">
+      <div className="container-page flex items-center justify-between">
       {/* Mobile-only menu button; the desktop pill carries the links instead. */}
       <MobileMenuButton className="lg:hidden" />
 
@@ -38,7 +46,8 @@ export function NavBar() {
         </a>
 
         {/* Mobile keeps only the theme toggle — the rest lives in the drawer. */}
-        <ThemeToggle className="size-[38px] border-[1.5px] border-nav-border bg-surface lg:hidden" />
+          <ThemeToggle className="size-[38px] border-[1.5px] border-nav-border bg-surface lg:hidden" />
+        </div>
       </div>
     </header>
   );
