@@ -292,30 +292,74 @@
   }
 }
 
-/* Category pills drift around the motif centre rather than sitting dead still.
- * The wrapper swings a couple of degrees about the hero's centre and the label
- * counter-swings by the same amount so the text stays upright. Each pill gets
- * its own duration and a negative delay so they are already out of phase on
- * first paint. */
-@keyframes orbit-swing {
-  0%, 100% { transform: rotate(-2.5deg); }
-  50%      { transform: rotate(2.5deg); }
+/* Category pills travel along their orbit.
+ *
+ * `.orbit` is a square box the size of the motif, centred on the motif centre,
+ * and it is what rotates. It has to have real dimensions: an earlier version
+ * used a zero-size anchor, and `left: <percent>` against a zero-width parent
+ * resolves to 0, so every pill piled up in the middle.
+ *
+ * `.orbit-pill` sits at the box centre plus the pill's radius along +x, and
+ * counter-rotates so the label stays upright. Both animations share --dur and
+ * --delay so they stay locked together frame for frame.
+ *
+ * --radius is expressed as a share of the box WIDTH (= the motif diameter), so
+ * a pill at r% of the motif radius is r/2 % here.
+ */
+@keyframes orbit-arc {
+  0%, 100% { transform: translate(-50%, -50%) rotate(calc(var(--angle) - 8deg)); }
+  50%      { transform: translate(-50%, -50%) rotate(calc(var(--angle) + 8deg)); }
 }
 
-@keyframes orbit-swing-back {
-  0%, 100% { transform: rotate(2.5deg); }
-  50%      { transform: rotate(-2.5deg); }
+@keyframes orbit-arc-upright {
+  0%, 100% { transform: translate(-50%, -50%) rotate(calc(8deg - var(--angle))); }
+  50%      { transform: translate(-50%, -50%) rotate(calc(-8deg - var(--angle))); }
 }
 
 .orbit {
-  transform-origin: 50% 400%;
-  animation: orbit-swing var(--spin, 15s) ease-in-out infinite;
-  animation-delay: var(--spin-delay, 0s);
+  --angle: var(--a);
+  --radius: var(--r);
+  position: absolute;
+  top: var(--motif-cy);
+  left: 50%;
+  height: calc(var(--motif-r) * 2);   /* the motif's diameter */
+  aspect-ratio: 1;
+  /* The box is large and sits over the CTAs — it must never eat a click. */
+  pointer-events: none;
+  transform: translate(-50%, -50%) rotate(var(--angle));
+  animation: orbit-arc var(--dur, 20s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
 }
 
-.orbit-body {
-  animation: orbit-swing-back var(--spin, 15s) ease-in-out infinite;
-  animation-delay: var(--spin-delay, 0s);
+.orbit-pill {
+  position: absolute;
+  top: 50%;
+  left: calc(50% + var(--radius));
+  pointer-events: auto;
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
+  animation: orbit-arc-upright var(--dur, 20s) ease-in-out infinite;
+  animation-delay: var(--delay, 0s);
+}
+
+/* The two artboards give the motif different proportions — 858 across an
+ * 852-tall mobile frame (radius 50.4% of the height) versus 1586 across 1004
+ * on desktop (79%) — and they place the pills at different angles. Both the
+ * motif and the orbit rigs read these, so they cannot drift apart. */
+.hero-frame {
+  --motif-r: 50.4%;
+  --motif-cy: 94%;
+}
+
+@media (width >= 64rem) {
+  .hero-frame {
+    --motif-r: 79%;
+    --motif-cy: 94.3%;
+  }
+
+  .orbit {
+    --angle: var(--a-lg);
+    --radius: var(--r-lg);
+  }
 }
 
 /* The design tracks display type and all mono labels at 10%. */
