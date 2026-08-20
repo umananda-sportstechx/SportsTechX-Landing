@@ -445,3 +445,230 @@
 @utility tracked {
   letter-spacing: 0.1em;
 }
+
+/* ===== Solutions cards ====================================================
+ * The artboard draws two 1350-wide cards: Playmakers 1508 tall, and Atlas
+ * 1446 placed at y=1392 — so they OVERLAP by 116. The site had them as
+ * separate stacked blocks.
+ *
+ * Every dimension below is a multiple of --k, one artboard unit, so a card is
+ * a true scale model of the design at any width. That is the fix for the
+ * "clamped" look: each block previously carried its own clamp() and they
+ * drifted out of proportion with one another and with the artboard.
+ *
+ * Desktop only. The design has a separate 402-wide mobile artboard; below lg
+ * the plain utility classes on the elements take over and --k is never read.
+ * ========================================================================= */
+.solutions-rig {
+  container-type: inline-size;
+}
+
+@media (width >= 64rem) {
+  .solutions-rig {
+    --k: calc(100cqw / 1350);
+  }
+
+  .solution-card {
+    border-radius: calc(20 * var(--k));
+  }
+  .solution-card + .solution-card {
+    margin-top: calc(-116 * var(--k));
+  }
+
+  /* --- intro ------------------------------------------------------------ */
+  .card-intro {
+    position: relative;
+    min-height: calc(615 * var(--k));
+  }
+  /* Flush to the card's right edge with square outer corners, so it reads as
+   * running off the card. It used to be inset by the card padding. */
+  .card-panel {
+    position: absolute;
+    right: 0;
+    top: calc(var(--panel-y) * var(--k));
+    width: calc(676 * var(--k));
+    height: calc(var(--panel-h) * var(--k));
+    border-radius: calc(20 * var(--k)) 0 0 calc(20 * var(--k));
+  }
+  /* The tier pill belongs inside the preview panel, not above the headline. */
+  .card-tag {
+    position: absolute;
+    left: calc(var(--tag-x) * var(--k));
+    top: calc(var(--tag-y) * var(--k));
+    height: calc(32 * var(--k));
+    padding-inline: calc(20 * var(--k));
+    border-radius: calc(7 * var(--k));
+    font-size: max(11px, calc(16 * var(--k)));
+  }
+  /* Bottom-aligned against the panel, as drawn — the artboard leaves the top
+   * third of this column empty. */
+  .card-intro-text {
+    position: absolute;
+    left: calc(58 * var(--k));
+    bottom: calc(var(--text-b) * var(--k));
+    width: calc(616 * var(--k));
+  }
+  .card-wordmark {
+    font-size: calc(var(--mark) * var(--k));
+  }
+  .card-headline {
+    margin-top: calc(var(--headline-mt) * var(--k));
+    font-size: max(28px, calc(var(--headline) * var(--k)));
+    line-height: var(--headline-lh);
+  }
+  .card-blurb {
+    margin-top: calc(var(--blurb-mt) * var(--k));
+    width: calc(514 * var(--k));
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: calc(31 / 18);
+  }
+  .card-cta {
+    margin-top: calc(25 * var(--k));
+    height: calc(42 * var(--k));
+    min-width: calc(var(--cta-w) * var(--k));
+    padding-inline: calc(15 * var(--k));
+    font-size: max(11px, calc(16 * var(--k)));
+  }
+
+  /* --- green band ------------------------------------------------------- */
+  .card-band {
+    min-height: calc(431 * var(--k));
+    padding: calc(64 * var(--k)) calc(57 * var(--k)) calc(25 * var(--k));
+  }
+  /* Zero-width rules are interleaved between the columns, so this gap applies
+   * twice per division and lands on the artboard's 102. */
+  .card-cases {
+    gap: calc(51 * var(--k));
+  }
+  .card-case-rule {
+    height: calc(328 * var(--k));
+  }
+  .card-col {
+    gap: calc(30 * var(--k));
+  }
+  .card-col-head {
+    gap: calc(11 * var(--k));
+  }
+  .card-numbox {
+    width: calc(52 * var(--k));
+    height: calc(51 * var(--k));
+  }
+  .card-numbox svg {
+    width: calc(24 * var(--k));
+    height: calc(24 * var(--k));
+  }
+  .card-col-title {
+    font-size: max(15px, calc(24 * var(--k)));
+    line-height: calc(30 / 24);
+  }
+  .card-uses {
+    gap: calc(20 * var(--k));
+  }
+  .card-use {
+    gap: calc(18 * var(--k));
+    font-size: max(13px, calc(18 * var(--k)));
+    line-height: calc(28 / 18);
+  }
+  .card-bullet {
+    width: calc(10 * var(--k));
+    height: calc(10 * var(--k));
+    margin-top: calc(10 * var(--k));
+  }
+
+  /* --- testimonials ------------------------------------------------------ */
+  .card-stories {
+    padding: calc(var(--stories-t) * var(--k)) calc(58 * var(--k))
+      calc(var(--stories-b) * var(--k));
+  }
+  .card-stories-label {
+    font-size: max(11px, calc(16 * var(--k)));
+  }
+  /* The artboard's Story Strip is 253 tall against 187 of actual content, and
+   * that slack is what carries the card to its full 1508 / 1446. */
+  .card-strip {
+    margin-top: calc(var(--strip-mt) * var(--k));
+    min-height: calc(253 * var(--k));
+  }
+  .card-story-rule {
+    height: calc(228 * var(--k));
+  }
+  .card-quote {
+    max-width: calc(485 * var(--k));
+    font-size: max(15px, calc(var(--quote) * var(--k)));
+    line-height: calc(34 / 24);
+  }
+  .card-chip {
+    margin-top: calc(29 * var(--k));
+    gap: calc(17 * var(--k));
+  }
+  .card-avatar {
+    width: calc(56 * var(--k));
+    height: calc(56 * var(--k));
+    border-radius: calc(3 * var(--k));
+  }
+  .card-chip-text {
+    font-size: max(11px, calc(15 * var(--k)));
+    line-height: calc(19 / 15);
+  }
+  /* The artboard sets these 25 in from the card edge, outside the story
+   * section's own 58 of padding. */
+  .card-arrow {
+    width: calc(51 * var(--k));
+    height: calc(51 * var(--k));
+  }
+  .card-arrow svg {
+    width: 100%;
+    height: 100%;
+    /* lucide's 1.5 is in 24-unit viewBox terms, which at this box size paints a
+     * 3px rule; the artboard's chevron is 1.5px. */
+    stroke-width: calc(1.5 * 24 / 51);
+  }
+  .card-arrow:nth-of-type(1) {
+    left: calc(-33 * var(--k));
+    right: auto;
+  }
+  .card-arrow:nth-of-type(2) {
+    right: calc(-33 * var(--k));
+    left: auto;
+  }
+
+  /* --- Playmakers motif: "Frame 6" > "Group 5", ten 328.43 squares stepping
+   * by (96.58, 60.05) inside a group that is itself rotated 15deg. Dropping
+   * that rotation is why the ribbon sat flat instead of raked. */
+  .card-motif {
+    position: absolute;
+    left: calc(-53 * var(--k));
+    top: 0;
+    width: calc(1376 * var(--k));
+    height: calc(615 * var(--k));
+    overflow: hidden;
+  }
+  .card-motif-group {
+    position: absolute;
+    left: calc(221.97 * var(--k));
+    top: calc(-321.28 * var(--k));
+    width: calc(1195.25 * var(--k));
+    height: calc(856.1 * var(--k));
+    transform: rotate(15deg);
+    transform-origin: 0 0;
+  }
+  .card-motif-group > span {
+    position: absolute;
+    width: calc(328.43 * var(--k));
+    height: calc(328.43 * var(--k));
+    /* A 1px gradient stroke fading pink to nothing, at 35% — not a flat rule. */
+    border: 1px solid transparent;
+    border-image: linear-gradient(to bottom, #ed1a5e 29%, rgb(236 30 95 / 0)) 1;
+    opacity: 0.35;
+  }
+
+  /* --- Atlas rings: a 1776.65 square whose two 45deg rotations cancel, so it
+   * sits axis-aligned at (12.6, -501.2) in the card. */
+  .card-rings {
+    position: absolute;
+    left: calc(12.6 * var(--k));
+    top: calc(-501.2 * var(--k));
+    width: calc(1776.65 * var(--k));
+    height: calc(1776.65 * var(--k));
+  }
+}

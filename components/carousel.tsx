@@ -44,7 +44,7 @@ export function Carousel({
   const paused = useRef(false);
   const resumeAt = useRef<number | null>(null);
   const [atStart, setAtStart] = useState(true);
-  const [atEnd, setAtEnd] = useState(false);
+  const [atEnd, setAtEnd] = useState(true);
 
   const sync = useCallback(() => {
     const el = track.current;
@@ -162,8 +162,15 @@ export function Carousel({
         )}
       </div>
 
+      {/* Both ends at once means the content already fits, so there is nowhere
+          to page — show no affordance rather than two dead arrows. The card
+          testimonials hit this whenever the design's two stories both fit. */}
+      {!(atStart && atEnd && !autoScroll) && (
+        <>
       <Arrow side="left" disabled={!autoScroll && atStart} onClick={() => page(-1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: previous`} />
       <Arrow side="right" disabled={!autoScroll && atEnd} onClick={() => page(1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: next`} />
+        </>
+      )}
     </div>
   );
 }
