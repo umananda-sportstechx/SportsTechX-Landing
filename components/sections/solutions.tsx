@@ -2,31 +2,20 @@
 
 import { useState, Fragment, type CSSProperties } from 'react';
 import Image from 'next/image';
-import {
-  ChartColumnIncreasing,
-  FileText,
-  Handshake,
-  Network,
-  Search,
-  Users,
-  type LucideIcon,
-} from 'lucide-react';
 import { Carousel } from '@/components/carousel';
 import { SectionIntro } from '@/components/section-intro';
 import { solutions, type SolutionCard } from '@/lib/content';
 import { cn } from '@/lib/utils';
+import vectors from '@/design/vectors.json';
 
 /**
- * ponytail: the artboard draws each column heading's glyph as a flattened
- * VECTOR, and the .fig carries no path geometry for those — the decoder reads
- * their size and stroke but not their shape. These are semantic stand-ins at
- * the designed 24x24 / 1.5px, in the same bucket as the two wordmarks. Swap in
- * the real SVGs when the brand files land.
+ * The heading glyphs, the two wordmarks and the Atlas rings are flattened
+ * VECTOR nodes. scripts/fig-extract.mjs now decodes their commandsBlob into
+ * real SVG paths under public/vectors, so these are the artboard's own
+ * drawings rather than the lucide and type stand-ins that were here before.
+ * Sizes come from design/vectors.json so they cannot drift from the export.
  */
-const ICONS: Record<string, LucideIcon[]> = {
-  playmakers: [Users, Network, ChartColumnIncreasing],
-  atlas: [FileText, Search, Handshake],
-};
+const art = (name: string) => vectors[name as keyof typeof vectors];
 
 /**
  * Per-card artboard constants, consumed by the .card-* rules in globals.css.
@@ -39,7 +28,8 @@ const VARS: Record<string, CSSProperties> = {
     '--tag-x': 25,
     '--tag-y': 24.53,
     '--text-b': 99.5,
-    '--mark': 48,
+    '--mark-w': 341,
+    '--mark-h': 35,
     '--headline': 56,
     '--headline-lh': 0.964, // Bebas 56/54
     '--headline-mt': 31,
@@ -56,7 +46,8 @@ const VARS: Record<string, CSSProperties> = {
     '--tag-x': 28,
     '--tag-y': 25.71,
     '--text-b': 75,
-    '--mark': 72,
+    '--mark-w': 212.995,
+    '--mark-h': 85.925,
     '--headline': 50,
     '--headline-lh': 1,
     '--headline-mt': 19.36,
@@ -120,7 +111,7 @@ export function Solutions() {
 function SolutionBlock({ card }: { card: SolutionCard }) {
   // Playmakers is the dark card, Atlas the pale one.
   const dark = card.id === 'playmakers';
-  const icons = ICONS[card.id];
+  const mark = art(`wordmark-${card.id}`);
 
   return (
     <article
@@ -156,19 +147,22 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
           </span>
         </div>
 
-        <div className="card-intro-text">
-          {/* ponytail: both wordmarks are vector logotypes the .fig does not
-              expose as images. Set in type at the designed box size. */}
-          <p
-            className={cn(
-              'card-wordmark font-sans leading-none font-bold',
-              dark
-                ? 'text-[28px] tracking-[0.02em] text-white uppercase'
-                : 'text-[40px] tracking-[-0.02em] text-black lowercase'
-            )}
-          >
-            {card.eyebrow}
-          </p>
+        <div
+          className="card-intro-text"
+          style={
+            {
+              '--mark-ow': mark.w,
+              '--mark-oh': mark.h,
+              '--mark-dx': mark.bleed.x,
+              '--mark-dy': mark.bleed.y,
+            } as CSSProperties
+          }
+        >
+          <span className={cn('card-wordmark block', dark ? 'h-[26px]' : 'h-[52px]')}>
+            {/* eslint-disable-next-line @next/next/no-img-element -- a flat
+                artboard vector; next/image would only add a request wrapper. */}
+            <img src={`/vectors/wordmark-${card.id}.svg`} alt={card.eyebrow} className="h-full w-auto" />
+          </span>
 
           <h3
             className={cn(
@@ -204,7 +198,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
       <div className="card-band card-p relative bg-green">
         <div className="card-cases grid gap-10 lg:flex lg:items-start">
           {card.features.map((feature, i) => {
-            const Icon = icons[i];
+            const icon = art(`icon-${card.id}-${i + 1}`);
             return (
               <Fragment key={feature.title}>
                 {i > 0 && (
@@ -216,7 +210,13 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
                 <div className="card-col flex flex-col gap-[30px] lg:flex-1">
                   <div className="card-col-head flex items-start gap-[11px]">
                     <span className="card-numbox grid size-[52px] shrink-0 place-items-center rounded-[45px] bg-white">
-                      <Icon className="size-6 text-black" strokeWidth={1.5} />
+                      {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
+                      <img
+                        src={`/vectors/icon-${card.id}-${i + 1}.svg`}
+                        alt=""
+                        style={{ '--iw': icon.w, '--ih': icon.h } as CSSProperties}
+                        className="card-icon size-6 object-contain"
+                      />
                     </span>
                     <h4 className="card-col-title font-sans text-feature leading-[1.25] font-medium whitespace-pre-line text-white">
                       {feature.title}
@@ -339,39 +339,22 @@ function Motif() {
 }
 
 /**
- * Atlas "BG Element": a 1776.65 square of concentric rings whose 45deg frame
- * and -45deg child cancel out, leaving it axis-aligned at (12.6, -501.2). The
- * stroke is a #4baf8e gradient running transparent to solid towards the lower
- * right.
+ * Atlas "BG Element": a 1046.97 square rotated 45deg that CLIPS a 1776.65
+ * ring vector rotated back -45deg. The clip is the whole point — it is what
+ * confines the rings to the intro instead of letting them run the height of
+ * the card, and the site was drawing them unclipped.
  *
- * ponytail: the .fig stores the rings as one flattened VECTOR, so their exact
- * count and radii are not recoverable — six evenly spaced approximates the
- * drawn motif.
+ * The rings themselves are the artboard's own vector, roughly forty tightly
+ * spaced circles with a #4baf8e stroke fading in towards the lower right —
+ * not the six-ring approximation that was here before.
  */
 function Rings() {
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 1776.65 1776.65"
-      className="card-rings pointer-events-none hidden lg:block"
-    >
-      <defs>
-        <linearGradient id="atlas-ring" x1="0.30" y1="0.393" x2="0.85" y2="0.687">
-          <stop offset="0" stopColor="#4baf8e" stopOpacity="0" />
-          <stop offset="1" stopColor="#4baf8e" stopOpacity="1" />
-        </linearGradient>
-      </defs>
-      {[1, 2, 3, 4, 5, 6].map((n) => (
-        <circle
-          key={n}
-          cx="888.325"
-          cy="888.325"
-          r={(888.325 * n) / 6}
-          fill="none"
-          stroke="url(#atlas-ring)"
-          strokeWidth="1"
-        />
-      ))}
-    </svg>
+    <div aria-hidden className="card-rings pointer-events-none hidden lg:block">
+      <div className="card-rings-node">
+        {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
+        <img src="/vectors/atlas-rings.svg" alt="" />
+      </div>
+    </div>
   );
 }

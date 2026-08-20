@@ -357,10 +357,88 @@ function tokens(nodes) {
   };
 }
 
+/* ---------- vector geometry ----------
+ * A VECTOR node's outline lives in `fillGeometry`/`strokeGeometry` as a
+ * `commandsBlob` index into doc.blobs. Each blob is a byte opcode followed by
+ * float32 pairs:
+ *
+ *   0 close   1 moveTo(1)   2 lineTo(1)   3 quadTo(2)   4 cubicTo(3)
+ *
+ * Figma flattens a stroke into the same kind of outline, so a 1.5px stroked
+ * icon comes back as a fillable path — exactly what an SVG wants. Decoding
+ * this is the only way to get the icons and the two wordmarks out: they are
+ * flattened vectors with no image fill, so the asset pass never saw them.
+ */
+const ARITY = [0, 2, 2, 4, 6];
+const CMD = ['Z', 'M', 'L', 'Q', 'C'];
+const r3 = (n) => Math.round(n * 1000) / 1000;
+
+function pathFromBlob(bytes) {
+  const b = Buffer.from(bytes);
+  let o = 0;
+  const out = [];
+  const box = { x0: Infinity, y0: Infinity, x1: -Infinity, y1: -Infinity };
+  while (o < b.length) {
+    const op = b[o++];
+    assert.ok(op < ARITY.length, `unknown path opcode ${op} at byte ${o - 1}`);
+    const n = ARITY[op];
+    assert.ok(o + n * 4 <= b.length, 'path blob truncated');
+    const args = [];
+    for (let j = 0; j < n; j++) args.push(b.readFloatLE(o + j * 4));
+    o += n * 4;
+    for (let j = 0; j < n; j += 2) {
+      box.x0 = Math.min(box.x0, args[j]);
+      box.x1 = Math.max(box.x1, args[j]);
+      box.y0 = Math.min(box.y0, args[j + 1]);
+      box.y1 = Math.max(box.y1, args[j + 1]);
+    }
+    out.push(CMD[op] + args.map(r3).join(' '));
+  }
+  // Same contract as the document decode: consume every byte or fail loudly,
+  // because a misread path still renders, just as the wrong shape.
+  assert.equal(o, b.length, `path blob consumed ${o}/${b.length} bytes`);
+  return { d: out.join(''), box };
+}
+
+/* The flattened vectors the Solutions cards need. These carry no image fill,
+ * so the asset pass below never saw them and they were standing in as type and
+ * as approximations. Colours are baked in because each is the same in both
+ * themes: the number pill is white with a black glyph either way. */
+const RINGS = 'atlas-rings';
+const VECTORS = [
+  { file: RINGS, id: '6018:2687', geom: 'stroke' },
+  { file: 'wordmark-playmakers', id: '6018:2680', geom: 'fill', color: '#ffffff' },
+  { file: 'wordmark-atlas', id: '6018:2770', geom: 'fill', color: '#000000' },
+  { file: 'icon-playmakers-1', id: '6018:2618', geom: 'stroke', color: '#000000' },
+  { file: 'icon-playmakers-2', id: '6018:2638', geom: 'stroke', color: '#000000' },
+  { file: 'icon-playmakers-3', id: '6018:2658', geom: 'stroke', color: '#000000' },
+  { file: 'icon-atlas-1', id: '6018:2709', geom: 'stroke', color: '#000000' },
+  { file: 'icon-atlas-2', id: '6018:2729', geom: 'stroke', color: '#000000' },
+  { file: 'icon-atlas-3', id: '6018:2750', geom: 'stroke', color: '#000000' },
+];
+
+
 /* ---------- run ---------- */
 
 const zip = unzip(readFileSync(FIG));
 const doc = decodeCanvas(zip.get('canvas.fig'));
+
+// `--raw <name>` dumps undigested nodeChanges while working out what the
+// format carries. Nothing downstream depends on it.
+if (process.argv.includes('--raw')) {
+  const want = process.argv[process.argv.indexOf('--raw') + 1];
+  console.log('doc keys:', Object.keys(doc).map((k) => `${k}${Array.isArray(doc[k]) ? `[${doc[k].length}]` : ''}`).join(' '));
+  const key = (n) => `${n.guid.sessionID}:${n.guid.localID}`;
+  for (const n of doc.nodeChanges.filter((n) => n.name === want || key(n) === want).slice(0, 2)) {
+    console.log('---', n.name, n.type, '---');
+    for (const [k, v] of Object.entries(n)) {
+      const s = JSON.stringify(v);
+      console.log(' ', k.padEnd(22), s.length > 300 ? s.slice(0, 300) + `... (${s.length} chars)` : s);
+    }
+  }
+  process.exit(0);
+}
+
 const nodes = doc.nodeChanges.map(slim);
 const tok = tokens(nodes);
 
@@ -390,8 +468,34 @@ if (process.argv.includes('--check')) {
   const withEffect = (t) => nodes.filter((n) => (n.effects ?? []).some((e) => e.type === t));
   assert.ok(withEffect('NOISE').length > 5, 'NOISE effects missing — the dark surfaces lose their grain');
   assert.ok(withEffect('DROP_SHADOW').length > 20, 'DROP_SHADOW effects missing — the page loses its depth');
+  // The Solutions glyphs, wordmarks and rings are flattened vectors whose
+  // outlines only exist as commandsBlob paths. If that decode breaks the page
+  // silently loses its icons and logotypes, so pin it here.
+  const byGuid = new Map(doc.nodeChanges.map((n) => [gid(n.guid), n]));
+  for (const v of VECTORS) {
+    const n = byGuid.get(v.id);
+    assert.ok(n, `vector ${v.id} (${v.file}) is not in the document`);
+    const g = n[`${v.geom}Geometry`];
+    assert.ok(g?.length, `${v.file}: no ${v.geom}Geometry to decode`);
+    const parts = g.map((e) => pathFromBlob(doc.blobs[e.commandsBlob].bytes));
+    const box = parts.map((p) => p.box).reduce((a, b) => ({
+      x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0),
+      x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1),
+    }));
+    // A stroked outline is the node box grown by half the stroke on each side.
+    // Anything wildly off means the opcode arities have drifted.
+    if (v.geom === 'stroke' && v.file !== RINGS) {
+      assert.ok(
+        Math.abs(box.x1 - box.x0 - n.size.x - n.strokeWeight) < 0.2,
+        `${v.file}: outline ${(box.x1 - box.x0).toFixed(2)} does not match node ${n.size.x} + ${n.strokeWeight} stroke`
+      );
+    }
+    const subpaths = parts.reduce((a, p) => a + (p.d.match(/M/g)?.length ?? 0), 0);
+    assert.ok(subpaths > 0, `${v.file}: decoded no subpaths`);
+    if (v.file === RINGS) assert.ok(subpaths > 100, `${v.file}: only ${subpaths} subpaths — the rings are a dense stack, not a handful`);
+  }
   console.log(
-    `ok — ${nodes.length} nodes (${hidden.length} hidden), ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts`
+    `ok — ${nodes.length} nodes (${hidden.length} hidden), ${Object.keys(tok.colors).length} colors, ${Object.keys(tok.fonts).length} fonts, ${VECTORS.length} vectors`
   );
   process.exit(0);
 }
@@ -400,6 +504,49 @@ mkdirSync(resolve(ROOT, 'design'), { recursive: true });
 mkdirSync(resolve(ROOT, 'public/images'), { recursive: true });
 writeFileSync(resolve(ROOT, 'design/tokens.json'), JSON.stringify(tok, null, 2));
 writeFileSync(resolve(ROOT, 'design/nodes.json'), JSON.stringify(nodes));
+
+mkdirSync(resolve(ROOT, 'public/vectors'), { recursive: true });
+const rawById = new Map(doc.nodeChanges.map((n) => [gid(n.guid), n]));
+const geometry = {};
+for (const v of VECTORS) {
+  const n = rawById.get(v.id);
+  assert.ok(n, `vector ${v.id} (${v.file}) not in the document`);
+  const g = n[`${v.geom}Geometry`];
+  assert.ok(g?.[0], `${v.file}: no ${v.geom}Geometry`);
+  // One entry per style run, not per shape — a wordmark's letters are split
+  // across several, so taking only the first yields a single glyph.
+  const parts = g.map((e) => pathFromBlob(doc.blobs[e.commandsBlob].bytes));
+  const d = parts.map((p) => p.d).join('');
+  const box = parts.map((p) => p.box).reduce((a, b) => ({
+    x0: Math.min(a.x0, b.x0), y0: Math.min(a.y0, b.y0),
+    x1: Math.max(a.x1, b.x1), y1: Math.max(a.y1, b.y1),
+  }));
+  const w = r3(box.x1 - box.x0);
+  const h = r3(box.y1 - box.y0);
+  const view = `${r3(box.x0)} ${r3(box.y0)} ${w} ${h}`;
+  // How far the outline reaches outside the node's own box, so the page can
+  // place it exactly where Figma does rather than guessing.
+  geometry[v.file] = {
+    view,
+    w,
+    h,
+    node: { w: r3(n.size.x), h: r3(n.size.y) },
+    parts: g.length,
+    bleed: { x: r3(-box.x0), y: r3(-box.y0) },
+  };
+  const paint =
+    v.file === RINGS
+      ? `<defs><linearGradient id="g" x1="0.3" y1="0.393" x2="0.85" y2="0.687"><stop offset="0" stop-color="#4baf8e" stop-opacity="0"/><stop offset="1" stop-color="#4baf8e"/></linearGradient></defs><path d="${d}" fill="url(#g)" fill-rule="nonzero"/>`
+      : `<path d="${d}" fill="${v.color}" fill-rule="nonzero"/>`;
+  writeFileSync(
+    resolve(ROOT, `public/vectors/${v.file}.svg`),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${view}">${paint}</svg>`
+  );
+}
+writeFileSync(resolve(ROOT, 'design/vectors.json'), JSON.stringify(geometry, null, 2));
+console.log('vectors:');
+for (const [k, g] of Object.entries(geometry))
+  console.log(`  ${k.padEnd(22)} outline ${g.w}x${g.h}  node ${g.node.w}x${g.node.h}  bleed ${g.bleed.x},${g.bleed.y}`);
 
 // Images: only the ones a fill on a *visible* node actually references.
 const usedBy = new Map();

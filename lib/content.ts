@@ -97,7 +97,7 @@ export const solutions = {
         'Playmakers is built around trusted peer exchange, strategic support and access to the people shaping the industry.',
       cta: 'TRY PLAYMAKERS',
       testimonialsLabel: 'PLAYMAKERS TESTIMONIALS',
-      testimonials: [testimonial, testimonial],
+      testimonials: [testimonial, testimonial, testimonial, testimonial],
       features: [
         {
           title: 'Your personal board\nof advisors',
@@ -134,7 +134,7 @@ export const solutions = {
         'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
       cta: 'TRY ATLAS',
       testimonialsLabel: 'ATLAS TESTIMONIALS',
-      testimonials: [testimonial, testimonial],
+      testimonials: [testimonial, testimonial, testimonial, testimonial],
       features: [
         {
           title: 'Build your case',

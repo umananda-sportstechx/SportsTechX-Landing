@@ -508,8 +508,21 @@
     bottom: calc(var(--text-b) * var(--k));
     width: calc(616 * var(--k));
   }
+  /* The wordmark is a real vector now, so it occupies exactly the artboard's
+   * box and everything below it lands where the design puts it. The inner img
+   * is the flattened outline, which bleeds slightly past that box. */
   .card-wordmark {
-    font-size: calc(var(--mark) * var(--k));
+    position: relative;
+    width: calc(var(--mark-w) * var(--k));
+    height: calc(var(--mark-h) * var(--k));
+  }
+  .card-wordmark img {
+    position: absolute;
+    left: calc(var(--mark-dx) * -1 * var(--k));
+    top: calc(var(--mark-dy) * -1 * var(--k));
+    width: calc(var(--mark-ow) * var(--k));
+    height: calc(var(--mark-oh) * var(--k));
+    max-width: none;
   }
   .card-headline {
     margin-top: calc(var(--headline-mt) * var(--k));
@@ -553,9 +566,9 @@
     width: calc(52 * var(--k));
     height: calc(51 * var(--k));
   }
-  .card-numbox svg {
-    width: calc(24 * var(--k));
-    height: calc(24 * var(--k));
+  .card-icon {
+    width: calc(var(--iw) * var(--k));
+    height: calc(var(--ih) * var(--k));
   }
   .card-col-title {
     font-size: max(15px, calc(24 * var(--k)));
@@ -662,13 +675,35 @@
     opacity: 0.35;
   }
 
-  /* --- Atlas rings: a 1776.65 square whose two 45deg rotations cancel, so it
-   * sits axis-aligned at (12.6, -501.2) in the card. */
+  /* --- Atlas "BG Element": a 1046.97 square rotated 45deg, holding a 1776.65
+   * vector rotated back -45deg. The frame CLIPS — that is what keeps the rings
+   * in the intro and out of the testimonials, and the site was missing it, so
+   * the rings ran the whole height of the card. */
   .card-rings {
     position: absolute;
-    left: calc(12.6 * var(--k));
-    top: calc(-501.2 * var(--k));
-    width: calc(1776.65 * var(--k));
-    height: calc(1776.65 * var(--k));
+    left: calc(727.32 * var(--k));
+    top: calc(-456 * var(--k));
+    width: calc(1046.97 * var(--k));
+    height: calc(1046.97 * var(--k));
+    transform: rotate(45deg);
+    transform-origin: 0 0;
+    overflow: hidden;
+  }
+  .card-rings-node {
+    position: absolute;
+    left: calc(-537.3 * var(--k));
+    top: calc(473.41 * var(--k));
+    width: calc(1776.653 * var(--k));
+    height: calc(1776.653 * var(--k));
+    transform: rotate(-45deg);
+    transform-origin: 0 0;
+  }
+  .card-rings-node img {
+    position: absolute;
+    left: calc(-93.769 * var(--k));
+    top: calc(-93.769 * var(--k));
+    width: calc(1964.191 * var(--k));
+    height: calc(1964.192 * var(--k));
+    max-width: none;
   }
 }
