@@ -14,6 +14,7 @@ import { extendTailwindMerge } from 'tailwind-merge';
 const FONT_SIZES = [
   'headline',
   'stat',
+  'stat-label',
   'section',
   'card',
   'card-sm',

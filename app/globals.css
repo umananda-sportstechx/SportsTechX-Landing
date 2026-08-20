@@ -113,6 +113,11 @@
    * `text-headline` and `text-body-lg` are used nowhere else, so this knob is
    * hero-only by construction and leaves the section headings at 0.72. */
   --scale-hero: 0.92;
+  /* The stats band is its own block: the artboard sets the figure and its
+   * caption at 72/16 = 4.5:1, which only holds if both come off ONE multiplier.
+   * Splitting them across --scale-display and --scale-text is what flattened
+   * the ratio to 3.45:1. `text-stat` is used nowhere else. */
+  --scale-stat: 0.9;
   --scale-lead: 0.82;     /* sub-heads, pull quotes, feature titles, eyebrows */
   --scale-text: 0.94;     /* body copy, buttons, labels */
 }
@@ -199,7 +204,10 @@
   --font-mono-alt: var(--font-space-mono), ui-monospace, Menlo, monospace;
 
   --text-headline: calc(var(--fs-headline) * var(--scale-hero));
-  --text-stat: calc(var(--fs-stat) * var(--scale-display));
+  --text-stat: calc(var(--fs-stat) * var(--scale-stat));
+  /* --fs-body-sm already clamps 14->16 across the two artboards, which is the
+   * caption's own ramp, so it is reused rather than duplicated. */
+  --text-stat-label: calc(var(--fs-body-sm) * var(--scale-stat));
   --text-section: calc(var(--fs-section) * var(--scale-display));
   --text-card: calc(var(--fs-card) * var(--scale-display));
   --text-card-sm: calc(var(--fs-card-sm) * var(--scale-display));
