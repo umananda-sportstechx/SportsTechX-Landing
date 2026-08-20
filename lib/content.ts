@@ -227,7 +227,9 @@ export const footer = {
         { label: 'Intelligence Hub', href: '#' },
         { label: 'Solutions', href: '#solutions' },
         { label: 'Media', href: '#media' },
-        { label: 'Newsletter', href: '#newsletter' },
+        // The design has no newsletter section, so this points at the Media
+        // band where the newsletter card lives.
+        { label: 'Newsletter', href: '#media' },
       ],
     },
     {

@@ -420,6 +420,15 @@ const VECTORS = [
   { file: 'icon-media-podcast', id: '6018:2556', geom: 'stroke', color: '#878787' },
   { file: 'icon-media-reports', id: '6018:2544', geom: 'stroke', color: '#878787' },
   { file: 'icon-media-events', id: '6018:2530', geom: 'stroke', color: '#878787' },
+  // Footer contact + social glyphs. Emitted opaque: the page uses them as CSS
+  // masks tinted with currentColor, so the artboard's 70% rides on the text
+  // colour instead of being baked in twice.
+  { file: 'icon-footer-mail', id: '6018:2473', geom: 'stroke', color: '#000000' },
+  { file: 'icon-footer-pin', id: '6018:2476', geom: 'stroke', color: '#000000' },
+  { file: 'icon-footer-linkedin', id: '6018:2501', geom: 'fill', color: '#000000' },
+  { file: 'icon-footer-youtube', id: '6018:2504', geom: 'fill', color: '#000000' },
+  { file: 'icon-footer-instagram', id: '6018:2507', geom: 'fill', color: '#000000' },
+  { file: 'icon-footer-x', id: '6018:2510', geom: 'fill', color: '#000000' },
 ];
 
 

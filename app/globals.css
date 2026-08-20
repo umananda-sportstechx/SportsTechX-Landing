@@ -784,3 +784,107 @@
     top: calc(434 * var(--k));
   }
 }
+
+/* ===== Footer ============================================================
+ * The artboard's footer is 1513x567 with a "Cloud grid" of 2px rules at
+ * #bababa/50: two horizontals 1385 wide (4 wider than the content column on
+ * the left) and three verticals 317.66 tall. Offsets below are artboard units
+ * measured from the content column, scaled by --k as elsewhere.
+ *
+ * There is no newsletter block in the design — the site had invented one.
+ * ========================================================================= */
+.footer-rig {
+  container-type: inline-size;
+}
+
+@media (width >= 64rem) {
+  .footer-rig {
+    --k: calc(100cqw / 1350);
+  }
+
+  /* Both horizontals overhang the content column, which is why they read as
+   * longer than everything above them. */
+  .footer-rule {
+    height: 2px;
+    margin-left: calc(-4 * var(--k));
+    width: calc(1385 * var(--k));
+  }
+  .footer-rule-top {
+    margin-top: calc(70.52 * var(--k));
+  }
+  .footer-rule-bottom {
+    margin-top: calc(75.84 * var(--k));
+  }
+
+  .footer-details {
+    margin-top: calc(53.95 * var(--k));
+    /* Holds the artboard's 247.81 so the bottom rule lands below the vertical
+     * rules rather than being crossed by them when the copy runs short. */
+    min-height: calc(247.81 * var(--k));
+    /* Column 1 sits in a 545 slot, then two 303s, then the rest. */
+    grid-template-columns: calc(545 * var(--k)) calc(303 * var(--k)) calc(303 * var(--k)) 1fr;
+    gap: 0;
+  }
+  /* Anchored to the details block, not the section, so they keep the
+   * artboard's overhang above and below the columns. */
+  .footer-vrule {
+    position: absolute;
+    top: calc(-22.98 * var(--k));
+    left: calc(var(--x) * var(--k));
+    width: 2px;
+    height: calc(317.66 * var(--k));
+  }
+
+  .footer-logo {
+    width: calc(148.4 * var(--k));
+    height: calc(40.81 * var(--k));
+  }
+  .footer-col-1 {
+    width: calc(451 * var(--k));
+    gap: calc(18 * var(--k));
+  }
+  .footer-desc {
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: calc(32 / 18);
+  }
+  .footer-contact {
+    gap: calc(13 * var(--k));
+    font-size: max(13px, calc(16 * var(--k)));
+    line-height: calc(32 / 16);
+  }
+  .footer-col {
+    gap: calc(21 * var(--k));
+  }
+  .footer-head {
+    font-size: max(17px, calc(22 * var(--k)));
+    line-height: calc(32 / 22);
+  }
+  .footer-link {
+    gap: calc(15 * var(--k));
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: calc(32 / 18);
+  }
+  /* Runs the full grid width like the rules, so the legal links end level
+   * with their right edge rather than the content column's. */
+  .footer-legal {
+    margin-top: calc(22.98 * var(--k));
+    margin-left: calc(-4 * var(--k));
+    width: calc(1385 * var(--k));
+    padding-bottom: calc(45 * var(--k));
+    font-size: max(11px, calc(13 * var(--k)));
+    line-height: calc(32 / 13);
+  }
+  .footer-icon {
+    width: calc(var(--iw) * var(--k));
+    height: calc(var(--ih) * var(--k));
+  }
+}
+
+/* Tinted with currentColor rather than baked in, so the artboard's 70% comes
+ * from the text colour and dark mode needs no second asset. */
+.footer-icon {
+  display: inline-block;
+  flex: none;
+  background-color: currentColor;
+  mask: var(--m) no-repeat center / contain;
+}
