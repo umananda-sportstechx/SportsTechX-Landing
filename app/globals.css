@@ -43,6 +43,9 @@
   --line: #bababa;
   --nav-bg: #ffffff;
   --nav-border: rgb(0 0 0 / 0.09);   /* a 9% hairline, not solid black */
+  /* Glass bar behind the nav once the page scrolls. Translucent on purpose —
+   * a solid fill would have nothing for the backdrop blur to work against. */
+  --nav-scrim: rgb(255 255 255 / 0.72);
   --pill-bg: #d9d9d9;
   --pill-border: #c3c3c3;
   --pill-fg: #828282;
@@ -139,6 +142,7 @@
   --line: #353a4b;
   --nav-bg: #1b202f;
   --nav-border: #2e354a;
+  --nav-scrim: rgb(18 20 27 / 0.72);   /* matches --surface */
   --pill-bg: #232833;
   --pill-border: #3a4152;
   --pill-fg: #a6a6a6;
@@ -173,6 +177,7 @@
   --color-line: var(--line);
   --color-nav-bg: var(--nav-bg);
   --color-nav-border: var(--nav-border);
+  --color-nav-scrim: var(--nav-scrim);
   --color-pill-bg: var(--pill-bg);
   --color-pill-border: var(--pill-border);
   --color-pill-fg: var(--pill-fg);

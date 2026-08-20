@@ -6,10 +6,23 @@ import { BrandLogo } from '@/components/brand-logo';
 import { mobileMenu } from '@/lib/content';
 import { cn } from '@/lib/utils';
 
-type MenuState = { open: boolean; toggle: () => void; close: () => void };
+type MenuState = {
+  open: boolean;
+  toggle: () => void;
+  close: () => void;
+  /**
+   * Scroll offset captured when the drawer opened. The shell is translated
+   * while the drawer is out, and a transformed ancestor becomes the containing
+   * block for `fixed` descendants — so the fixed nav inside it stops resolving
+   * against the viewport and lands at the top of the *document*. Anchoring it
+   * to this offset instead keeps it at the visible top while it slides with the
+   * page, which is what the artboard shows.
+   */
+  lockedY: number;
+};
 const MobileMenuContext = createContext<MenuState | null>(null);
 
-function useMobileMenu() {
+export function useMobileMenu() {
   const ctx = useContext(MobileMenuContext);
   if (!ctx) throw new Error('useMobileMenu must be used inside <MobileMenuProvider>');
   return ctx;
@@ -22,9 +35,15 @@ function useMobileMenu() {
  */
 export function MobileMenuProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [lockedY, setLockedY] = useState(0);
 
   const close = useCallback(() => setOpen(false), []);
-  const toggle = useCallback(() => setOpen((v) => !v), []);
+  // Captured in the handler, not an effect, so it is read before the body
+  // scroll lock takes hold.
+  const toggle = useCallback(() => {
+    setLockedY(window.scrollY);
+    setOpen((v) => !v);
+  }, []);
 
   // Escape closes; body scroll is locked while the drawer is out.
   useEffect(() => {
@@ -41,7 +60,7 @@ export function MobileMenuProvider({ children }: { children: React.ReactNode }) 
     };
   }, [open, close]);
 
-  const value = useMemo(() => ({ open, toggle, close }), [open, toggle, close]);
+  const value = useMemo(() => ({ open, toggle, close, lockedY }), [open, toggle, close, lockedY]);
   return <MobileMenuContext.Provider value={value}>{children}</MobileMenuContext.Provider>;
 }
 
@@ -109,9 +128,12 @@ export function MobileMenuPanel() {
 }
 
 /**
- * Wraps the page content and performs the slide. Keeping the transform here
- * (rather than on <body>) means position:fixed children of the page still
- * behave, because the whole shell is the transformed element.
+ * Wraps the page content and performs the slide.
+ *
+ * Note the transform's side effect: while it is applied, this element becomes
+ * the containing block for any `position: fixed` descendant, so the nav inside
+ * stops resolving against the viewport. NavBar compensates by switching to
+ * `absolute` at the captured scroll offset while the drawer is open.
  */
 export function MobileMenuShell({ children }: { children: React.ReactNode }) {
   const { open, close } = useMobileMenu();
