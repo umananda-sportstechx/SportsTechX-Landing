@@ -415,6 +415,11 @@ const VECTORS = [
   { file: 'icon-atlas-1', id: '6018:2709', geom: 'stroke', color: '#000000' },
   { file: 'icon-atlas-2', id: '6018:2729', geom: 'stroke', color: '#000000' },
   { file: 'icon-atlas-3', id: '6018:2750', geom: 'stroke', color: '#000000' },
+  // Media card action glyphs, beside SUBSCRIBE / LISTEN / READ / ATTEND.
+  { file: 'icon-media-newsletter', id: '6018:2569', geom: 'stroke', color: '#878787' },
+  { file: 'icon-media-podcast', id: '6018:2556', geom: 'stroke', color: '#878787' },
+  { file: 'icon-media-reports', id: '6018:2544', geom: 'stroke', color: '#878787' },
+  { file: 'icon-media-events', id: '6018:2530', geom: 'stroke', color: '#878787' },
 ];
 
 

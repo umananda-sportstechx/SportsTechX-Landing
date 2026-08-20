@@ -707,3 +707,80 @@
     max-width: none;
   }
 }
+
+/* ===== Media cards ========================================================
+ * Four 634.29x338.93 cards on a 1350 grid, gapped 81.71 x 85.07, each split
+ * into a 315 copy panel and a 319 image. Same --k scale-model trick as the
+ * Solutions cards, so the type and insets hold the artboard's proportions
+ * instead of each carrying its own clamp.
+ * ========================================================================= */
+.media-rig {
+  container-type: inline-size;
+}
+
+@media (width >= 64rem) {
+  .media-rig {
+    --k: calc(100cqw / 1350);
+  }
+
+  .media-grid {
+    margin-top: calc(50 * var(--k));
+    gap: calc(85.07 * var(--k)) calc(81.71 * var(--k));
+  }
+  .media-card {
+    /* r20 in the design; the site had it at 6. */
+    border-radius: calc(20 * var(--k));
+    grid-template-columns: calc(315 * var(--k)) 1fr;
+    min-height: calc(338.93 * var(--k));
+  }
+  /* Copy sits 28 from the top and the category block 12 from the bottom,
+   * which lands it on the artboard's y=251 without pinning it there. */
+  .media-copy {
+    padding: calc(28 * var(--k)) calc(27 * var(--k)) calc(12 * var(--k));
+  }
+  .media-into {
+    width: calc(260 * var(--k));
+    gap: calc(13 * var(--k));
+  }
+  .media-kicker {
+    font-size: max(12px, calc(16 * var(--k)));
+    line-height: calc(19 / 16);
+  }
+  .media-breaker {
+    width: calc(256 * var(--k));
+  }
+  .media-title {
+    font-size: max(16px, calc(21 * var(--k)));
+    line-height: calc(30 / 21);
+  }
+  .media-cat {
+    width: calc(217 * var(--k));
+  }
+  .media-label {
+    height: calc(22 * var(--k));
+    gap: calc(9 * var(--k));
+    font-size: max(10px, calc(12 * var(--k)));
+    line-height: calc(15 / 12);
+  }
+  .media-label img {
+    width: calc(var(--iw) * var(--k));
+    height: calc(var(--ih) * var(--k));
+  }
+  .media-word {
+    font-size: max(28px, calc(42 * var(--k)));
+    line-height: 1;
+  }
+  /* The artboard rules the grid per row rather than end to end. Offsets are
+   * measured from the rig, which starts 50 above the first card row — the
+   * artboard's own numbers are relative to the row, so each carries that 50. */
+  .media-rule-v {
+    top: calc(50 * var(--k));
+    height: calc(339 * var(--k));
+  }
+  .media-rule-v-2 {
+    top: calc(474 * var(--k));
+  }
+  .media-rule-h {
+    top: calc(434 * var(--k));
+  }
+}

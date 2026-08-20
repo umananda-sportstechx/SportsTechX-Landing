@@ -170,9 +170,6 @@ export type MediaItem = {
   action: string;
   /** Absent where the design hides the card's "Product Title" layer. */
   kicker?: string;
-  kickerFont?: 'mono' | 'mono-alt';
-  /** Glyph beside the action label; the design gives each card its own. */
-  icon: 'mail' | 'audio' | 'doc' | 'ticket';
   title: string;
   image: string;
   href: string;
@@ -184,27 +181,22 @@ export const media = {
   items: ([
     {
       category: 'NEWSLETTER',
-      icon: 'mail',
       action: 'SUBSCRIBE',
       kicker: 'SPORTSTECHX WEEKLY',
-      kickerFont: 'mono-alt' as const,
       title: "#191 🤝 IG Group's $2.15B\nBet on Underdog",
       image: '/images/6552cb5eb340.webp',
       href: '#newsletter',
     },
     {
       category: 'PODCAST',
-      icon: 'audio',
       action: 'LISTEN',
       kicker: 'STX ALLSTARS PODCAST',
-      kickerFont: 'mono' as const,
       title: 'From M&A Advisory to Early Stage Sports Tech Investor - Uday Khanna',
       image: '/images/b8758def93ad.webp',
       href: '#podcast',
     },
     {
       category: 'REPORTS',
-      icon: 'doc',
       action: 'READ',
       // no kicker: the design hides this card's "Product Title" layer
       title: 'Football Tech Report 2006',
@@ -213,7 +205,6 @@ export const media = {
     },
     {
       category: 'EVENTS',
-      icon: 'ticket',
       action: 'ATTEND',
       // no kicker: the design hides this card's "Product Title" layer
       title: 'The NextGen Sportstech\nSummit 2026',
