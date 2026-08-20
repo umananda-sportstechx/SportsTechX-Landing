@@ -41,9 +41,10 @@ export function TrustedBy() {
             >
               {row.map((partner, j) => (
                 <Fragment key={`${i}-${j}`}>
-                  {j > 0 && (
-                    <span aria-hidden className="my-auto h-[264px] w-px shrink-0 self-center bg-[#b6b6b6]" />
-                  )}
+                  {/* Before every card, not just between them: the track loops,
+                      so skipping the first left the join between the last card
+                      and the first with no rule while every other pair had one. */}
+                  <span aria-hidden className="my-auto h-[264px] w-px shrink-0 self-center bg-[#b6b6b6]" />
                   <article className="w-[210px] shrink-0 snap-start">
                     <div className="relative h-[232px] overflow-hidden rounded-[7px]">
                       <Image src={partner.photo} alt="" fill sizes="210px" className="object-cover" />

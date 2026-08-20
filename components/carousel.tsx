@@ -42,6 +42,7 @@ export function Carousel({
 }) {
   const track = useRef<HTMLDivElement>(null);
   const paused = useRef(false);
+  const resumeAt = useRef<number | null>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(false);
 
@@ -98,7 +99,26 @@ export function Carousel({
   const page = (dir: 1 | -1) => {
     const el = track.current;
     if (!el) return;
-    el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' });
+    // The drift rewrites scrollLeft every frame, so a smooth scroll started here
+    // was overwritten before it could travel — the arrows did nothing on the
+    // auto-scrolling rows. Hold the drift while the scroll settles; the loop
+    // resyncs its accumulator from the real position on the way out.
+    paused.current = true;
+    if (resumeAt.current) window.clearTimeout(resumeAt.current);
+    const delta = dir * el.clientWidth * 0.8;
+    if (autoScroll) {
+      // The track carries two copies, so jumping by exactly one is invisible.
+      // Without this a page near either end just clamped: row 2 sits low in its
+      // range, and its left arrow travelled 342px of a 1089px page before
+      // hitting scrollLeft 0.
+      const half = el.scrollWidth / 2;
+      if (el.scrollLeft + delta < 0) el.scrollLeft += half;
+      else if (el.scrollLeft + delta > el.scrollWidth - el.clientWidth) el.scrollLeft -= half;
+    }
+    el.scrollBy({ left: delta, behavior: 'smooth' });
+    resumeAt.current = window.setTimeout(() => {
+      paused.current = false;
+    }, 800);
   };
 
   // Plain callbacks rather than a curried hold(true) factory: that factory was
@@ -109,6 +129,10 @@ export function Carousel({
   }, []);
   const resume = useCallback(() => {
     paused.current = false;
+  }, []);
+
+  useEffect(() => () => {
+    if (resumeAt.current) window.clearTimeout(resumeAt.current);
   }, []);
 
   return (
@@ -138,8 +162,8 @@ export function Carousel({
         )}
       </div>
 
-      <Arrow side="left" disabled={!autoScroll && atStart} onClick={() => page(-1)} className={arrowClassName} label={`${label}: previous`} />
-      <Arrow side="right" disabled={!autoScroll && atEnd} onClick={() => page(1)} className={arrowClassName} label={`${label}: next`} />
+      <Arrow side="left" disabled={!autoScroll && atStart} onClick={() => page(-1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: previous`} />
+      <Arrow side="right" disabled={!autoScroll && atEnd} onClick={() => page(1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: next`} />
     </div>
   );
 }
@@ -148,12 +172,16 @@ function Arrow({
   side,
   disabled,
   onClick,
+  onHold,
+  onRelease,
   className,
   label,
 }: {
   side: 'left' | 'right';
   disabled: boolean;
   onClick: () => void;
+  onHold: () => void;
+  onRelease: () => void;
   className?: string;
   label: string;
 }) {
@@ -162,16 +190,23 @@ function Arrow({
     <button
       type="button"
       onClick={onClick}
+      onPointerEnter={onHold}
+      onPointerLeave={onRelease}
+      onFocus={onHold}
+      onBlur={onRelease}
       disabled={disabled}
       aria-label={label}
+      // The artboard's chevrons are 16x36.7 at 1.5px, set ~35px clear of the
+      // row. Sized up to match and pushed off the track; the offset eases back
+      // below xl, where the page gutter is too narrow to hold it.
       className={cn(
-        'absolute top-1/2 z-10 grid size-9 -translate-y-1/2 place-items-center text-[#606060] transition-opacity',
+        'absolute top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center text-[#606060] transition-opacity',
         'hover:opacity-70 disabled:pointer-events-none disabled:opacity-25 dark:text-fg-muted',
-        side === 'left' ? 'left-0 lg:-left-[22px]' : 'right-0 lg:-right-[22px]',
+        side === 'left' ? '-left-1 lg:-left-[42px] xl:-left-[52px]' : '-right-1 lg:-right-[42px] xl:-right-[52px]',
         className
       )}
     >
-      <Icon className="size-9" strokeWidth={1.5} />
+      <Icon className="size-12" strokeWidth={1.5} />
     </button>
   );
 }
