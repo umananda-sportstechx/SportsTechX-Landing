@@ -112,7 +112,7 @@
   /* The hero headline and subhead run larger than the rest of the display type.
    * `text-headline` and `text-body-lg` are used nowhere else, so this knob is
    * hero-only by construction and leaves the section headings at 0.72. */
-  --scale-hero: 0.92;
+  --scale-hero: 1;        /* the artboard's own 116px headline / 28px subhead */
   /* The stats band is its own block: the artboard sets the figure and its
    * caption at 72/16 = 4.5:1, which only holds if both come off ONE multiplier.
    * Splitting them across --scale-display and --scale-text is what flattened
@@ -203,7 +203,12 @@
   --font-mono: "Commit Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
   --font-mono-alt: var(--font-space-mono), ui-monospace, Menlo, monospace;
 
-  --text-headline: calc(var(--fs-headline) * var(--scale-hero));
+  /* Capped by viewport HEIGHT as well as width. The hero is 100svh, so on a
+   * short window the px-sized block ran long and pushed the buttons toward the
+   * floor (ctaBottom hit 84% at 640px tall against the artboard's 68%). The svh
+   * ceiling only bites below ~830px of height — at 860 and above the artboard's
+   * own 116px still wins. */
+  --text-headline: min(calc(var(--fs-headline) * var(--scale-hero)), 14svh);
   --text-stat: calc(var(--fs-stat) * var(--scale-stat));
   /* --fs-body-sm already clamps 14->16 across the two artboards, which is the
    * caption's own ramp, so it is reused rather than duplicated. */
@@ -213,7 +218,7 @@
   --text-card-sm: calc(var(--fs-card-sm) * var(--scale-display));
   --text-label-lg: calc(var(--fs-label-lg) * var(--scale-display));
   --text-eyebrow: calc(var(--fs-eyebrow) * var(--scale-lead));
-  --text-body-lg: calc(var(--fs-body-lg) * var(--scale-hero));
+  --text-body-lg: min(calc(var(--fs-body-lg) * var(--scale-hero)), 3.4svh);
   --text-quote: calc(var(--fs-quote) * var(--scale-lead));
   --text-feature: calc(var(--fs-feature) * var(--scale-lead));
   --text-card-title: calc(var(--fs-card-title) * var(--scale-text));

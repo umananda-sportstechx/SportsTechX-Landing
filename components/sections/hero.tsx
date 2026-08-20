@@ -62,7 +62,10 @@ export function Hero() {
         />
       </div>
 
-      <div className="absolute inset-x-0 top-[13%] flex flex-col items-center px-5 text-center lg:top-[18%] lg:px-0">
+      <div // 22.3% is the artboard's own content offset (224 of the 1004 hero); 18%
+        // sat the whole block — headline, subhead and buttons — about four
+        // points high. Mobile's 13% already matches its own board (115.8/852).
+        className="absolute inset-x-0 top-[13%] flex flex-col items-center px-5 text-center lg:top-[22.3%] lg:px-0">
         <h1
           // max-width in em, not px, so the designed two-line break survives the
           // fluid type scale at every width.
