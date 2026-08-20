@@ -34,9 +34,12 @@ export function Stats() {
         <ul
           className={cn(
             'grid grid-cols-2 text-white',
-            // items-end reproduces the artboard's align: MAX — the figures sit
-            // on the rules' baseline rather than centring against them.
-            'lg:mx-auto lg:flex lg:w-fit lg:items-end',
+            // Top-aligned: each figure starts level with the top of its rule.
+            // The artboard uses align: MAX, but there the rule is 149 against a
+            // 140 block, so bottom-aligning offset the text by only 9px. Here
+            // the rules are 158 against a ~106 block, which stranded ~52px of
+            // empty space above every figure.
+            'lg:mx-auto lg:flex lg:w-fit lg:items-start',
             GAP
           )}
         >
