@@ -101,19 +101,25 @@ export function Carousel({
     el.scrollBy({ left: dir * el.clientWidth * 0.8, behavior: 'smooth' });
   };
 
-  const hold = (on: boolean) => () => {
-    paused.current = on;
-  };
+  // Plain callbacks rather than a curried hold(true) factory: that factory was
+  // *called* during render, so react-hooks/refs flagged it as a ref access in
+  // the render pass even though the write itself only happens on the event.
+  const pause = useCallback(() => {
+    paused.current = true;
+  }, []);
+  const resume = useCallback(() => {
+    paused.current = false;
+  }, []);
 
   return (
     <div className={cn('relative', className)}>
       <div
         ref={track}
         onScroll={sync}
-        onPointerEnter={hold(true)}
-        onPointerLeave={hold(false)}
-        onFocusCapture={hold(true)}
-        onBlurCapture={hold(false)}
+        onPointerEnter={pause}
+        onPointerLeave={resume}
+        onFocusCapture={pause}
+        onBlurCapture={resume}
         role="group"
         aria-label={label}
         tabIndex={0}
