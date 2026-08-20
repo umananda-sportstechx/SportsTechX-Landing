@@ -18,7 +18,14 @@ import { cn } from '@/lib/utils';
  * Everything is 0.9x the artboard: figure 72 -> 64.8, caption 16 -> 14.4 (both
  * off --scale-stat so the designed 4.5:1 survives), rules 149 -> 134, gap 50 -> 45.
  */
-const RULE = 'hidden w-px shrink-0 bg-white/20 lg:block lg:h-[134px]';
+/* Rule height and column gap sit a little above the 0.9x type scale by choice —
+ * the band reads better with more air than a strict 0.9 of the artboard's
+ * 149/50 gives. The gap is fluid rather than fixed: the row is w-fit, so a flat
+ * 56px would make it 1068px wide and overflow the container at the lg
+ * breakpoint (1024px, where the column is only ~921px). This tracks from 28px
+ * there up to 56px at 1512. */
+const RULE = 'hidden w-px shrink-0 bg-white/20 lg:block lg:h-[158px]';
+const GAP = 'lg:gap-[clamp(28px,5.74vw-30.8px,56px)]';
 
 export function Stats() {
   return (
@@ -29,7 +36,8 @@ export function Stats() {
             'grid grid-cols-2 text-white',
             // items-end reproduces the artboard's align: MAX — the figures sit
             // on the rules' baseline rather than centring against them.
-            'lg:mx-auto lg:flex lg:w-fit lg:items-end lg:gap-[45px]'
+            'lg:mx-auto lg:flex lg:w-fit lg:items-end',
+            GAP
           )}
         >
           {stats.map((stat, i) => (
