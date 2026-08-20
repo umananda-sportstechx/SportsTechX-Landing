@@ -100,7 +100,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
       className={cn(
         'relative overflow-hidden rounded-[20px] shadow-panel',
         dark
-          ? 'noise [--noise-alpha:0.09] bg-linear-to-b from-card-dark-from to-card-dark-to'
+          ? 'noise [--noise-alpha:0.5] bg-linear-to-b from-card-dark-from to-card-dark-to'
           : 'bg-card-light'
       )}
     >

@@ -29,7 +29,7 @@ const GAP = 'lg:gap-[clamp(28px,5.74vw-30.8px,56px)]';
 
 export function Stats() {
   return (
-    <section className="noise section-y bg-stats [--noise-alpha:0.10]">
+    <section className="noise section-y bg-stats [--noise-alpha:0.6]">
       <div className="container-page">
         <ul
           className={cn(

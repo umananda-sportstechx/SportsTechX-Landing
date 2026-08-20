@@ -14,7 +14,7 @@ const ACTION_ICONS = { mail: Mail, audio: Volume2, doc: FileText, ticket: Ticket
  */
 export function Media() {
   return (
-    <section id="media" className="noise section-y bg-band-2 [--noise-alpha:0.03] dark:[--noise-alpha:0.14]">
+    <section id="media" className="noise section-y bg-band-2 [--noise-alpha:0.2] dark:[--noise-alpha:0.45]">
       <div className="container-page">
         <SectionIntro title={media.title} subtitle={media.subtitle} />
 

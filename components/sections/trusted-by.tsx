@@ -17,7 +17,7 @@ export function TrustedBy() {
   const rows = [trustedBy.partners, [...trustedBy.partners.slice(4), ...trustedBy.partners.slice(0, 4)]];
 
   return (
-    <section className="noise section-y bg-band [--noise-alpha:0.05] dark:[--noise-alpha:0]">
+    <section className="noise section-y bg-band [--noise-alpha:0.3] dark:[--noise-alpha:0]">
       <div className="container-page">
         <SectionIntro title={trustedBy.title} subtitle={trustedBy.subtitle} />
 

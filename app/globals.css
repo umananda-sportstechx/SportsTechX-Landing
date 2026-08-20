@@ -280,14 +280,18 @@
   padding: var(--card-p);
 }
 
-/* Figma NOISE effect. The artboard applies it to the dark surfaces — alpha 1 on
- * the stats band and the Playmakers card, a whisper elsewhere. Reproduced as a
- * tiled feTurbulence so it stays resolution-independent and costs no request.
+/* Figma NOISE effect, applied to the dark surfaces.
  *
- * The turbulence is mapped to the ALPHA channel as white speckles rather than
- * grey pixels with a blend mode: overlay/soft-light barely register on a dark
- * navy, which is exactly how the first attempt ended up invisible. Strength
- * comes from --noise-alpha so each surface sets its own. */
+ * The grain MUST be mean-neutral, or it shifts the colour underneath it. The
+ * previous version painted white speckles at normal blend, which has a positive
+ * mean and lifted the stats band from its specified #181c28 to #242733 — about
+ * +11 on every channel, exactly 0.10 x 0.5 x (255 - 24).
+ *
+ * So: opaque greyscale turbulence centred on 50% grey, composited with
+ * `overlay`. Overlay against 50% grey is an identity operation, so the average
+ * colour is preserved by construction however hard the grain is driven, while
+ * individual pixels still swing either side of the base. Strength comes from
+ * --noise-alpha, set per surface. */
 @utility noise {
   position: relative;
   isolation: isolate;
@@ -299,7 +303,16 @@
     z-index: 0;
     pointer-events: none;
     opacity: var(--noise-alpha, 0);
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 1 0 0 0 0'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)'/%3E%3C/svg%3E");
+    mix-blend-mode: overlay;
+    /* feColorMatrix copies red into R/G/B and forces alpha to 1, turning the
+     * turbulence into an opaque grey field rather than a semi-transparent one —
+     * a partially transparent layer would dilute the overlay and barely show.
+     *
+     * color-interpolation-filters=sRGB is essential: SVG filters default to
+     * linearRGB, where the turbulence's midpoint of 0.5 lands at about 0.73 in
+     * sRGB. That is brighter than mid-grey, so overlay stopped being an identity
+     * and still lifted the band, most visibly in the blue channel. */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='1 0 0 0 0 1 0 0 0 0 1 0 0 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* Content must sit above the grain. */
