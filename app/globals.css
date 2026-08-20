@@ -327,6 +327,27 @@
   }
 }
 
+/* Keeps the hero copy dominant over the orbits.
+ *
+ * The artboard needs nothing like this: its pills sit at y=737 while the content
+ * ends at y=696, so they simply never overlap. Ours orbit a full 360deg and do
+ * pass behind the headline, so a soft plate of the hero's own colour rides with
+ * the text block and mutes whatever is behind it. Tied to the text rather than
+ * to a fixed height, so it follows the block as the type rescales.
+ */
+@utility hero-scrim {
+  position: absolute;
+  inset: -14% -8%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    ellipse at center,
+    color-mix(in srgb, var(--hero) 92%, transparent) 36%,
+    color-mix(in srgb, var(--hero) 62%, transparent) 58%,
+    transparent 78%
+  );
+}
+
 /* Category pills travel along their orbit.
  *
  * `.orbit` is a square box the size of the motif, centred on the motif centre,

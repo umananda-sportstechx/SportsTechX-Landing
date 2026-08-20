@@ -51,7 +51,7 @@ export function Hero() {
           frame's height so the orbits keep their proportions at any viewport. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute top-[var(--motif-cy)] left-1/2 -z-10 aspect-square h-[calc(var(--motif-r)*2)] -translate-x-1/2 -translate-y-1/2"
+        className="pointer-events-none absolute top-[var(--motif-cy)] left-1/2 -z-30 aspect-square h-[calc(var(--motif-r)*2)] -translate-x-1/2 -translate-y-1/2"
       >
         <Image
           src="/icons/epicentre-motif.svg"
@@ -66,6 +66,9 @@ export function Hero() {
         // sat the whole block — headline, subhead and buttons — about four
         // points high. Mobile's 13% already matches its own board (115.8/852).
         className="absolute inset-x-0 top-[13%] flex flex-col items-center px-5 text-center lg:top-[22.3%] lg:px-0">
+        {/* Mutes the orbits where they pass behind the copy. */}
+        <div aria-hidden className="hero-scrim" />
+
         <h1
           // max-width in em, not px, so the designed two-line break survives the
           // fluid type scale at every width.
@@ -118,7 +121,7 @@ export function Hero() {
             // -z-10 puts the pills behind the headline and CTAs, so a full
             // revolution tucks them under the text instead of covering it. They
             // still sit above the motif, which is earlier in the DOM.
-            className={cn('orbit -z-10', !p.mr && 'hidden lg:block')}
+            className={cn('orbit -z-20', !p.mr && 'hidden lg:block')}
           >
             <span className="orbit-pill" data-pill={pill.label}>
               <span
