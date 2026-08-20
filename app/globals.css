@@ -362,17 +362,39 @@
  * --radius is expressed as a share of the box WIDTH (= the motif diameter), so
  * a pill at r% of the motif radius is r/2 % here.
  */
-@keyframes orbit-arc {
+@keyframes orbit-sweep {
   from { transform: translate(-50%, -50%) rotate(var(--angle)); }
-  to   { transform: translate(-50%, -50%) rotate(calc(var(--angle) + 360deg)); }
+  to   { transform: translate(-50%, -50%) rotate(calc(var(--angle) + var(--sweep))); }
 }
 
-/* Counter-turn, so the label stays upright through the whole revolution. */
-@keyframes orbit-arc-upright {
+/* Counter-turn, so the label stays upright across the sweep. */
+@keyframes orbit-sweep-upright {
   from { transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle))); }
-  to   { transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle) - 360deg)); }
+  to   { transform: translate(-50%, -50%) rotate(calc(-1 * (var(--angle) + var(--sweep)))); }
 }
 
+/* Category pills travel along their orbit.
+ *
+ * `.orbit` is a square box the size of the motif, centred on the motif centre,
+ * and it is what rotates. It has to have real dimensions: an earlier version
+ * used a zero-size anchor, and `left: <percent>` against a zero-width parent
+ * resolves to 0, so every pill piled up in the middle.
+ *
+ * `.orbit-pill` sits at the box centre plus the pill's radius along +x, and
+ * counter-rotates so the label stays upright. Both animations share --dur so
+ * they stay locked together frame for frame.
+ *
+ * The motif centre sits at ~94% of the hero's height, so only the UPPER half of
+ * each circle is on screen — a full revolution parked every pill off-screen for
+ * half its cycle. Instead each one sweeps 35deg inward from its artboard angle
+ * and back (`alternate`), which keeps it inside the visible arc the whole time.
+ * Sweeping inward rather than oscillating symmetrically matters: MEDIA has only
+ * 6.6deg of room before -180 and INVESTORS 9.3deg before 0, so a centred swing
+ * would have to be tiny for them.
+ *
+ * --radius is expressed as a share of the box WIDTH (= the motif diameter), so
+ * a pill at r% of the motif radius is r/2 % here.
+ */
 .orbit {
   --angle: var(--a);
   --radius: var(--r);
@@ -384,8 +406,7 @@
   /* The box is large and sits over the CTAs — it must never eat a click. */
   pointer-events: none;
   transform: translate(-50%, -50%) rotate(var(--angle));
-  /* linear, so orbital speed is constant rather than easing at the ends */
-  animation: orbit-arc var(--dur, 120s) linear infinite;
+  animation: orbit-sweep var(--dur, 26s) ease-in-out infinite alternate;
   will-change: transform;
 }
 
@@ -395,20 +416,8 @@
   left: calc(50% + var(--radius));
   pointer-events: auto;
   transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
-  animation: orbit-arc-upright var(--dur, 120s) linear infinite;
+  animation: orbit-sweep-upright var(--dur, 26s) ease-in-out infinite alternate;
   will-change: transform;
-}
-
-/* Where two capsules share an orbit they travel opposite ways. `reverse` plays
- * the existing keyframes backwards, so no second set is needed — and because it
- * starts at the `to` frame (angle + 360deg, visually identical to angle), the
- * arrangement on first paint is unchanged.
- *
- * Both halves must flip together: the arm carries the pill round and the inner
- * span counter-turns to keep the label upright. */
-.orbit[data-spin='ccw'],
-.orbit[data-spin='ccw'] .orbit-pill {
-  animation-direction: reverse;
 }
 
 /* The two artboards give the motif different proportions — 858 across an

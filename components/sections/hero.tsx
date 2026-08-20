@@ -28,20 +28,33 @@ import { cn } from '@/lib/utils';
  * fastest, as orbits actually behave. No delays: the first painted frame is the
  * artboard.
  */
-const ORBIT = { outer: 120, mid: 100, inner: 80 };
+/*
+ * `sweep` is how far a pill travels from its artboard angle and back. Only the
+ * UPPER half of each circle is on screen — the motif centre sits at ~94% of the
+ * hero's height — so a full revolution parked every pill off-screen for half its
+ * cycle. Each sweep therefore points INWARD, toward the top of the arc: the two
+ * on the right go negative, the three on the left positive.
+ *
+ * Inward rather than a centred swing, because the outermost pills have almost no
+ * room the other way: MEDIA sits 6.6deg from -180 and INVESTORS 9.3deg from 0, so
+ * a symmetric oscillation would have to be tiny for them. It also keeps each
+ * orbit's pair counter-rotating for free, since partners sit on opposite sides.
+ */
+const ORBIT = { outer: 26, mid: 22, inner: 18 };
+const SWEEP = 35;
 
-type Pill = { r: number; a: number; mr?: number; ma?: number; dur: number; dir: 'cw' | 'ccw' };
+type Pill = { r: number; a: number; mr?: number; ma?: number; dur: number; sweep: number };
 
 const PILLS: Record<string, Pill> = {
   // 57.3% orbit
-  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, dir: 'cw' },
-  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, dir: 'ccw' },
+  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, sweep: -SWEEP },
+  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, sweep: SWEEP },
   // 52.75% orbit
-  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, dir: 'cw' },
-  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, dir: 'ccw' },
+  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, sweep: -SWEEP },
+  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, sweep: SWEEP },
   // 16.85% orbit
-  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, dir: 'cw' },
-  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, dir: 'ccw' },
+  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, sweep: -SWEEP },
+  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, sweep: SWEEP },
 };
 
 export function Hero() {
@@ -107,7 +120,6 @@ export function Hero() {
         return (
           <span
             key={pill.label}
-            data-spin={p.dir}
             style={
               {
                 // share of the motif diameter, so r% of the radius is r/2 here
@@ -116,6 +128,7 @@ export function Hero() {
                 '--a': `${p.ma ?? p.a}deg`,
                 '--a-lg': `${p.a}deg`,
                 '--dur': `${p.dur}s`,
+                '--sweep': `${p.sweep}deg`,
               } as React.CSSProperties
             }
             // -z-10 puts the pills behind the headline and CTAs, so a full
