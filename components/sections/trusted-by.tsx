@@ -10,8 +10,14 @@ import { SectionIntro } from '@/components/section-intro';
  * are rotated LINE nodes in the .fig, which is why they read as horizontal in
  * the extracted data — see `rotation` in scripts/fig-extract.mjs.
  *
- * The design offsets the second row by -141px so it starts mid-card, which is
- * what gives the grid its staggered look.
+ * Both rows crop to the same 1349px width. The artboard staggers the second one
+ * by shifting its card group -141px *inside* that crop — not by widening the
+ * row, which is what an earlier `-ml-[141px]` on the scroll container did, and
+ * why the bottom row spilled past the page column. It is a starting scroll
+ * position instead, so both rows stay identical in width.
+ *
+ * The rows drift continuously in opposite directions, with a 29px fade at each
+ * edge in the band's own colour, as the artboard's "Left Mask" rects do.
  */
 export function TrustedBy() {
   const rows = [trustedBy.partners, [...trustedBy.partners.slice(4), ...trustedBy.partners.slice(0, 4)]];
@@ -26,7 +32,12 @@ export function TrustedBy() {
             <Carousel
               key={i}
               label={`Trusted by, row ${i + 1}`}
-              trackClassName={`gap-[37px] py-1 ${i === 1 ? '-ml-[141px]' : ''}`}
+              autoScroll={i === 0 ? 'ltr' : 'rtl'}
+              initialOffset={i === 1 ? 141 : 0}
+              // The fade belongs on the TRACK, not the carousel root — the root
+              // also holds the arrows, which sit at those very edges and were
+              // being faded away with the cards.
+              trackClassName="gap-[37px] py-1 [--edge:29px] [mask-image:linear-gradient(to_right,transparent_0,#000_var(--edge),#000_calc(100%-var(--edge)),transparent_100%)]"
             >
               {row.map((partner, j) => (
                 <Fragment key={`${i}-${j}`}>
