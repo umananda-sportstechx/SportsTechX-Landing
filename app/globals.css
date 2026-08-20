@@ -352,6 +352,18 @@
   will-change: transform;
 }
 
+/* Where two capsules share an orbit they travel opposite ways. `reverse` plays
+ * the existing keyframes backwards, so no second set is needed — and because it
+ * starts at the `to` frame (angle + 360deg, visually identical to angle), the
+ * arrangement on first paint is unchanged.
+ *
+ * Both halves must flip together: the arm carries the pill round and the inner
+ * span counter-turns to keep the label upright. */
+.orbit[data-spin='ccw'],
+.orbit[data-spin='ccw'] .orbit-pill {
+  animation-direction: reverse;
+}
+
 /* The two artboards give the motif different proportions — 858 across an
  * 852-tall mobile frame (radius 50.4% of the height) versus 1586 across 1004
  * on desktop (79%) — and they place the pills at different angles. Both the

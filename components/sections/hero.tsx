@@ -22,20 +22,26 @@ import { cn } from '@/lib/utils';
  * `r` is a share of the motif radius, `a` the angle in degrees with y down.
  * `mr`/`ma` are the mobile overrides; the design drops MEDIA and ATHLETES there.
  *
- * Duration is per RING, not per pill, so each ring turns as one body and keeps
- * the artboard's spacing between its pills. The inner ring runs faster, the way
- * orbits actually behave. No delays: the first painted frame is the artboard.
+ * The radii fall into three pairs, each pair sharing an orbit. The two capsules
+ * on an orbit run at the same speed in OPPOSITE directions, so they meet and
+ * pass twice a revolution. Duration is per orbit — outermost slowest, innermost
+ * fastest, as orbits actually behave. No delays: the first painted frame is the
+ * artboard.
  */
-const OUTER = 120;
-const INNER = 80;
+const ORBIT = { outer: 120, mid: 100, inner: 80 };
 
-const PILLS: Record<string, { r: number; a: number; mr?: number; ma?: number; dur: number }> = {
-  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: OUTER },
-  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: OUTER },
-  MEDIA: { r: 57.5, a: -173.4, dur: OUTER },
-  ATHLETES: { r: 52.8, a: -10.8, dur: OUTER },
-  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: INNER },
-  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: INNER },
+type Pill = { r: number; a: number; mr?: number; ma?: number; dur: number; dir: 'cw' | 'ccw' };
+
+const PILLS: Record<string, Pill> = {
+  // 57.3% orbit
+  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, dir: 'cw' },
+  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, dir: 'ccw' },
+  // 52.75% orbit
+  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, dir: 'cw' },
+  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, dir: 'ccw' },
+  // 16.85% orbit
+  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, dir: 'cw' },
+  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, dir: 'ccw' },
 };
 
 export function Hero() {
@@ -95,6 +101,7 @@ export function Hero() {
         return (
           <span
             key={pill.label}
+            data-spin={p.dir}
             style={
               {
                 // share of the motif diameter, so r% of the radius is r/2 here
