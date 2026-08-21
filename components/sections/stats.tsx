@@ -25,12 +25,31 @@ import { cn } from '@/lib/utils';
  * breakpoint (1024px, where the column is only ~921px). This tracks from 28px
  * there up to 56px at 1512. */
 const RULE = 'hidden w-px shrink-0 bg-white/20 lg:block lg:h-[158px]';
+
+/**
+ * The mobile cross. The artboard draws it as four separate 1px segments at 61%
+ * white, not as cell borders: the vertical runs y 40-149 and 177-286 at x=201,
+ * the horizontal x 40-187 and 215-364 at y=163. Both leave a 28 gap centred on
+ * the intersection, so the two rules never actually touch. Written as shares of
+ * the 362x274 grid so they hold at any phone width.
+ */
+const CROSS = [
+  'top-[3.6%] left-1/2 h-[39.8%] w-px -translate-x-1/2',
+  'top-[53.6%] left-1/2 h-[39.8%] w-px -translate-x-1/2',
+  'top-[48.5%] left-[5.5%] h-px w-[40.6%]',
+  'top-[48.5%] left-[53.9%] h-px w-[41.2%]',
+];
 const GAP = 'lg:gap-[clamp(28px,5.74vw-30.8px,56px)]';
 
 export function Stats() {
   return (
     <section className="noise section-y bg-stats [--noise-alpha:0.6]">
       <div className="container-page">
+        <div className="relative">
+          {CROSS.map((pos) => (
+            <span key={pos} aria-hidden className={cn('absolute bg-white/[0.61] lg:hidden', pos)} />
+          ))}
+
         <ul
           className={cn(
             'grid grid-cols-2 text-white',
@@ -48,11 +67,12 @@ export function Stats() {
               <li aria-hidden className={RULE} />
               <li
                 className={cn(
-                  'flex flex-col gap-[8px] px-6 py-5 lg:w-[155px] lg:px-0 lg:py-0',
-                  // Mobile draws a cross between the four cells instead of the
-                  // desktop row of rules.
-                  i % 2 === 1 && 'border-l border-white/20 lg:border-l-0',
-                  i > 1 && 'border-t border-white/20 lg:border-t-0'
+                  'flex flex-col gap-[8px] py-5 lg:w-[155px] lg:px-0 lg:py-0',
+                  // Each column hugs its outer edge, 20 in, so the pair sits
+                  // symmetrically either side of the centre rule.
+                  i % 2 === 0
+                    ? 'pl-5 text-left lg:pl-0 lg:text-left'
+                    : 'pr-5 text-right lg:pr-0 lg:text-left'
                 )}
               >
                 <p className="font-display text-stat leading-[0.94]">{stat.value}</p>
@@ -64,6 +84,7 @@ export function Stats() {
             </Fragment>
           ))}
         </ul>
+        </div>
       </div>
     </section>
   );
