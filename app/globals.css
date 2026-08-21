@@ -1137,3 +1137,73 @@
     height: calc(999.49 * var(--k));
   }
 }
+
+/* ===== Media on the 402 mobile artboard ===================================
+ * Another layout rather than a squeezed one: the image is the whole top of a
+ * 362x285 card with the kicker and headline laid over it in white, and only
+ * the action label and the category word sit in a 94 white strip beneath.
+ * ========================================================================= */
+@media (width < 64rem) {
+  .media-rig {
+    --k: calc(100cqw / 362);
+  }
+
+  .media-grid {
+    gap: calc(30 * var(--k));
+  }
+  /* flex, not block: the image is second in the DOM and relies on order to
+   * come first here. */
+  .media-card {
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    border-radius: calc(20 * var(--k));
+  }
+  .media-shot {
+    height: calc(191 * var(--k));
+    border-radius: calc(10 * var(--k)) calc(10 * var(--k)) 0 0;
+  }
+  /* #454545 transparent to #232529, so the overlaid copy stays readable. */
+  .media-shot::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(to bottom, rgb(69 69 69 / 0) 0%, #232529 78%);
+  }
+  .media-copy {
+    height: calc(94 * var(--k));
+    padding: calc(19 * var(--k)) calc(21 * var(--k)) 0;
+  }
+  /* Lifted out of the white strip and over the image, 17 clear of its foot. */
+  .media-into {
+    position: absolute;
+    left: calc(21 * var(--k));
+    bottom: calc(111 * var(--k));
+    z-index: 1;
+    width: calc(321 * var(--k));
+    gap: calc(13 * var(--k));
+  }
+  .media-kicker {
+    font-size: max(12px, calc(16 * var(--k)));
+    line-height: calc(19 / 16);
+  }
+  .media-title {
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: calc(25 / 18);
+  }
+  .media-cat {
+    width: calc(321 * var(--k));
+    gap: calc(13 * var(--k));
+  }
+  .media-label {
+    height: calc(22 * var(--k));
+    gap: calc(9 * var(--k));
+    font-size: max(10px, calc(12 * var(--k)));
+    line-height: calc(15 / 12);
+  }
+  .media-word {
+    font-size: max(22px, calc(32 * var(--k)));
+    line-height: 1;
+  }
+}

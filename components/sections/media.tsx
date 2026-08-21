@@ -2,7 +2,6 @@ import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import { SectionIntro } from '@/components/section-intro';
 import { media } from '@/lib/content';
-import { cn } from '@/lib/utils';
 import vectors from '@/design/vectors.json';
 
 /**
@@ -10,6 +9,11 @@ import vectors from '@/design/vectors.json';
  * panel carrying the copy and a 319 image butted against it, with a 2px white
  * stroke at 20%. The design also rules the grid — a hairline down the middle
  * of each row and one across between them, drawn as rotated LINE nodes.
+ *
+ * The 402 artboard rearranges it: a 362x285 card whose image is the whole top
+ * 191, with the kicker and headline laid over it in white, and only the action
+ * label and category in a 94 white strip beneath. See the media rules in
+ * globals.css — the same markup serves both.
  *
  * The card stays pale in dark mode (#dce3f4) and its copy goes black, so this
  * is --color-card-light rather than the page surface.
@@ -43,20 +47,25 @@ export function Media() {
                 <a
                   key={item.category}
                   href={item.href}
-                  className="media-card group grid overflow-hidden rounded-[20px] bg-card-light shadow-card transition-shadow hover:shadow-panel sm:grid-cols-2"
+                  className="media-card group grid overflow-hidden rounded-[20px] bg-card-light shadow-card transition-shadow hover:shadow-panel"
                 >
                   <div className="media-copy flex flex-col justify-between gap-6 p-[27px]">
+                    {/* Below lg this block is lifted over the image and set in
+                        white; from lg it sits in the copy panel in colour. */}
                     <div className="media-into flex flex-col gap-3">
                       {/* REPORTS and EVENTS hide their kicker and its rule. */}
                       {item.kicker && (
                         <>
-                          <p className="media-kicker font-mono text-[14px] leading-[19px] text-green uppercase dark:text-[#1f7a5c]">
+                          <p className="media-kicker font-mono text-[14px] leading-[19px] text-white/90 uppercase lg:text-green lg:dark:text-[#1f7a5c]">
                             {item.kicker}
                           </p>
-                          <span aria-hidden className="media-breaker block h-px w-full bg-[#6b6b6b]/35" />
+                          <span
+                            aria-hidden
+                            className="media-breaker block h-px w-full bg-white/70 lg:bg-[#6b6b6b]/35"
+                          />
                         </>
                       )}
-                      <p className="media-title font-sans text-[18px] leading-[1.43] font-medium whitespace-pre-line text-heading dark:text-black">
+                      <p className="media-title font-sans text-[18px] leading-[1.43] font-medium whitespace-pre-line text-white lg:text-heading lg:dark:text-black">
                         {item.title}
                       </p>
                     </div>
@@ -79,11 +88,7 @@ export function Media() {
                     </div>
                   </div>
 
-                  <div
-                    className={cn(
-                      'relative order-first aspect-4/3 border-2 border-white/20 sm:order-none sm:aspect-auto sm:min-h-[339px]'
-                    )}
-                  >
+                  <div className="media-shot relative order-first overflow-hidden border-white/20 lg:order-none lg:min-h-[339px] lg:border-2">
                     <Image
                       src={item.image}
                       alt=""
