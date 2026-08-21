@@ -18,6 +18,10 @@ import { SectionIntro } from '@/components/section-intro';
  *
  * The rows drift continuously in opposite directions, with a 29px fade at each
  * edge in the band's own colour, as the artboard's "Left Mask" rects do.
+ *
+ * The 402 artboard is a different animal: 158x211 cards with a 175-tall photo,
+ * a flat 12 gutter, and none of the desktop furniture — no dividers between the
+ * cards, no fade at the edges and no arrows. All of that is desktop-only below.
  */
 export function TrustedBy() {
   const rows = [trustedBy.partners, [...trustedBy.partners.slice(4), ...trustedBy.partners.slice(0, 4)]];
@@ -27,30 +31,39 @@ export function TrustedBy() {
       <div className="container-page">
         <SectionIntro title={trustedBy.title} subtitle={trustedBy.subtitle} />
 
-        <div className="mt-[50px] flex flex-col gap-[38px] lg:mt-[86px]">
+        <div className="mt-[50px] flex flex-col gap-[11px] lg:mt-[86px] lg:gap-[38px]">
           {rows.map((row, i) => (
             <Carousel
               key={i}
               label={`Trusted by, row ${i + 1}`}
               autoScroll={i === 0 ? 'ltr' : 'rtl'}
               initialOffset={i === 1 ? 141 : 0}
+              // The artboard gives mobile no arrows at all.
+              arrowClassName="hidden lg:grid"
               // The fade belongs on the TRACK, not the carousel root — the root
               // also holds the arrows, which sit at those very edges and were
-              // being faded away with the cards.
-              trackClassName="gap-[37px] py-1 [--edge:29px] [mask-image:linear-gradient(to_right,transparent_0,#000_var(--edge),#000_calc(100%-var(--edge)),transparent_100%)]"
+              // being faded away with the cards. Desktop only: the 402 artboard
+              // runs its rows to a hard edge.
+              trackClassName="gap-[12px] py-1 lg:gap-[37px] lg:[--edge:29px] lg:[mask-image:linear-gradient(to_right,transparent_0,#000_var(--edge),#000_calc(100%-var(--edge)),transparent_100%)]"
             >
               {row.map((partner, j) => (
                 <Fragment key={`${i}-${j}`}>
                   {/* Before every card, not just between them: the track loops,
                       so skipping the first left the join between the last card
                       and the first with no rule while every other pair had one. */}
-                  <span aria-hidden className="my-auto h-[264px] w-px shrink-0 self-center bg-[#b6b6b6]" />
-                  <article className="w-[210px] shrink-0 snap-start">
-                    <div className="relative h-[232px] overflow-hidden rounded-[7px]">
-                      <Image src={partner.photo} alt="" fill sizes="210px" className="object-cover" />
+                  <span aria-hidden className="my-auto hidden h-[264px] w-px shrink-0 self-center bg-[#b6b6b6] lg:block" />
+                  <article className="w-[158px] shrink-0 snap-start lg:w-[210px]">
+                    <div className="relative h-[175px] overflow-hidden rounded-[7px] lg:h-[232px]">
+                      <Image
+                        src={partner.photo}
+                        alt=""
+                        fill
+                        sizes="(min-width: 1024px) 210px, 158px"
+                        className="object-cover"
+                      />
                       {/* Bottom scrim: #454545 transparent to #232529 opaque. */}
-                      <div className="absolute inset-x-0 bottom-0 h-[72px] bg-linear-to-b from-[#454545]/0 to-[#232529]" />
-                      <span className="absolute inset-x-0 bottom-[15px] text-center font-sans text-[19px] leading-none font-bold tracking-[-0.02em] text-white">
+                      <div className="absolute inset-x-0 bottom-0 h-[55px] bg-linear-to-b from-[#454545]/0 to-[#232529] lg:h-[72px]" />
+                      <span className="absolute inset-x-0 bottom-[11px] text-center font-sans text-[14px] leading-none font-bold tracking-[-0.02em] text-white lg:bottom-[15px] lg:text-[19px]">
                         {partner.logo}
                       </span>
                     </div>
