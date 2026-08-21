@@ -31,7 +31,10 @@ export function TrustedBy() {
       <div className="container-page">
         <SectionIntro title={trustedBy.title} subtitle={trustedBy.subtitle} />
 
-        <div className="mt-[21px] flex flex-col gap-[11px] lg:mt-[86px] lg:gap-[38px]">
+        {/* Full-bleed on mobile: the artboard runs row 1 off the right edge
+            and row 2 off the left, so the rows break out of the page gutter
+            rather than sitting inside it. */}
+        <div className="mt-[21px] mx-[calc(var(--gutter)*-1)] flex flex-col gap-[11px] lg:mx-0 lg:mt-[86px] lg:gap-[38px]">
           {rows.map((row, i) => (
             <Carousel
               key={i}
