@@ -31,7 +31,7 @@ export function TrustedBy() {
       <div className="container-page">
         <SectionIntro title={trustedBy.title} subtitle={trustedBy.subtitle} />
 
-        <div className="mt-[50px] flex flex-col gap-[11px] lg:mt-[86px] lg:gap-[38px]">
+        <div className="mt-[21px] flex flex-col gap-[11px] lg:mt-[86px] lg:gap-[38px]">
           {rows.map((row, i) => (
             <Carousel
               key={i}
@@ -44,7 +44,10 @@ export function TrustedBy() {
               // also holds the arrows, which sit at those very edges and were
               // being faded away with the cards. Desktop only: the 402 artboard
               // runs its rows to a hard edge.
-              trackClassName="gap-[12px] py-1 lg:gap-[37px] lg:[--edge:29px] lg:[mask-image:linear-gradient(to_right,transparent_0,#000_var(--edge),#000_calc(100%-var(--edge)),transparent_100%)]"
+              // py-1 is desktop-only: the artboard's partner groups carry no
+              // padding, and 4 top and bottom turned the designed 11 between
+              // the rows into 19 of visible space.
+              trackClassName="gap-[12px] lg:gap-[37px] lg:py-1 lg:[--edge:29px] lg:[mask-image:linear-gradient(to_right,transparent_0,#000_var(--edge),#000_calc(100%-var(--edge)),transparent_100%)]"
             >
               {row.map((partner, j) => (
                 <Fragment key={`${i}-${j}`}>
