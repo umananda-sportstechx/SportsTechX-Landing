@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-import { Menu, X } from 'lucide-react';
 import { BrandLogo } from '@/components/brand-logo';
 import { mobileMenu } from '@/lib/content';
 import { cn } from '@/lib/utils';
@@ -29,9 +28,10 @@ export function useMobileMenu() {
 }
 
 /**
- * The design's menu is a drawer: the cream panel sits underneath and the whole
- * page slides right, exposing a rounded, bordered edge (radius 41, 2px border).
- * The provider owns the state so the nav button and the page shell can share it.
+ * The artboard's menu board is 402 wide: a 351 panel sits behind the page and
+ * the page slides 283 to the right, exposing a 41 top-left radius, a 2px
+ * #bebebe edge and a shadow cast back to the left. Sizes are capped at those
+ * artboard pixels so the drawer does not grow absurdly on a wide phone.
  */
 export function MobileMenuProvider({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -51,11 +51,17 @@ export function MobileMenuProvider({ children }: { children: React.ReactNode }) 
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
     };
-    const prev = document.body.style.overflow;
+    // The slid page is still full width, so it overhangs the document by the
+    // shift. Both elements get clipped: body alone leaves the html element
+    // scrollable sideways.
+    const prevBody = document.body.style.overflow;
+    const prevRoot = document.documentElement.style.overflow;
     document.body.style.overflow = 'hidden';
+    document.documentElement.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevRoot;
       window.removeEventListener('keydown', onKey);
     };
   }, [open, close]);
@@ -64,7 +70,11 @@ export function MobileMenuProvider({ children }: { children: React.ReactNode }) 
   return <MobileMenuContext.Provider value={value}>{children}</MobileMenuContext.Provider>;
 }
 
-/** The hamburger / close button that lives in the mobile nav bar. */
+/**
+ * The nav's round button. The artboard draws it 38x38 at radius 50 with a
+ * 1.5px black edge at 9% and a wide soft shadow; open, it turns #343434 with
+ * a white cross.
+ */
 export function MobileMenuButton({ className }: { className?: string }) {
   const { open, toggle } = useMobileMenu();
   return (
@@ -75,11 +85,23 @@ export function MobileMenuButton({ className }: { className?: string }) {
       aria-controls="mobile-menu"
       aria-label={open ? 'Close menu' : 'Open menu'}
       className={cn(
-        'grid size-[38px] place-items-center rounded-full border-[1.5px] border-fg bg-surface text-fg',
+        'grid size-[38px] shrink-0 place-items-center rounded-full border-[1.5px] border-black/[0.09] shadow-[0_0_39.4px_rgb(0_0_0/0.08)] transition-colors dark:border-white/[0.12]',
+        open ? 'bg-[#343434] text-white dark:bg-white dark:text-[#343434]' : 'bg-surface text-fg',
         className
       )}
     >
-      {open ? <X className="size-[18px]" strokeWidth={1.5} /> : <Menu className="size-[18px]" strokeWidth={1.5} />}
+      {open ? (
+        /* A 12x12 cross centred in the artboard's 24 frame, 1.5 stroke. */
+        <svg viewBox="0 0 24 24" aria-hidden className="size-6" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <path d="M6 6 18 18M18 6 6 18" />
+        </svg>
+      ) : (
+        /* Four rules at y 5/10/15/20 — the last is 8 wide, not 18. lucide's
+           three even bars were the wrong glyph. */
+        <svg viewBox="0 0 24 24" aria-hidden className="size-6" fill="none" stroke="currentColor" strokeWidth={1.5}>
+          <path d="M3 5h18M3 10h18M3 15h18M3 20h8" />
+        </svg>
+      )}
     </button>
   );
 }
@@ -91,38 +113,40 @@ export function MobileMenuPanel() {
     <div
       id="mobile-menu"
       aria-hidden={!open}
-      className={cn(
-        'fixed inset-y-0 left-0 z-10 w-[300px] bg-band px-[30px] py-[22px] lg:hidden',
-        'transition-opacity duration-300',
-        open ? 'opacity-100' : 'pointer-events-none opacity-0'
-      )}
+      className="fixed inset-y-0 left-0 z-10 w-[min(87.3%,351px)] lg:hidden"
     >
-      <BrandLogo className="h-[38px]" />
+      {/* Grain lives on this inner box: the `noise` utility sets position
+          relative, which would undo the fixed panel above it. */}
+      <div className="noise h-full overflow-y-auto bg-[#f7f3e9] px-[30px] py-[22px] [--noise-alpha:0.35] dark:bg-[#212634]">
+        <BrandLogo className="h-[38px] w-auto self-start" />
 
-      <nav className="mt-[74px] flex flex-col gap-[50px]">
-        {mobileMenu.groups.map((group) => (
-          <div key={group.title} className="flex flex-col gap-[15px]">
-            <p className="tracked font-mono text-[13px] text-fg/[0.48]">{group.title}</p>
-            <ul className="flex flex-col gap-1">
-              {group.links.map((link) => (
-                <li key={link.label}>
-                  <a
-                    href={link.href}
-                    onClick={close}
-                    tabIndex={open ? undefined : -1}
-                    className={cn(
-                      'tracked block py-1 font-sans text-[16px] font-medium transition-opacity hover:opacity-70',
-                      'accent' in link && link.accent ? 'text-accent-2' : 'text-fg'
-                    )}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        ))}
-      </nav>
+        <nav className="mt-[74px] flex w-[211px] flex-col gap-[50px]">
+          {mobileMenu.groups.map((group) => (
+            <div key={group.title} className="flex flex-col gap-[15px]">
+              <p className="tracked font-mono text-[13px] leading-none text-black/[0.48] dark:text-white/[0.48]">
+                {group.title}
+              </p>
+              <ul className="flex flex-col gap-1">
+                {group.links.map((link) => (
+                  <li key={link.label}>
+                    <a
+                      href={link.href}
+                      onClick={close}
+                      tabIndex={open ? undefined : -1}
+                      className={cn(
+                        'tracked block py-1 font-sans text-[16px] leading-none font-medium transition-opacity hover:opacity-70',
+                        'accent' in link && link.accent ? 'text-accent-2' : 'text-black dark:text-white'
+                      )}
+                    >
+                      {link.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
+        </nav>
+      </div>
     </div>
   );
 }
@@ -130,28 +154,53 @@ export function MobileMenuPanel() {
 /**
  * Wraps the page content and performs the slide.
  *
- * Note the transform's side effect: while it is applied, this element becomes
- * the containing block for any `position: fixed` descendant, so the nav inside
- * stops resolving against the viewport. NavBar compensates by switching to
- * `absolute` at the captured scroll offset while the drawer is open.
+ * `nav` is taken separately from `children` because the artboard dims and
+ * softens the page *behind* the nav bar — its close button stays crisp. Note
+ * the transform's side effect too: while it is applied this element becomes
+ * the containing block for any `position: fixed` descendant, so NavBar
+ * switches to `absolute` at the captured scroll offset while the drawer is out.
  */
-export function MobileMenuShell({ children }: { children: React.ReactNode }) {
+export function MobileMenuShell({ nav, children }: { nav: React.ReactNode; children: React.ReactNode }) {
   const { open, close } = useMobileMenu();
   return (
     <div
       className={cn(
-        'relative z-20 min-h-dvh bg-page transition-[transform,border-radius] duration-300 ease-out',
-        open && 'translate-x-[300px] overflow-hidden rounded-l-[41px] border-l-2 border-[#bebebe] dark:border-nav-border'
+        'relative z-20 min-h-dvh bg-page transition-[transform,border-radius,box-shadow] duration-300 ease-out',
+        open &&
+          'translate-x-[min(70.4%,283px)] overflow-hidden rounded-tl-[41px] border-l-2 border-[#bebebe]/65 shadow-[-11px_0_42.2px_rgb(0_0_0/0.13)] dark:border-[#bebebe]/[0.18]'
       )}
     >
-      {children}
-      {/* Click-away target, only while the drawer is out. */}
+      {nav}
+
+      {/* The artboard puts the page's content at 87%; the softening is the
+          "a little blurred" read of that same treatment. */}
+      <div
+        className={cn(
+          'transition-[opacity,filter] duration-300 ease-out',
+          open && 'opacity-[0.87] blur-[2px]'
+        )}
+      >
+        {children}
+      </div>
+
+      {/* "Gradient Mask": 117 of the page's own background fading out to the
+          right, which is what softens the edge nearest the drawer. */}
+      <span
+        aria-hidden
+        className={cn(
+          'pointer-events-none absolute inset-y-0 left-0 z-30 w-[min(29.1%,117px)] bg-linear-to-r from-surface/90 to-transparent transition-opacity duration-300',
+          open ? 'opacity-100' : 'opacity-0'
+        )}
+      />
+
+      {/* Click-away target, only while the drawer is out. Below the nav so the
+          close button stays clickable. */}
       {open && (
         <button
           type="button"
           aria-label="Close menu"
           onClick={close}
-          className="absolute inset-0 z-50 cursor-pointer bg-transparent lg:hidden"
+          className="absolute inset-0 z-40 cursor-pointer bg-transparent lg:hidden"
         />
       )}
     </div>

@@ -253,7 +253,7 @@ export const mobileMenu = {
     {
       title: 'CONNECT',
       links: [
-        { label: 'JOIN THE NEWSLETTER', href: '#newsletter', accent: true },
+        { label: 'JOIN THE NEWSLETTER', href: '#media', accent: true },
         { label: 'LINKEDIN', href: 'https://www.linkedin.com/company/sportstechx' },
         { label: 'YOUTUBE', href: 'https://www.youtube.com/@sportstechx' },
         { label: 'INSTAGRAM', href: 'https://www.instagram.com/sportstechx' },

@@ -41,10 +41,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               are shared by every route and the nav can stay pinned. */}
           <MobileMenuProvider>
             <MobileMenuPanel />
-            <MobileMenuShell>
-              <NavBar />
-              {children}
-            </MobileMenuShell>
+            {/* The nav goes in as its own prop: the drawer dims the page
+                behind it, and the close button must stay crisp. */}
+            <MobileMenuShell nav={<NavBar />}>{children}</MobileMenuShell>
           </MobileMenuProvider>
         </Providers>
       </body>

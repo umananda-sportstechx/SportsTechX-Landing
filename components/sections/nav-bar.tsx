@@ -51,7 +51,10 @@ export function NavBar() {
       className={cn(
         'inset-x-0 z-50 transition-[top,padding,background-color,box-shadow] duration-300',
         drawerOpen ? 'absolute' : 'fixed',
-        scrolled
+        // The docked glass bar is suppressed while the drawer is out: the
+        // artboard shows the plain nav there, and leaving it on painted a
+        // translucent white strip across the top of the slid page.
+        scrolled && !drawerOpen
           // Docked: a full-width glass bar. It has to sit flush at top-0 —
           // keeping the inset would leave a transparent strip above it with
           // page content sliding through.
@@ -63,7 +66,8 @@ export function NavBar() {
         {/* Mobile-only menu button; the desktop pill carries the links instead. */}
         <MobileMenuButton className="lg:hidden" />
 
-        <BrandLogo className="h-[32px] lg:h-[48px]" priority />
+        {/* 174x48 on the 402 artboard, the same 48 as desktop. */}
+        <BrandLogo className="h-[48px]" priority />
 
         <div className="flex items-center gap-5">
           <nav className="hidden items-center gap-9 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-1 pr-1 pl-[20px] shadow-nav lg:flex">
@@ -87,7 +91,7 @@ export function NavBar() {
           </a>
 
           {/* Mobile keeps only the theme toggle — the rest lives in the drawer. */}
-          <ThemeToggle className="size-[38px] border-[1.5px] border-nav-border bg-surface lg:hidden" />
+          <ThemeToggle className="size-[38px] border-[1.5px] border-black/[0.09] bg-surface shadow-[0_0_39.4px_rgb(0_0_0/0.08)] lg:hidden dark:border-white/[0.12]" />
         </div>
       </div>
     </header>
