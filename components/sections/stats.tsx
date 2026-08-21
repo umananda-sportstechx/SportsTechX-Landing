@@ -52,7 +52,10 @@ export function Stats() {
 
         <ul
           className={cn(
-            'grid grid-cols-2 text-white',
+            // The artboard's mobile grid is two 156 cells with a 50 gutter in
+            // a 362 column, which is what puts the right column's copy clear of
+            // the centre rule rather than hard against it.
+            'grid grid-cols-2 gap-x-[50px] text-white',
             // Top-aligned: each figure starts level with the top of its rule.
             // The artboard uses align: MAX, but there the rule is 149 against a
             // 140 block, so bottom-aligning offset the text by only 9px. Here
@@ -67,12 +70,9 @@ export function Stats() {
               <li aria-hidden className={RULE} />
               <li
                 className={cn(
-                  'flex flex-col py-5 lg:w-[155px] lg:items-start lg:px-0 lg:py-0',
-                  // The block hugs its column's outer edge, 20 in, so the pair
-                  // sits symmetrically either side of the centre rule. Only the
-                  // block moves — the copy inside it stays left-aligned, so the
-                  // label's two lines share a left edge either way.
-                  i % 2 === 0 ? 'items-start pl-5 lg:pl-0' : 'items-end pr-5 lg:pr-0'
+                  // Both columns read from the left, 20 in from their own cell,
+                  // as the artboard has them.
+                  'flex flex-col items-start py-5 pl-5 lg:w-[155px] lg:px-0 lg:py-0'
                 )}
               >
                 <div className="flex flex-col gap-[8px] text-left">
