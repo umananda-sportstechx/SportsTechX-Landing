@@ -14,13 +14,55 @@ import { cn } from '@/lib/utils';
  * effect. `resolvedTheme` is only read inside the click handler, which never
  * runs before hydration.
  */
+type WithViewTransition = Document & {
+  startViewTransition?: (callback: () => void | Promise<void>) => { finished: Promise<void> };
+};
+
 export function ThemeToggle({ className }: { className?: string }) {
   const { resolvedTheme, setTheme } = useTheme();
+
+  /**
+   * The switch ripples: the incoming theme is clipped in through a circle grown
+   * from the button to the furthest corner of the viewport.
+   *
+   * The origin and radius go on the root as custom properties because the
+   * ::view-transition pseudo tree inherits from it — there is no other way to
+   * hand geometry to those pseudo-elements. Where startViewTransition is
+   * missing, or the reader asked for less motion, the theme just swaps.
+   */
+  const toggle = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const next = resolvedTheme === 'dark' ? 'light' : 'dark';
+    const doc = document as WithViewTransition;
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (reduce || typeof doc.startViewTransition !== 'function') {
+      setTheme(next);
+      return;
+    }
+
+    const box = event.currentTarget.getBoundingClientRect();
+    const x = box.left + box.width / 2;
+    const y = box.top + box.height / 2;
+    const root = document.documentElement;
+    root.style.setProperty('--ripple-x', `${x}px`);
+    root.style.setProperty('--ripple-y', `${y}px`);
+    root.style.setProperty(
+      '--ripple-r',
+      `${Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))}px`
+    );
+
+    doc.startViewTransition(async () => {
+      setTheme(next);
+      // next-themes writes data-theme from an effect, so give React a frame to
+      // commit before the transition snapshots the new state.
+      await new Promise((resolve) => requestAnimationFrame(resolve));
+    });
+  };
 
   return (
     <button
       type="button"
-      onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
+      onClick={toggle}
       aria-label="Switch colour theme"
       className={cn(
         'grid size-[42px] shrink-0 place-items-center rounded-full',
