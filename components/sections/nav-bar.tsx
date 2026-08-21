@@ -72,8 +72,14 @@ export function NavBar() {
         {/* Mobile-only menu button; the desktop pill carries the links instead. */}
         <MobileMenuButton className="lg:hidden" />
 
-        {/* 174x48 on the 402 artboard, the same 48 as desktop. */}
-        <BrandLogo className="h-[48px]" priority />
+        {/* 174x48 on the 402 artboard, the same 48 as desktop.
+            Hidden while the drawer is out: the artboard's 402 board leaves a
+            5px sliver of it past the slid page, but the shift is capped at 283
+            so a wider phone shows a real chunk of the wordmark instead. */}
+        <BrandLogo
+          className={cn('h-[48px] transition-opacity duration-200', drawerOpen && 'opacity-0 lg:opacity-100')}
+          priority
+        />
 
         <div className="flex items-center gap-5">
           <nav className="hidden items-center gap-9 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-1 pr-1 pl-[20px] shadow-nav lg:flex">
@@ -97,7 +103,12 @@ export function NavBar() {
           </a>
 
           {/* Mobile keeps only the theme toggle — the rest lives in the drawer. */}
-          <ThemeToggle className="size-[38px] border-[1.5px] border-black/[0.09] bg-surface shadow-[0_0_39.4px_rgb(0_0_0/0.08)] lg:hidden dark:border-white/[0.12]" />
+          <ThemeToggle
+            className={cn(
+              'size-[38px] border-[1.5px] border-black/[0.09] bg-surface shadow-[0_0_39.4px_rgb(0_0_0/0.08)] lg:hidden dark:border-white/[0.12]',
+              drawerOpen && 'opacity-0'
+            )}
+          />
         </div>
       </div>
     </header>

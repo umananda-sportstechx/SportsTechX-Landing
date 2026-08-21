@@ -110,6 +110,7 @@ export function MobileMenuButton({ className }: { className?: string }) {
 export function MobileMenuPanel() {
   const { open, close } = useMobileMenu();
   return (
+    <>
     <div
       id="mobile-menu"
       aria-hidden={!open}
@@ -157,6 +158,20 @@ export function MobileMenuPanel() {
         </nav>
       </div>
     </div>
+
+    {/* The shell's own rounded corner belongs to the top of the *document*, so
+        it scrolls out of view and the page reads square once you have moved
+        down the page. This repaints the same 41 corner — arc of border and
+        all — at the viewport's edge instead. It has to be a sibling of the
+        shell: inside it, `fixed` would resolve against the transform. */}
+    <span
+      aria-hidden
+      className={cn(
+        'corner-notch pointer-events-none fixed top-0 left-[min(70.4%,283px)] z-30 size-[41px] transition-opacity duration-[420ms] lg:hidden motion-reduce:transition-none',
+        open ? 'opacity-100' : 'opacity-0'
+      )}
+    />
+    </>
   );
 }
 
