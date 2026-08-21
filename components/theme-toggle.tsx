@@ -1,5 +1,6 @@
 'use client';
 
+import { flushSync } from 'react-dom';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
@@ -14,8 +15,13 @@ import { cn } from '@/lib/utils';
  * effect. `resolvedTheme` is only read inside the click handler, which never
  * runs before hydration.
  */
+type ViewTransition = {
+  ready: Promise<unknown>;
+  finished: Promise<unknown>;
+  updateCallbackDone: Promise<unknown>;
+};
 type WithViewTransition = Document & {
-  startViewTransition?: (callback: () => void | Promise<void>) => { finished: Promise<void> };
+  startViewTransition?: (callback: () => void) => ViewTransition;
 };
 
 export function ThemeToggle({ className }: { className?: string }) {
@@ -51,12 +57,18 @@ export function ThemeToggle({ className }: { className?: string }) {
       `${Math.hypot(Math.max(x, window.innerWidth - x), Math.max(y, window.innerHeight - y))}px`
     );
 
-    doc.startViewTransition(async () => {
-      setTheme(next);
-      // next-themes writes data-theme from an effect, so give React a frame to
-      // commit before the transition snapshots the new state.
-      await new Promise((resolve) => requestAnimationFrame(resolve));
+    // flushSync, not an awaited frame: rAF does not fire while the transition
+    // is capturing, so awaiting one deadlocked the callback until Chrome's
+    // 4s "timeout in DOM update" — which is what made every toggle drag.
+    const transition = doc.startViewTransition(() => {
+      flushSync(() => setTheme(next));
     });
+
+    // Toggling again mid-flight aborts the running transition and rejects its
+    // promises; without these it surfaces as an unhandled rejection.
+    transition.ready.catch(() => {});
+    transition.finished.catch(() => {});
+    transition.updateCallbackDone.catch(() => {});
   };
 
   return (
