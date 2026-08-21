@@ -170,7 +170,11 @@ export function MobileMenuPanel() {
         'corner-notch pointer-events-none fixed top-0 left-[min(70.4%,283px)] z-30 size-[41px] transition-opacity duration-[420ms] lg:hidden motion-reduce:transition-none',
         open ? 'opacity-100' : 'opacity-0'
       )}
-    />
+    >
+      {/* Same class and same --noise-alpha as the panel, so the grain matches
+          exactly instead of being approximated. */}
+      <span className="noise block size-full bg-[#f7f3e9] [--noise-alpha:0.35] dark:bg-[#212634]" />
+    </span>
     </>
   );
 }

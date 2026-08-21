@@ -890,19 +890,38 @@
 }
 
 /* The mobile drawer's concave corner, painted at the viewport's left edge so
- * the page stays curved at any scroll offset. Everything outside the 41 radius
- * is the drawer's own colour, with the page's 2px #bebebe edge as an arc just
- * inside it. */
+ * the page stays curved at any scroll offset.
+ *
+ * The element is masked to the region *outside* the 41 radius and its child
+ * carries the panel's own colour and grain, so the corner is a piece of the
+ * drawer rather than a flat repaint of it — painting the cream directly left a
+ * visibly smooth triangle against the grained panel. */
 .corner-notch {
-  --drawer: #f7f3e9;
-  background: radial-gradient(
-    circle 41px at 100% 100%,
-    transparent 0 39.5px,
-    rgb(190 190 190 / 0.65) 39.5px 41.5px,
-    var(--drawer) 41.5px
-  );
+  -webkit-mask-image: radial-gradient(circle 41px at 100% 100%, transparent 0 41px, #000 41px);
+  mask-image: radial-gradient(circle 41px at 100% 100%, transparent 0 41px, #000 41px);
 }
 
-[data-theme='dark'] .corner-notch {
-  --drawer: #212634;
+/* The page's 2px edge carried around the curve, over the page's own shadow
+ * continued past it: the notch paints above the shell, so it catches none of
+ * the -11px 0 42.2px cast that darkens the drawer everywhere else along the
+ * edge, and without this it reads as a lighter patch. The alpha is well under
+ * the shadow's own 0.13 because a gaussian is roughly half its peak at the
+ * silhouette; 0.033 is what measured flush against the surrounding panel. */
+.corner-notch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(
+      circle 41px at 100% 100%,
+      transparent 0 39.5px,
+      rgb(190 190 190 / 0.65) 39.5px 41.5px,
+      transparent 41.5px
+    ),
+    radial-gradient(
+      circle 41px at 100% 100%,
+      transparent 0 41px,
+      rgb(0 0 0 / 0.033) 41px,
+      transparent 83.2px
+    );
 }
