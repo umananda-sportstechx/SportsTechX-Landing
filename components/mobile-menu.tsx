@@ -113,7 +113,16 @@ export function MobileMenuPanel() {
     <div
       id="mobile-menu"
       aria-hidden={!open}
-      className="fixed inset-y-0 left-0 z-10 w-[min(87.3%,351px)] lg:hidden"
+      className={cn(
+        'fixed inset-y-0 left-0 z-10 w-[min(87.3%,351px)] lg:hidden',
+        // The page still does the pushing; the panel just travels a short way
+        // with it so it arrives rather than being uncovered fully formed.
+        // `translate`, not `transform`: Tailwind v4 emits translate-x-* to the
+        // translate property, so naming transform here animated nothing and the
+        // panel snapped into place.
+        'transition-[translate,opacity] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
+        open ? 'translate-x-0 opacity-100' : 'pointer-events-none -translate-x-8 opacity-0'
+      )}
     >
       {/* Grain lives on this inner box: the `noise` utility sets position
           relative, which would undo the fixed panel above it. */}
@@ -165,7 +174,8 @@ export function MobileMenuShell({ nav, children }: { nav: React.ReactNode; child
   return (
     <div
       className={cn(
-        'relative z-20 min-h-dvh bg-page transition-[transform,border-radius,box-shadow] duration-300 ease-out',
+        'relative z-20 min-h-dvh bg-page',
+        'transition-[translate,border-radius,box-shadow] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
         open &&
           'translate-x-[min(70.4%,283px)] overflow-hidden rounded-tl-[41px] border-l-2 border-[#bebebe]/65 shadow-[-11px_0_42.2px_rgb(0_0_0/0.13)] dark:border-[#bebebe]/[0.18]'
       )}
@@ -176,7 +186,7 @@ export function MobileMenuShell({ nav, children }: { nav: React.ReactNode; child
           "a little blurred" read of that same treatment. */}
       <div
         className={cn(
-          'transition-[opacity,filter] duration-300 ease-out',
+          'transition-[opacity,filter] duration-[420ms] ease-[cubic-bezier(0.22,1,0.36,1)] motion-reduce:transition-none',
           open && 'opacity-[0.87] blur-[2px]'
         )}
       >
@@ -188,7 +198,7 @@ export function MobileMenuShell({ nav, children }: { nav: React.ReactNode; child
       <span
         aria-hidden
         className={cn(
-          'pointer-events-none absolute inset-y-0 left-0 z-30 w-[min(29.1%,117px)] bg-linear-to-r from-surface/90 to-transparent transition-opacity duration-300',
+          'pointer-events-none absolute inset-y-0 left-0 z-30 w-[min(29.1%,117px)] bg-linear-to-r from-surface/90 to-transparent transition-opacity duration-[420ms] motion-reduce:transition-none',
           open ? 'opacity-100' : 'opacity-0'
         )}
       />

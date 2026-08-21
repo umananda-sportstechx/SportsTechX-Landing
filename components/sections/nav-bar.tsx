@@ -16,6 +16,9 @@ import { cn } from '@/lib/utils';
  * and it avoids calling setState inside an effect, which the project's lint
  * config rejects (react-hooks/set-state-in-effect).
  */
+/** The artboard's 16 gap above the nav, which `top-4` gives when it is fixed. */
+const NAV_INSET = 16;
+
 const subscribe = (onChange: () => void) => {
   window.addEventListener('scroll', onChange, { passive: true });
   return () => window.removeEventListener('scroll', onChange);
@@ -47,7 +50,10 @@ export function NavBar() {
       // the containing block for `fixed` children — a fixed nav would then be
       // pinned to the top of the document and scroll away off-screen, taking
       // the close button with it. Anchor to the captured offset instead.
-      style={drawerOpen ? { top: lockedY } : undefined}
+      // + NAV_INSET because the inline top overrides `top-4`: pinning to the
+      // bare offset dropped the 16 gap and the close button jumped up on open,
+      // out of line with the drawer's logo. The artboard sits it at 21.62.
+      style={drawerOpen ? { top: lockedY + NAV_INSET } : undefined}
       className={cn(
         'inset-x-0 z-50 transition-[top,padding,background-color,box-shadow] duration-300',
         drawerOpen ? 'absolute' : 'fixed',
