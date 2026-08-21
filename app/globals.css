@@ -1207,3 +1207,60 @@
     line-height: 1;
   }
 }
+
+/* ===== Footer on the 402 mobile artboard ==================================
+ * The "Cloud grid" carries six horizontal lines here rather than two: one
+ * above the block, one between every column, and one before the legal rows.
+ * The three inner ones are the top borders of the link columns.
+ * ========================================================================= */
+@media (width < 64rem) {
+  .footer-rig {
+    --k: calc(100cqw / 362);
+  }
+
+  .footer-rule {
+    height: 2px;
+  }
+
+  .footer-details {
+    gap: calc(32 * var(--k));
+  }
+  .footer-col {
+    border-top: 2px solid rgb(186 186 186 / 0.5);
+    padding-top: calc(28 * var(--k));
+    gap: calc(10 * var(--k));
+  }
+  .footer-col-1 {
+    gap: calc(18 * var(--k));
+  }
+  .footer-desc {
+    font-size: max(14px, calc(16 * var(--k)));
+    line-height: calc(28 / 16);
+  }
+  .footer-head {
+    font-size: max(17px, calc(22 * var(--k)));
+    line-height: calc(32 / 22);
+  }
+  .footer-link {
+    gap: calc(15 * var(--k));
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: calc(32 / 18);
+  }
+  .footer-contact {
+    gap: calc(13 * var(--k));
+    font-size: max(13px, calc(16 * var(--k)));
+    line-height: calc(32 / 16);
+  }
+  .footer-legal {
+    font-size: max(10px, calc(11 * var(--k)));
+    line-height: calc(32 / 11);
+  }
+  .footer-icon {
+    width: calc(var(--iw) * var(--k));
+    height: calc(var(--ih) * var(--k));
+  }
+}
+
+[data-theme='dark'] .footer-col {
+  border-top-color: var(--line);
+}

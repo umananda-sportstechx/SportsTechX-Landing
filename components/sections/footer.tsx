@@ -10,6 +10,10 @@ import { cn } from '@/lib/utils';
  * than the content column on each side, and three verticals that overhang the
  * columns above and below.
  *
+ * The 402 artboard rules it differently: the columns stack, so the grid there
+ * is six horizontals — one above, one between each pair, one before the legal
+ * rows. The inner three are the columns' own top borders; see globals.css.
+ *
  * There is no newsletter block in the design; the site had one that was never
  * drawn. Glyphs are the artboard's own vectors, tinted through a CSS mask so
  * they follow the text colour in both themes.
