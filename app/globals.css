@@ -492,7 +492,6 @@
   }
   /* The tier pill belongs inside the preview panel, not above the headline. */
   .card-tag {
-    position: absolute;
     left: calc(var(--tag-x) * var(--k));
     top: calc(var(--tag-y) * var(--k));
     height: calc(32 * var(--k));
@@ -554,6 +553,7 @@
     gap: calc(51 * var(--k));
   }
   .card-case-rule {
+    width: 1px;
     height: calc(328 * var(--k));
   }
   .card-col {
@@ -649,12 +649,9 @@
    * by (96.58, 60.05) inside a group that is itself rotated 15deg. Dropping
    * that rotation is why the ribbon sat flat instead of raked. */
   .card-motif {
-    position: absolute;
     left: calc(-53 * var(--k));
-    top: 0;
     width: calc(1376 * var(--k));
     height: calc(615 * var(--k));
-    overflow: hidden;
   }
   .card-motif-group {
     position: absolute;
@@ -665,47 +662,25 @@
     transform: rotate(15deg);
     transform-origin: 0 0;
   }
-  .card-motif-group > span {
-    position: absolute;
-    width: calc(328.43 * var(--k));
-    height: calc(328.43 * var(--k));
-    /* A 1px gradient stroke fading pink to nothing, at 35% — not a flat rule. */
-    border: 1px solid transparent;
-    border-image: linear-gradient(to bottom, #ed1a5e 29%, rgb(236 30 95 / 0)) 1;
-    opacity: 0.35;
-  }
+
 
   /* --- Atlas "BG Element": a 1046.97 square rotated 45deg, holding a 1776.65
    * vector rotated back -45deg. The frame CLIPS — that is what keeps the rings
    * in the intro and out of the testimonials, and the site was missing it, so
    * the rings ran the whole height of the card. */
   .card-rings {
-    position: absolute;
     left: calc(727.32 * var(--k));
     top: calc(-456 * var(--k));
     width: calc(1046.97 * var(--k));
     height: calc(1046.97 * var(--k));
-    transform: rotate(45deg);
-    transform-origin: 0 0;
-    overflow: hidden;
   }
   .card-rings-node {
-    position: absolute;
     left: calc(-537.3 * var(--k));
     top: calc(473.41 * var(--k));
     width: calc(1776.653 * var(--k));
     height: calc(1776.653 * var(--k));
-    transform: rotate(-45deg);
-    transform-origin: 0 0;
   }
-  .card-rings-node img {
-    position: absolute;
-    left: calc(-93.769 * var(--k));
-    top: calc(-93.769 * var(--k));
-    width: calc(1964.191 * var(--k));
-    height: calc(1964.192 * var(--k));
-    max-width: none;
-  }
+
 }
 
 /* ===== Media cards ========================================================
@@ -924,4 +899,195 @@
       rgb(0 0 0 / 0.033) 41px,
       transparent 83.2px
     );
+}
+
+
+/* Shared between both Solutions breakpoints: the motif squares and the ring
+ * art are the same drawing at either size, so they are shares of whatever box
+ * the breakpoint gives them rather than absolute units. */
+.card-motif,
+.card-rings {
+  position: absolute;
+  overflow: hidden;
+}
+
+.card-motif-group,
+.card-rings-node {
+  position: absolute;
+  transform-origin: 0 0;
+}
+
+.card-motif-group {
+  transform: rotate(15deg);
+}
+
+.card-rings {
+  transform: rotate(45deg);
+  transform-origin: 0 0;
+}
+
+.card-rings-node {
+  transform: rotate(-45deg);
+}
+
+.card-motif-group > span {
+  position: absolute;
+  width: 27.478%; /* 328.43 of 1195.25, and 181.89 of 661.94 */
+  aspect-ratio: 1;
+  /* A 1px gradient stroke fading pink to nothing, at 35% — not a flat rule. */
+  border: 1px solid transparent;
+  border-image: linear-gradient(to bottom, #ed1a5e 29%, rgb(236 30 95 / 0)) 1;
+  opacity: 0.35;
+}
+
+.card-rings-node img {
+  position: absolute;
+  left: -5.278%; /* the outline's bleed past the node box */
+  top: -5.278%;
+  width: 110.556%;
+  height: 110.556%;
+  max-width: none;
+}
+
+/* ===== Solutions on the 402 mobile artboard ==============================
+ * A different layout, not a squeezed one: the cards run full bleed at r10,
+ * the preview panel stacks *below* the copy instead of beside it, and the
+ * three use-case columns stack with a rule between them.
+ * ========================================================================= */
+@media (width < 64rem) {
+  .solutions-rig {
+    --k: calc(100cqw / 402);
+  }
+
+  .solution-card {
+    border-radius: calc(10 * var(--k));
+  }
+  .solution-card + .solution-card {
+    margin-top: calc(-44 * var(--k));
+  }
+
+  .card-intro {
+    display: flex;
+    flex-direction: column;
+    min-height: calc(739 * var(--k));
+    padding: calc(var(--m-top) * var(--k)) 0 0;
+  }
+  .card-intro-text {
+    padding-inline: calc(20 * var(--k));
+  }
+  .card-wordmark {
+    height: calc(var(--m-mark) * var(--k));
+  }
+  .card-headline {
+    margin-top: calc(var(--m-headline-mt) * var(--k));
+    font-size: max(24px, calc(38 * var(--k)));
+    line-height: calc(43 / 38);
+  }
+  .card-blurb {
+    margin-top: calc(7 * var(--k));
+    width: calc(361 * var(--k));
+    font-size: max(13px, calc(14 * var(--k)));
+    line-height: calc(22 / 14);
+  }
+  .card-cta {
+    margin-top: calc(9 * var(--k));
+    height: calc(36 * var(--k));
+    min-width: calc(var(--m-cta-w) * var(--k));
+    padding-inline: calc(15 * var(--k));
+    font-size: max(11px, calc(14 * var(--k)));
+  }
+  /* Full width and below the copy — the artboard's "Demo" frame. */
+  .card-panel {
+    order: 1;
+    width: 100%;
+    height: calc(342 * var(--k));
+    margin-top: calc(50 * var(--k));
+    border-radius: calc(10 * var(--k));
+  }
+  .card-tag {
+    top: calc(20 * var(--k));
+    left: calc(20 * var(--k));
+    height: calc(23 * var(--k));
+    padding-inline: calc(20 * var(--k));
+    border-radius: calc(5 * var(--k));
+    font-size: max(10px, calc(12 * var(--k)));
+  }
+
+  .card-band {
+    min-height: calc(962 * var(--k));
+    padding: calc(31 * var(--k)) calc(20 * var(--k)) calc(49 * var(--k));
+  }
+  .card-cases {
+    gap: calc(40 * var(--k));
+  }
+  /* Stacked columns, so the rule runs across rather than down. */
+  .card-case-rule {
+    width: calc(322 * var(--k));
+    height: 1px;
+  }
+  .card-col {
+    gap: calc(16 * var(--k));
+  }
+  .card-col-head {
+    gap: calc(13 * var(--k));
+  }
+  .card-numbox {
+    width: calc(36 * var(--k));
+    height: calc(36 * var(--k));
+  }
+  .card-icon {
+    width: calc(var(--iw) * 0.69 * var(--k));
+    height: calc(var(--ih) * 0.69 * var(--k));
+  }
+  .card-col-title {
+    font-size: max(15px, calc(19 * var(--k)));
+    line-height: calc(30 / 19);
+  }
+  .card-uses {
+    width: calc(321 * var(--k));
+    margin-left: calc(20.5 * var(--k));
+    gap: calc(7 * var(--k));
+  }
+  .card-use {
+    gap: calc(18 * var(--k));
+    font-size: max(13px, calc(16 * var(--k)));
+    line-height: calc(22 / 16);
+  }
+  .card-bullet {
+    width: calc(10 * var(--k));
+    height: calc(10 * var(--k));
+    margin-top: calc(10 * var(--k));
+  }
+
+  .card-stories {
+    padding: calc(49 * var(--k)) calc(20 * var(--k)) calc(40 * var(--k));
+  }
+  .card-quote {
+    font-size: max(15px, calc(18 * var(--k)));
+  }
+
+  .card-motif {
+    left: 0;
+    width: 100%;
+    height: calc(615 * var(--k));
+  }
+  .card-motif-group {
+    left: calc(131.04 * var(--k));
+    top: calc(-101.28 * var(--k));
+    width: calc(661.94 * var(--k));
+    height: calc(474.12 * var(--k));
+  }
+
+  .card-rings {
+    left: calc(380.48 * var(--k));
+    top: calc(-196 * var(--k));
+    width: calc(589 * var(--k));
+    height: calc(589 * var(--k));
+  }
+  .card-rings-node {
+    left: calc(-302.27 * var(--k));
+    top: calc(266.33 * var(--k));
+    width: calc(999.49 * var(--k));
+    height: calc(999.49 * var(--k));
+  }
 }

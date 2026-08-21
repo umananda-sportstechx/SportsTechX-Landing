@@ -39,6 +39,11 @@ const VARS: Record<string, CSSProperties> = {
     '--stories-b': 116, // the strip Atlas overlaps
     '--strip-mt': 36,
     '--quote': 24,
+    // 402 artboard
+    '--m-top': 83,
+    '--m-mark': 27,
+    '--m-headline-mt': 24,
+    '--m-cta-w': 177,
   } as CSSProperties,
   atlas: {
     '--panel-y': 67.29,
@@ -57,6 +62,10 @@ const VARS: Record<string, CSSProperties> = {
     '--stories-b': 34,
     '--strip-mt': 40,
     '--quote': 22,
+    '--m-top': 65,
+    '--m-mark': 48,
+    '--m-headline-mt': 21,
+    '--m-cta-w': 153,
   } as CSSProperties,
 };
 
@@ -68,10 +77,10 @@ export function Solutions() {
       <div className="container-page">
         <SectionIntro title={solutions.title} tracking="tracking-[0.05em]">
           <div className="mt-1 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
-            <p className="font-sans text-card-title leading-[1.5] font-medium text-heading/70 uppercase">
+            <p className="font-sans text-[18px] leading-[27px] font-medium text-heading/70 uppercase lg:text-card-title lg:leading-[1.5]">
               {solutions.selectorLabel}
             </p>
-            <div className="flex gap-5">
+            <div className="flex gap-[13px] lg:gap-5">
               {solutions.sectors.map((s) => {
                 const active = s.id === sector;
                 return (
@@ -81,13 +90,15 @@ export function Solutions() {
                     onClick={() => setSector(s.id)}
                     aria-pressed={active}
                     className={cn(
-                      'tracked inline-flex h-[42px] w-[160px] items-center justify-center gap-2.5 rounded-full font-mono text-label text-white transition-colors',
+                      'tracked inline-flex h-[35px] w-[174px] items-center justify-center gap-2.5 rounded-full font-mono text-[14px] text-white transition-colors lg:h-[42px] lg:w-[160px] lg:text-label',
                       active
-                        ? 'bg-linear-to-r from-[#f21d63] to-[#ed1a5e]'
+                        // Flat pink on mobile; the gradient and the dot are
+                        // desktop-only in the artboard.
+                        ? 'bg-accent-2 lg:bg-linear-to-r lg:from-[#f21d63] lg:to-[#ed1a5e]'
                         : 'bg-slate hover:brightness-110'
                     )}
                   >
-                    {active && <span className="size-[13px] rounded-full bg-white" />}
+                    {active && <span className="hidden size-[13px] rounded-full bg-white lg:block" />}
                     {s.label}
                   </button>
                 );
@@ -98,7 +109,9 @@ export function Solutions() {
 
         {/* solutions-rig is the container --k measures against, and the two
             cards overlap by 116 artboard units inside it. */}
-        <div className="solutions-rig mt-[52px] flex flex-col gap-10 lg:gap-0">
+        {/* Full bleed on mobile: the artboard's cards are the full 402 wide,
+            which also makes 100cqw the artboard width for --k. */}
+        <div className="solutions-rig mx-[calc(var(--gutter)*-1)] mt-[52px] flex flex-col lg:mx-0">
           {solutions.cards.map((card) => (
             <SolutionBlock key={card.id} card={card} />
           ))}
@@ -125,28 +138,11 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
     >
       {dark ? <Motif /> : <Rings />}
 
-      {/* ---------- intro: panel flush right, copy bottom-aligned ---------- */}
-      <div className="card-intro card-p relative flex flex-col gap-8 lg:block lg:p-0">
-        <div
-          className={cn(
-            'card-panel relative order-first min-h-[210px] rounded-[20px] border shadow-preview backdrop-blur-[4px] lg:order-none',
-            dark
-              ? 'border-[#373b49] bg-[#020716]/60'
-              : 'border-[#bcecd4] bg-white/85 dark:border-white/50 dark:bg-[#d6dced]'
-          )}
-        >
-          <span
-            className={cn(
-              'card-tag tracked absolute top-4 left-4 inline-flex h-8 items-center rounded-[7px] border px-5 font-mono-alt text-[13px] whitespace-nowrap',
-              dark
-                ? 'border-accent bg-accent/[0.17] text-white'
-                : 'border-accent bg-accent/[0.09] text-accent dark:text-white'
-            )}
-          >
-            {card.badge}
-          </span>
-        </div>
-
+      {/* ---------- intro ----------
+          Desktop: copy bottom-aligned with the panel flush to the right edge.
+          Mobile: copy first, then the panel full width beneath it. Both are
+          driven from .card-intro in globals.css. */}
+      <div className="card-intro relative">
         <div
           className="card-intro-text"
           style={
@@ -158,7 +154,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
             } as CSSProperties
           }
         >
-          <span className={cn('card-wordmark block', dark ? 'h-[26px]' : 'h-[52px]')}>
+          <span className="card-wordmark block">
             {/* eslint-disable-next-line @next/next/no-img-element -- a flat
                 artboard vector; next/image would only add a request wrapper. */}
             <img src={`/vectors/wordmark-${card.id}.svg`} alt={card.eyebrow} className="h-full w-auto" />
@@ -192,20 +188,37 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
             {card.cta}
           </button>
         </div>
+        <div
+          className={cn(
+            'card-panel relative border shadow-preview backdrop-blur-[4px]',
+            dark
+              ? 'border-[#373b49] bg-[#020716]/60'
+              : 'border-[#bcecd4] bg-white/85 dark:border-white/50 dark:bg-[#d6dced]'
+          )}
+        >
+          <span
+            className={cn(
+              'card-tag tracked absolute inline-flex items-center border font-mono-alt whitespace-nowrap',
+              dark
+                ? 'border-accent bg-accent/[0.17] text-white'
+                : 'border-accent bg-accent/[0.09] text-accent dark:text-white'
+            )}
+          >
+            {card.badge}
+          </span>
+        </div>
+
       </div>
 
       {/* ---------- green band ---------- */}
-      <div className="card-band card-p relative bg-green">
-        <div className="card-cases grid gap-10 lg:flex lg:items-start">
+      <div className="card-band relative bg-green">
+        <div className="card-cases flex flex-col lg:flex-row lg:items-start">
           {card.features.map((feature, i) => {
             const icon = art(`icon-${card.id}-${i + 1}`);
             return (
               <Fragment key={feature.title}>
                 {i > 0 && (
-                  <span
-                    aria-hidden
-                    className="card-case-rule hidden w-px shrink-0 bg-white/40 lg:block"
-                  />
+                  <span aria-hidden className="card-case-rule shrink-0 bg-white/40" />
                 )}
                 <div className="card-col flex flex-col gap-[30px] lg:flex-1">
                   <div className="card-col-head flex items-start gap-[11px]">
@@ -244,7 +257,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
       </div>
 
       {/* ---------- testimonials ---------- */}
-      <div className="card-stories card-p relative">
+      <div className="card-stories relative">
         <p
           className={cn(
             'card-stories-label tracked text-center text-label',
@@ -321,16 +334,18 @@ const MOTIF = [
   [674.68, 413.98],
   [771.26, 474.02],
   [866.82, 527.67],
-];
+  // As shares of the group box: the 402 artboard steps by (52.72, 29.75)
+  // inside a 661.94x474.12 group, which is the same figure at 0.554 scale.
+].map(([x, y]) => [(x / 1195.25) * 100, (y / 856.1) * 100]);
 
 function Motif() {
   return (
-    <div aria-hidden className="card-motif pointer-events-none hidden lg:block">
+    <div aria-hidden className="card-motif pointer-events-none">
       <div className="card-motif-group">
         {MOTIF.map(([x, y]) => (
           <span
             key={`${x}-${y}`}
-            style={{ left: `calc(${x}*var(--k))`, top: `calc(${y}*var(--k))` }}
+            style={{ left: `${x}%`, top: `${y}%` }}
           />
         ))}
       </div>
@@ -350,7 +365,7 @@ function Motif() {
  */
 function Rings() {
   return (
-    <div aria-hidden className="card-rings pointer-events-none hidden lg:block">
+    <div aria-hidden className="card-rings pointer-events-none">
       <div className="card-rings-node">
         {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
         <img src="/vectors/atlas-rings.svg" alt="" />
