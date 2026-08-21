@@ -88,13 +88,21 @@ export function Media() {
                     </div>
                   </div>
 
-                  <div className="media-shot relative order-first overflow-hidden border-white/20 lg:order-none lg:min-h-[339px] lg:border-2">
+                  <div className="media-shot relative order-first overflow-hidden lg:order-none lg:min-h-[339px]">
                     <Image
                       src={item.image}
                       alt=""
                       fill
                       sizes="(min-width: 1024px) 320px, 100vw"
                       className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                    />
+                    {/* The artboard's stroke is INSIDE-aligned, so it belongs
+                        over the photo. As a border on this box it inset the
+                        image instead and read as a white frame against the
+                        card. */}
+                    <span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-[inherit] border border-white/20 lg:border-2"
                     />
                   </div>
                 </a>
