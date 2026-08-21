@@ -67,18 +67,20 @@ export function Stats() {
               <li aria-hidden className={RULE} />
               <li
                 className={cn(
-                  'flex flex-col gap-[8px] py-5 lg:w-[155px] lg:px-0 lg:py-0',
-                  // Each column hugs its outer edge, 20 in, so the pair sits
-                  // symmetrically either side of the centre rule.
-                  i % 2 === 0
-                    ? 'pl-5 text-left lg:pl-0 lg:text-left'
-                    : 'pr-5 text-right lg:pr-0 lg:text-left'
+                  'flex flex-col py-5 lg:w-[155px] lg:items-start lg:px-0 lg:py-0',
+                  // The block hugs its column's outer edge, 20 in, so the pair
+                  // sits symmetrically either side of the centre rule. Only the
+                  // block moves — the copy inside it stays left-aligned, so the
+                  // label's two lines share a left edge either way.
+                  i % 2 === 0 ? 'items-start pl-5 lg:pl-0' : 'items-end pr-5 lg:pr-0'
                 )}
               >
-                <p className="font-display text-stat leading-[0.94]">{stat.value}</p>
-                <p className="tracked font-sans text-stat-label leading-[1.3] whitespace-pre-line">
-                  {stat.label}
-                </p>
+                <div className="flex flex-col gap-[8px] text-left">
+                  <p className="font-display text-stat leading-[0.94]">{stat.value}</p>
+                  <p className="tracked font-sans text-stat-label leading-[1.3] whitespace-pre-line">
+                    {stat.label}
+                  </p>
+                </div>
               </li>
               {i === stats.length - 1 && <li aria-hidden className={RULE} />}
             </Fragment>
