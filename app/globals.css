@@ -966,10 +966,12 @@
     margin-top: calc(-44 * var(--k));
   }
 
+  /* No min-height: the panel is the last thing in the block and the artboard
+   * butts it straight up against the green band. A floor here just left a gap
+   * whenever the copy wrapped shorter than the artboard's. */
   .card-intro {
     display: flex;
     flex-direction: column;
-    min-height: calc(739 * var(--k));
     padding: calc(var(--m-top) * var(--k)) 0 0;
   }
   .card-intro-text {
@@ -1048,7 +1050,11 @@
     margin-left: calc(20.5 * var(--k));
     gap: calc(7 * var(--k));
   }
+  /* The artboard's use-case rows are 52 whatever the copy does. Letting them
+   * shrink to the text left every column 5 short, which compounded into 100 of
+   * dead green at the foot of the band instead of the designed 49. */
   .card-use {
+    min-height: calc(52 * var(--k));
     gap: calc(18 * var(--k));
     font-size: max(13px, calc(16 * var(--k)));
     line-height: calc(22 / 16);
@@ -1060,10 +1066,50 @@
   }
 
   .card-stories {
-    padding: calc(49 * var(--k)) calc(20 * var(--k)) calc(40 * var(--k));
+    padding: calc(49 * var(--k)) calc(20 * var(--k)) calc(100 * var(--k));
+  }
+  /* Story Example is 257 on the artboard; the strip was collapsing to its copy. */
+  .card-strip {
+    margin-top: calc(22 * var(--k));
+    min-height: calc(257 * var(--k));
   }
   .card-quote {
-    font-size: max(15px, calc(18 * var(--k)));
+    font-size: max(15px, calc(21 * var(--k)));
+    line-height: calc(34 / 21);
+  }
+  /* Mobile stacks the chip: a 70 avatar over centred details. */
+  .card-chip {
+    flex-direction: column;
+    align-items: center;
+    margin-top: calc(29 * var(--k));
+    gap: calc(10 * var(--k));
+  }
+  .card-avatar {
+    width: calc(70 * var(--k));
+    height: calc(70 * var(--k));
+    border-radius: calc(3 * var(--k));
+  }
+  .card-chip-text {
+    text-align: center;
+    font-size: max(11px, calc(15 * var(--k)));
+    line-height: calc(19 / 15);
+  }
+  .card-arrow {
+    width: calc(27 * var(--k));
+    height: calc(27 * var(--k));
+  }
+  .card-arrow svg {
+    width: 100%;
+    height: 100%;
+    stroke-width: calc(1.5 * 24 / 27);
+  }
+  .card-arrow:nth-of-type(1) {
+    left: 0;
+    right: auto;
+  }
+  .card-arrow:nth-of-type(2) {
+    right: 0;
+    left: auto;
   }
 
   .card-motif {

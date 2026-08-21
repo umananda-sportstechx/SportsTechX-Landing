@@ -281,7 +281,9 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
             {card.testimonials.map((t, i) => (
               <figure
                 key={i}
-                className="flex w-full shrink-0 snap-start flex-col items-center px-8 text-center lg:w-1/2"
+                // No side padding on mobile: the artboard gives the quote the
+                // full 362, and 32 either side forced it onto a fourth line.
+                className="flex w-full shrink-0 snap-start flex-col items-center text-center lg:w-1/2 lg:px-8"
               >
                 <blockquote
                   className={cn(
