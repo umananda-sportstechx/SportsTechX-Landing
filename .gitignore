@@ -17,3 +17,7 @@ design/nodes.json
 
 .DS_Store
 *.tsbuildinfo
+
+# Unlicensed retail fonts dropped in for local trials. Kept out of git so a
+# deploy never serves them from our own domain.
+/public/fonnts.com-*/
