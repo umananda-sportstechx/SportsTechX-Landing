@@ -20,4 +20,4 @@ design/nodes.json
 
 # Unlicensed retail fonts dropped in for local trials. Kept out of git so a
 # deploy never serves them from our own domain.
-/public/fonnts.com-*/
+# /public/fonnts.com-*/
