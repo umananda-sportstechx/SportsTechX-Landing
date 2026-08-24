@@ -70,6 +70,8 @@ const testimonial = {
 
 export type SolutionCard = {
   id: string;
+  /** Which of the sector buttons show this card. */
+  sectors: string[];
   eyebrow: string;
   badge: string;
   title: string;
@@ -90,6 +92,8 @@ export const solutions = {
   cards: [
     {
       id: 'playmakers',
+      // Playmakers is the founder product — picking INVESTORS drops it.
+      sectors: ['founders'],
       eyebrow: 'PLAYMAKERS',
       badge: 'FOR THE PROS',
       title: "Where sports tech's\nbest build together.",
@@ -127,6 +131,7 @@ export const solutions = {
     },
     {
       id: 'atlas',
+      sectors: ['founders', 'investors'],
       eyebrow: 'atlas',
       badge: 'EARLY STAGE',
       title: 'Raising your next round?',

@@ -112,9 +112,11 @@ export function Solutions() {
         {/* Full bleed on mobile: the artboard's cards are the full 402 wide,
             which also makes 100cqw the artboard width for --k. */}
         <div className="solutions-rig mx-[calc(var(--gutter)*-1)] mt-[52px] flex flex-col lg:mx-0">
-          {solutions.cards.map((card) => (
-            <SolutionBlock key={card.id} card={card} />
-          ))}
+          {solutions.cards
+            .filter((card) => card.sectors.includes(sector))
+            .map((card) => (
+              <SolutionBlock key={card.id} card={card} />
+            ))}
         </div>
       </div>
     </section>
@@ -287,7 +289,9 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
               >
                 <blockquote
                   className={cn(
-                    'card-quote font-sans text-quote leading-[1.4]',
+                    // Size and line box come from .card-quote, which scales
+                    // them off the artboard; a utility here would shadow it.
+                    'card-quote font-sans',
                     dark ? 'text-[#eeeeee]' : 'text-[#2e2e2e]'
                   )}
                 >

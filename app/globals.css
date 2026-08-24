@@ -612,7 +612,10 @@
   .card-quote {
     max-width: calc(485 * var(--k));
     font-size: max(15px, calc(var(--quote) * var(--k)));
-    line-height: calc(34 / 24);
+    /* The artboard sets a 34px line box on every quote on every board and
+     * varies only the type size, so the ratio has to follow --quote — pinning
+     * it to 24 left Atlas, which sets 22, running a line short of the design. */
+    line-height: calc(34 / var(--quote));
   }
   .card-chip {
     margin-top: calc(29 * var(--k));
