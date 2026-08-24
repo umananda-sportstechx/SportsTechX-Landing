@@ -170,6 +170,8 @@ export type MediaItem = {
   action: string;
   /** Absent where the design hides the card's "Product Title" layer. */
   kicker?: string;
+  /** Extra destinations shown as brand icons beside the category word. */
+  links?: { label: string; href: string; icon: string }[];
   title: string;
   image: string;
   href: string;
@@ -194,7 +196,16 @@ export const media = {
       kicker: 'STX ALLSTARS PODCAST',
       title: 'From M&A Advisory to Early Stage Sports Tech Investor - Uday Khanna',
       image: '/images/b8758def93ad.webp',
-      href: '#podcast',
+      // Spotify is the default destination for the card itself.
+      href: 'https://open.spotify.com/show/2IWyvvtC2fAeRAyt55TmtF',
+      links: [
+        { label: 'Spotify', href: 'https://open.spotify.com/show/2IWyvvtC2fAeRAyt55TmtF', icon: 'spotify' },
+        {
+          label: 'YouTube',
+          href: 'https://www.youtube.com/playlist?list=PLptEoomboUFS422kldem0tLkXJjDbHjfx',
+          icon: 'footer-youtube',
+        },
+      ],
     },
     {
       category: 'REPORTS',

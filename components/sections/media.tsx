@@ -56,11 +56,9 @@ export async function Media() {
               const href = live?.link ?? item.href;
               const image = live?.image || item.image;
               return (
-                <a
+                <article
                   key={item.category}
-                  href={href}
-                  {...(href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-                  className="media-card group grid overflow-hidden rounded-[20px] bg-card-light shadow-card transition-shadow hover:shadow-panel"
+                  className="media-card group relative grid overflow-hidden rounded-[20px] bg-card-light shadow-card transition-shadow hover:shadow-panel"
                 >
                   <div className="media-copy flex flex-col justify-between gap-6 p-[27px]">
                     {/* Below lg this block is lifted over the image and set in
@@ -97,8 +95,29 @@ export async function Media() {
                         />
                         {item.action}
                       </span>
-                      <span className="media-word tracked font-display text-[32px] leading-[1.28] text-accent uppercase">
-                        {item.category}
+                      <span className="flex items-center gap-3">
+                        <span className="media-word tracked font-display text-[32px] leading-[1.28] text-accent uppercase">
+                          {item.category}
+                        </span>
+
+                        {/* Straight redirects, not players. They sit above the
+                            card's own stretched link so they stay clickable. */}
+                        {item.links?.map((link) => (
+                          <a
+                            key={link.label}
+                            href={link.href}
+                            target="_blank"
+                            rel="noreferrer"
+                            aria-label={`${item.category} on ${link.label}`}
+                            className="relative z-30 -m-1 grid place-items-center p-1 text-[#878787] transition-colors hover:text-accent"
+                          >
+                            <span
+                              aria-hidden
+                              style={{ '--m': `url(/vectors/icon-${link.icon}.svg)` } as CSSProperties}
+                              className="brand-icon size-[18px]"
+                            />
+                          </a>
+                        ))}
                       </span>
                     </div>
                   </div>
@@ -120,7 +139,16 @@ export async function Media() {
                       className="pointer-events-none absolute inset-0 rounded-[inherit] border border-white/20 lg:border-2"
                     />
                   </div>
-                </a>
+
+                  {/* The card's own destination, stretched across it — the card
+                      can no longer be an <a> itself now that it contains one. */}
+                  <a
+                    href={href}
+                    {...(href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+                    aria-label={`${item.category}: ${title}`}
+                    className="absolute inset-0 z-20"
+                  />
+                </article>
               );
             })}
           </div>

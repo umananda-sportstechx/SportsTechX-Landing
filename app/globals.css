@@ -1305,3 +1305,12 @@
     animation: none;
   }
 }
+
+
+/* A glyph tinted with currentColor, for the brand marks beside a media
+ * category. Same masking idea as .footer-icon, without its sizing. */
+.brand-icon {
+  display: block;
+  background-color: currentColor;
+  mask: var(--m) no-repeat center / contain;
+}
