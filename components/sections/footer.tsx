@@ -108,7 +108,21 @@ export function Footer() {
 
         <div className="footer-legal mt-6 flex flex-col gap-2 pb-10 font-mono text-legal text-heading/70 lg:flex-row lg:items-center lg:justify-between dark:text-heading/55">
           <p>{footer.legal}</p>
-          <p>{footer.legalLinks}</p>
+          <p>
+            {footer.legalLinks.map((link, i) => (
+              <span key={link.label}>
+                {i > 0 && <span aria-hidden> · </span>}
+                <a
+                  href={link.href}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="transition-opacity hover:opacity-70"
+                >
+                  {link.label}
+                </a>
+              </span>
+            ))}
+          </p>
         </div>
       </div>
     </footer>

@@ -9,7 +9,7 @@ export const nav = {
     { label: 'MEDIA', href: '#media' },
     { label: 'ABOUT', href: '#about' },
   ],
-  cta: { label: 'JOIN THE NEWSLETTER', href: '#newsletter' },
+  cta: { label: 'JOIN THE NEWSLETTER', href: 'https://newsletter.sportstechx.com' },
 };
 
 export const hero = {
@@ -185,7 +185,8 @@ export const media = {
       kicker: 'SPORTSTECHX WEEKLY',
       title: "#191 🤝 IG Group's $2.15B\nBet on Underdog",
       image: '/images/6552cb5eb340.webp',
-      href: '#newsletter',
+      // Replaced at render time by the latest issue from the Beehiiv feed.
+      href: 'https://newsletter.sportstechx.com',
     },
     {
       category: 'PODCAST',
@@ -201,7 +202,7 @@ export const media = {
       // no kicker: the design hides this card's "Product Title" layer
       title: 'Football Tech Report 2006',
       image: '/images/198f122078d1.webp',
-      href: '#reports',
+      href: 'https://intelligence.sportstechx.com/reports/',
     },
     {
       category: 'EVENTS',
@@ -224,12 +225,10 @@ export const footer = {
     {
       title: 'Quick Links',
       links: [
-        { label: 'Intelligence Hub', href: '#' },
+        { label: 'Intelligence Hub', href: 'https://intelligence.sportstechx.com' },
         { label: 'Solutions', href: '#solutions' },
         { label: 'Media', href: '#media' },
-        // The design has no newsletter section, so this points at the Media
-        // band where the newsletter card lives.
-        { label: 'Newsletter', href: '#media' },
+        { label: 'Newsletter', href: 'https://newsletter.sportstechx.com' },
       ],
     },
     {
@@ -243,7 +242,11 @@ export const footer = {
     },
   ],
   legal: '© 2026 SportsTechX GmbH. All rights reserved.',
-  legalLinks: 'Privacy · Imprint · The Inner Circle of Sports Tech',
+  legalLinks: [
+    { label: 'Privacy', href: 'https://sportstechx.com/privacy-policy' },
+    { label: 'Imprint', href: 'https://sportstechx.com/terms-of-service' },
+    { label: 'The Inner Circle of Sports Tech', href: 'https://sportstechx.com/about' },
+  ],
 };
 
 export const mobileMenu = {
@@ -253,7 +256,7 @@ export const mobileMenu = {
     {
       title: 'CONNECT',
       links: [
-        { label: 'JOIN THE NEWSLETTER', href: '#media', accent: true },
+        { label: 'JOIN THE NEWSLETTER', href: 'https://newsletter.sportstechx.com', accent: true },
         { label: 'LINKEDIN', href: 'https://www.linkedin.com/company/sportstechx' },
         { label: 'YOUTUBE', href: 'https://www.youtube.com/@sportstechx' },
         { label: 'INSTAGRAM', href: 'https://www.instagram.com/sportstechx' },

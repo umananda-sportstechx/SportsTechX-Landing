@@ -76,10 +76,12 @@ export function NavBar() {
             Hidden while the drawer is out: the artboard's 402 board leaves a
             5px sliver of it past the slid page, but the shift is capped at 283
             so a wider phone shows a real chunk of the wordmark instead. */}
-        <BrandLogo
-          className={cn('h-[48px] transition-opacity duration-200', drawerOpen && 'opacity-0 lg:opacity-100')}
-          priority
-        />
+        <a href="#top" aria-label="Back to top" className="inline-flex">
+          <BrandLogo
+            className={cn('h-[48px] transition-opacity duration-200', drawerOpen && 'opacity-0 lg:opacity-100')}
+            priority
+          />
+        </a>
 
         <div className="flex items-center gap-5">
           <nav className="hidden items-center gap-9 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-1 pr-1 pl-[20px] shadow-nav lg:flex">

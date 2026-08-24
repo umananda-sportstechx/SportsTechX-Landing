@@ -2,6 +2,7 @@ import Image from 'next/image';
 import type { CSSProperties } from 'react';
 import { SectionIntro } from '@/components/section-intro';
 import { media } from '@/lib/content';
+import { latestIssues } from '@/lib/newsletter';
 import vectors from '@/design/vectors.json';
 
 /**
@@ -17,8 +18,15 @@ import vectors from '@/design/vectors.json';
  *
  * The card stays pale in dark mode (#dce3f4) and its copy goes black, so this
  * is --color-card-light rather than the page surface.
+ *
+ * The NEWSLETTER card carries the current issue, pulled from the same Beehiiv
+ * feed the STX web app reads. The artboard's placeholder ("#191 IG Group's
+ * $2.15B Bet on Underdog") is itself a real issue off that feed. If the feed is
+ * unreachable the static copy stands in, so the card is never blank.
  */
-export function Media() {
+export async function Media() {
+  const [latest] = await latestIssues();
+
   return (
     <section id="media" className="noise section-y bg-band-2 [--noise-alpha:0.2] dark:[--noise-alpha:0.45]">
       <div className="container-page">
@@ -43,10 +51,15 @@ export function Media() {
             {media.items.map((item) => {
               const key = item.category.toLowerCase();
               const icon = vectors[`icon-media-${key}` as keyof typeof vectors];
+              const live = item.category === 'NEWSLETTER' ? latest : undefined;
+              const title = live?.title ?? item.title;
+              const href = live?.link ?? item.href;
+              const image = live?.image || item.image;
               return (
                 <a
                   key={item.category}
-                  href={item.href}
+                  href={href}
+                  {...(href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
                   className="media-card group grid overflow-hidden rounded-[20px] bg-card-light shadow-card transition-shadow hover:shadow-panel"
                 >
                   <div className="media-copy flex flex-col justify-between gap-6 p-[27px]">
@@ -65,8 +78,10 @@ export function Media() {
                           />
                         </>
                       )}
-                      <p className="media-title font-sans text-[18px] leading-[1.43] font-medium whitespace-pre-line text-white lg:text-heading lg:dark:text-black">
-                        {item.title}
+                      {/* Clamped: a live issue title can run far longer than
+                          the artboard's two lines. */}
+                      <p className="media-title line-clamp-2 font-sans text-[18px] leading-[1.43] font-medium whitespace-pre-line text-white lg:text-heading lg:dark:text-black">
+                        {title}
                       </p>
                     </div>
 
@@ -90,7 +105,7 @@ export function Media() {
 
                   <div className="media-shot relative order-first overflow-hidden lg:order-none lg:min-h-[339px]">
                     <Image
-                      src={item.image}
+                      src={image}
                       alt=""
                       fill
                       sizes="(min-width: 1024px) 320px, 100vw"

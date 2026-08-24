@@ -43,23 +43,28 @@ import { cn } from '@/lib/utils';
 const ORBIT = { outer: 26, mid: 22, inner: 18 };
 const SWEEP = 35;
 
-type Pill = { r: number; a: number; mr?: number; ma?: number; dur: number; sweep: number };
+/**
+ * `w` / `mw` are the artboard's own pill widths — its pills are fixed width
+ * with the glyph and label centred inside, not padded to fit. Deriving the
+ * width from padding instead ran every pill 2-23 too wide.
+ */
+type Pill = { r: number; a: number; mr?: number; ma?: number; dur: number; sweep: number; w: number; mw?: number };
 
 const PILLS: Record<string, Pill> = {
   // 57.3% orbit
-  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, sweep: -SWEEP },
-  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, sweep: SWEEP },
+  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, sweep: -SWEEP, w: 124, mw: 90 },
+  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, sweep: SWEEP, w: 112 },
   // 52.75% orbit
-  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, sweep: -SWEEP },
-  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, sweep: SWEEP },
-  // 16.85% orbit
-  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, sweep: -SWEEP },
-  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, sweep: SWEEP },
+  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, sweep: -SWEEP, w: 128 },
+  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, sweep: SWEEP, w: 102, mw: 78 },
+  // 16.85% orbit — these ride the innermost ring, radius 135 on the artboard
+  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, sweep: -SWEEP, w: 134, mw: 116 },
+  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, sweep: SWEEP, w: 130, mw: 112 },
 };
 
 export function Hero() {
   return (
-    <section className="hero-frame relative isolate h-[100svh] min-h-[640px] overflow-hidden bg-hero">
+    <section id="top" className="hero-frame relative isolate h-[100svh] min-h-[640px] overflow-hidden bg-hero">
       {/* Epicentre motif, exported from Figma as a single SVG. Sized off the
           frame's height so the orbits keep their proportions at any viewport. */}
       <div
@@ -129,6 +134,8 @@ export function Hero() {
                 '--a-lg': `${p.a}deg`,
                 '--dur': `${p.dur}s`,
                 '--sweep': `${p.sweep}deg`,
+                '--pw': `${p.w}px`,
+                '--pw-m': `${p.mw ?? p.w}px`,
               } as React.CSSProperties
             }
             // -z-10 puts the pills behind the headline and CTAs, so a full
@@ -139,11 +146,11 @@ export function Hero() {
             <span className="orbit-pill" data-pill={pill.label}>
               <span
                 className={cn(
-                  'inline-flex h-[24px] items-center gap-[7px] rounded-full px-[14px] font-mono text-micro',
-                  'shadow-pill tracking-[0.1em] whitespace-nowrap lg:h-[31px] lg:px-[22px]',
+                  'inline-flex h-[24px] w-[var(--pw-m)] items-center justify-center gap-[7px] rounded-full font-mono text-[11px]',
+                  'shadow-pill tracking-[0.1em] whitespace-nowrap lg:h-[31px] lg:w-[var(--pw)] lg:text-[14px]',
                   pill.primary
-                    ? 'border-2 border-accent bg-white text-accent-2 dark:bg-surface'
-                    : 'border-2 border-pill-border bg-[#d9d9d9]/12 text-pill-fg'
+                    ? 'border-[1.5px] border-accent bg-white text-accent-2 lg:border-2 dark:bg-surface'
+                    : 'border-[1.5px] border-pill-border bg-[#d9d9d9]/12 text-pill-fg lg:border-2'
                 )}
               >
                 {/* Each glyph keeps its own artboard dimensions — not a uniform set. */}
