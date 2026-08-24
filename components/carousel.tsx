@@ -81,7 +81,9 @@ export function Carousel({
     const tick = (now: number) => {
       const dt = Math.min(now - last, 100) / 1000; // clamp after a background tab
       last = now;
-      if (paused.current) {
+      // data-swapping: the theme ripple is snapshotting the page, and scroll
+      // writes during that are pure cost — see theme-toggle.tsx.
+      if (paused.current || document.documentElement.hasAttribute('data-swapping')) {
         pos = el.scrollLeft; // pick up wherever the arrows or a drag left it
       } else {
         const half = el.scrollWidth / 2;

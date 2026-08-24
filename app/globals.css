@@ -1271,8 +1271,12 @@
 
 /* ===== Theme ripple =======================================================
  * The incoming theme is clipped in through a circle grown from the switch,
- * over the outgoing one held still beneath it. Geometry arrives as custom
- * properties on the root, which the ::view-transition tree inherits.
+ * over the outgoing one held still beneath it.
+ *
+ * The circle itself is animated from theme-toggle.tsx with concrete pixel
+ * values rather than declared here against custom properties: the geometry
+ * is only known at click time, and inheriting it into the ::view-transition
+ * tree is the step that was failing in other engines.
  *
  * The default cross-fade is switched off on both halves: fading them together
  * dips the whole page through a washed-out midpoint, which is exactly what the
@@ -1290,17 +1294,37 @@
 
 ::view-transition-new(root) {
   z-index: 1;
-  animation: theme-ripple 520ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 
-@keyframes theme-ripple {
-  from {
-    clip-path: circle(0 at var(--ripple-x, 50%) var(--ripple-y, 50%));
-  }
-  to {
-    clip-path: circle(var(--ripple-r, 150vmax) at var(--ripple-x, 50%) var(--ripple-y, 50%));
-  }
+/* The no-View-Transitions path: no snapshot to clip, so the incoming page
+ * colour sweeps over the live page and the theme swaps behind it. Same
+ * gesture, and it costs one element. */
+.theme-wash {
+  position: fixed;
+  inset: 0;
+  z-index: 2147483647;
+  pointer-events: none;
+  background: var(--bg-next);
 }
+
+ /* The colour the page is about to become — body's own background in the
+  * other theme. Keyed off data-theme, which is the attribute next-themes is
+  * configured with (see the top of this file); a `.dark` class never lands. */
+:root[data-theme='light'] {
+  --bg-next: #000;
+}
+
+:root[data-theme='dark'] {
+  --bg-next: #fff;
+}
+
+/* Nothing else moves while the page is being snapshotted — see the comment in
+ * theme-toggle.tsx. The carousel drift watches the same attribute from JS. */
+:root[data-swapping] .orbit,
+:root[data-swapping] .orbit-pill {
+  animation-play-state: paused;
+}
+
 
 /* The handler already bails out before starting a transition, but a reader can
  * flip the setting mid-flight. */
