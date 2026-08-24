@@ -171,7 +171,7 @@ export type MediaItem = {
   /** Absent where the design hides the card's "Product Title" layer. */
   kicker?: string;
   /** Extra destinations shown as brand icons beside the category word. */
-  links?: { label: string; href: string; icon: string }[];
+  links?: { label: string; href: string; icon: string; color: string }[];
   title: string;
   image: string;
   href: string;
@@ -199,11 +199,17 @@ export const media = {
       // Spotify is the default destination for the card itself.
       href: 'https://open.spotify.com/show/2IWyvvtC2fAeRAyt55TmtF',
       links: [
-        { label: 'Spotify', href: 'https://open.spotify.com/show/2IWyvvtC2fAeRAyt55TmtF', icon: 'spotify' },
+        {
+          label: 'Spotify',
+          href: 'https://open.spotify.com/show/2IWyvvtC2fAeRAyt55TmtF',
+          icon: 'spotify',
+          color: '#1DB954',
+        },
         {
           label: 'YouTube',
           href: 'https://www.youtube.com/playlist?list=PLptEoomboUFS422kldem0tLkXJjDbHjfx',
           icon: 'footer-youtube',
+          color: '#FF0000',
         },
       ],
     },

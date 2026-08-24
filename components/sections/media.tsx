@@ -3,6 +3,7 @@ import type { CSSProperties } from 'react';
 import { SectionIntro } from '@/components/section-intro';
 import { media } from '@/lib/content';
 import { latestIssues } from '@/lib/newsletter';
+import { showArtwork } from '@/lib/podcast';
 import vectors from '@/design/vectors.json';
 
 /**
@@ -25,7 +26,9 @@ import vectors from '@/design/vectors.json';
  * unreachable the static copy stands in, so the card is never blank.
  */
 export async function Media() {
-  const [latest] = await latestIssues();
+  // Both live sources in parallel — neither should hold the other up.
+  const [issues, show] = await Promise.all([latestIssues(), showArtwork()]);
+  const [latest] = issues;
 
   return (
     <section id="media" className="noise section-y bg-band-2 [--noise-alpha:0.2] dark:[--noise-alpha:0.45]">
@@ -54,7 +57,8 @@ export async function Media() {
               const live = item.category === 'NEWSLETTER' ? latest : undefined;
               const title = live?.title ?? item.title;
               const href = live?.link ?? item.href;
-              const image = live?.image || item.image;
+              const image =
+                item.category === 'PODCAST' ? show?.image || item.image : live?.image || item.image;
               return (
                 <article
                   key={item.category}
@@ -109,12 +113,19 @@ export async function Media() {
                             target="_blank"
                             rel="noreferrer"
                             aria-label={`${item.category} on ${link.label}`}
-                            className="relative z-30 -m-1 grid place-items-center p-1 text-[#878787] transition-colors hover:text-accent"
+                            className="relative z-30 -m-1 grid place-items-center p-1 transition-opacity hover:opacity-75"
                           >
+                            {/* The glyph is a mask tinted by `color`, so each
+                                mark carries its own brand colour. */}
                             <span
                               aria-hidden
-                              style={{ '--m': `url(/vectors/icon-${link.icon}.svg)` } as CSSProperties}
-                              className="brand-icon size-[18px]"
+                              style={
+                                {
+                                  '--m': `url(/vectors/icon-${link.icon}.svg)`,
+                                  color: link.color,
+                                } as CSSProperties
+                              }
+                              className="brand-icon size-[26px]"
                             />
                           </a>
                         ))}
