@@ -18,7 +18,10 @@ import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 
 const ROOT = resolve(dirname(fileURLToPath(import.meta.url)), '..');
-const FIG = resolve(ROOT, 'STX-Figma.fig');
+// `--file` points the decoder at another board (interactions.fig) without
+// touching the pipeline below, which is specific to the main design file.
+const argFile = process.argv.indexOf('--file');
+const FIG = resolve(ROOT, argFile > -1 ? process.argv[argFile + 1] : 'STX-Figma.fig');
 
 /* ---------- zip ---------- */
 
@@ -454,6 +457,18 @@ if (process.argv.includes('--raw')) {
 }
 
 const nodes = doc.nodeChanges.map(slim);
+
+// `--dump <path>` writes just the slim tree and stops. Everything past this
+// point is written for the main design file — it rewrites design/ and prunes
+// public/images against whatever it just read, so a second board must not
+// reach it.
+const argDump = process.argv.indexOf('--dump');
+if (argDump > -1) {
+  writeFileSync(process.argv[argDump + 1], JSON.stringify(nodes, null, 2));
+  console.log(`${nodes.length} nodes -> ${process.argv[argDump + 1]}`);
+  process.exit(0);
+}
+
 const tok = tokens(nodes);
 
 if (process.argv.includes('--check')) {
