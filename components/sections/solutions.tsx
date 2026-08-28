@@ -73,7 +73,7 @@ export function Solutions() {
   const [sector, setSector] = useState(solutions.sectors[0].id);
 
   return (
-    <section id="solutions" className="section-y bg-surface">
+    <section id="solutions" data-rise className="section-y bg-surface">
       <div className="container-page">
         <SectionIntro title={solutions.title} tracking="tracking-[0.05em]">
           <div className="mt-1 flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-5">
@@ -183,11 +183,24 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
           <button
             type="button"
             className={cn(
-              'card-cta tracked mt-8 inline-flex h-[42px] items-center justify-center rounded-full px-6 text-label transition-opacity hover:opacity-85',
+              'card-cta group/cta tracked mt-8 inline-flex h-[42px] items-center justify-center rounded-full px-6 text-label',
+              // Both cards converge on the brand pink with white type — the
+              // dark card's label starts black, so colour animates too.
+              // bg-accent-2 is #ED1A5E, the value on the board.
+              'hover:bg-accent-2 hover:text-white active:bg-accent-2 active:text-white',
+              // scale, not transform: Tailwind v4 emits scale-* to the `scale`
+              // property, and a transition naming `transform` never fires.
+              'transition-[background-color,color,scale] duration-200 ease-out',
+              'active:duration-[80ms]',
+              // Only the movement waits on prefers-reduced-motion.
+              'motion-safe:hover:scale-105 motion-safe:active:scale-95',
               dark ? 'bg-white font-mono text-black' : 'bg-black font-mono-alt text-white'
             )}
           >
-            {card.cta}
+            {/* Only the label dims on press; the board keeps the fill solid. */}
+            <span className="transition-opacity duration-[80ms] ease-out group-active/cta:opacity-70">
+              {card.cta}
+            </span>
           </button>
         </div>
         <div
@@ -303,6 +316,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
                     alt=""
                     width={56}
                     height={56}
+                    placeholder="blur"
                     className="card-avatar size-14 rounded-[3px] object-cover"
                   />
                   <span

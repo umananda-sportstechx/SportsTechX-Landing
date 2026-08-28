@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { BlurImage } from '@/components/blur-image';
 import { Fragment } from 'react';
 import { Carousel } from '@/components/carousel';
 import { trustedBy } from '@/lib/content';
@@ -27,7 +27,7 @@ export function TrustedBy() {
   const rows = [trustedBy.partners, [...trustedBy.partners.slice(4), ...trustedBy.partners.slice(0, 4)]];
 
   return (
-    <section className="noise section-y bg-band [--noise-alpha:0.3] dark:[--noise-alpha:0]">
+    <section data-rise className="noise section-y bg-band [--noise-alpha:0.3] dark:[--noise-alpha:0]">
       <div className="container-page">
         <SectionIntro title={trustedBy.title} subtitle={trustedBy.subtitle} />
 
@@ -58,13 +58,13 @@ export function TrustedBy() {
                       so skipping the first left the join between the last card
                       and the first with no rule while every other pair had one. */}
                   <span aria-hidden className="my-auto hidden h-[264px] w-px shrink-0 self-center bg-[#b6b6b6] lg:block" />
-                  <article className="w-[158px] shrink-0 snap-start lg:w-[210px]">
-                    <div className="relative h-[175px] overflow-hidden rounded-[7px] lg:h-[232px]">
-                      <Image
+                  <article className="w-[158px] shrink-0 snap-start sm:w-[171px] xl:w-[210px]">
+                    <div className="relative h-[175px] overflow-hidden rounded-[7px] sm:h-[191px] xl:h-[232px]">
+                      <BlurImage
                         src={partner.photo}
                         alt=""
                         fill
-                        sizes="(min-width: 1024px) 210px, 158px"
+                        sizes="(min-width: 1280px) 210px, (min-width: 640px) 171px, 158px"
                         className="object-cover"
                       />
                       {/* Bottom scrim: #454545 transparent to #232529 opaque. */}

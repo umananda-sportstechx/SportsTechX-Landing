@@ -1,4 +1,4 @@
-import Image from 'next/image';
+import { BlurImage } from '@/components/blur-image';
 import type { CSSProperties } from 'react';
 import { SectionIntro } from '@/components/section-intro';
 import { media } from '@/lib/content';
@@ -25,13 +25,24 @@ import vectors from '@/design/vectors.json';
  * $2.15B Bet on Underdog") is itself a real issue off that feed. If the feed is
  * unreachable the static copy stands in, so the card is never blank.
  */
+/**
+ * A tiny version of a remote image, to stand in while the full one loads.
+ *
+ * The optimiser validates both parameters: `q` is mandatory, and `w` has to be
+ * one of the configured sizes — 16 is not among them in this version, which is
+ * why an earlier `w=16&q=10` returned 400 and the live cards silently lost
+ * their placeholder. 32 is the smallest allowed, and still about a kilobyte.
+ * scratchpad/blurcheck.mjs fails if this ever 400s again.
+ */
+const tiny = (url: string) => `/_next/image?url=${encodeURIComponent(url)}&w=32&q=75`;
+
 export async function Media() {
   // Both live sources in parallel — neither should hold the other up.
   const [issues, show] = await Promise.all([latestIssues(), showArtwork()]);
   const [latest] = issues;
 
   return (
-    <section id="media" className="noise section-y bg-band-2 [--noise-alpha:0.2] dark:[--noise-alpha:0.45]">
+    <section id="media" data-rise className="noise section-y bg-band-2 [--noise-alpha:0.2] dark:[--noise-alpha:0.45]">
       <div className="container-page">
         <SectionIntro title={media.title} subtitle={media.subtitle} />
 
@@ -62,7 +73,7 @@ export async function Media() {
               return (
                 <article
                   key={item.category}
-                  className="media-card group relative grid overflow-hidden rounded-[20px] bg-card-light shadow-card transition-shadow hover:shadow-panel"
+                  className="media-card group relative grid overflow-hidden rounded-[20px] bg-card-light shadow-card hover:shadow-panel"
                 >
                   <div className="media-copy flex flex-col justify-between gap-6 p-[27px]">
                     {/* Below lg this block is lifted over the image and set in
@@ -134,12 +145,18 @@ export async function Media() {
                   </div>
 
                   <div className="media-shot relative order-first overflow-hidden lg:order-none lg:min-h-[339px]">
-                    <Image
+                    <BlurImage
                       src={image}
                       alt=""
                       fill
                       sizes="(min-width: 1024px) 320px, 100vw"
-                      className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                      // Blurred thumbnail first, then a cross-fade to the full
+                      // image. The artboard photos are static imports and carry
+                      // their own blur data; a live issue's hero arrives from
+                      // the feed as a URL with none, so it points at a 16px
+                      // optimisation of itself and the placeholder blurs it.
+                      standIn={typeof image === 'string' ? tiny(image) : undefined}
+                      className="object-cover"
                     />
                     {/* The artboard's stroke is INSIDE-aligned, so it belongs
                         over the photo. As a border on this box it inset the

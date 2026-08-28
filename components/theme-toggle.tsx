@@ -117,14 +117,23 @@ export function ThemeToggle({ className }: { className?: string }) {
       onClick={toggle}
       aria-label="Switch colour theme"
       className={cn(
-        'grid size-[42px] shrink-0 place-items-center rounded-full',
+        'group/toggle grid size-[42px] shrink-0 place-items-center rounded-full',
         'bg-white/45 text-fg transition-colors hover:bg-white/70',
+        'active:opacity-70',
         'dark:bg-transparent dark:hover:bg-white/10',
         className
       )}
     >
-      <Moon className="size-[18px] dark:hidden" strokeWidth={1.5} />
-      <Sun className="hidden size-[18px] dark:block" strokeWidth={1.5} />
+      {/* The board fills the glyph on hover rather than recolouring its stroke:
+          transparent to #EC1E5F over 80ms. */}
+      <Moon
+        className="size-[18px] fill-transparent transition-[fill] duration-[80ms] ease-out group-hover/toggle:fill-accent dark:hidden"
+        strokeWidth={1.5}
+      />
+      <Sun
+        className="hidden size-[18px] fill-transparent transition-[fill] duration-[80ms] ease-out group-hover/toggle:fill-accent dark:block"
+        strokeWidth={1.5}
+      />
     </button>
   );
 }

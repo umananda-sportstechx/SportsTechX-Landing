@@ -24,7 +24,7 @@ import { cn } from '@/lib/utils';
  * 56px would make it 1068px wide and overflow the container at the lg
  * breakpoint (1024px, where the column is only ~921px). This tracks from 28px
  * there up to 56px at 1512. */
-const RULE = 'hidden w-px shrink-0 bg-white/20 lg:block lg:h-[158px]';
+const RULE = 'hidden w-px shrink-0 bg-white/20 md:block md:h-[133px] lg:h-[158px]';
 
 /**
  * The mobile cross. The artboard draws it as four separate 1px segments at 61%
@@ -39,15 +39,15 @@ const CROSS = [
   'top-[48.5%] left-[5.5%] h-px w-[40.6%]',
   'top-[48.5%] left-[53.9%] h-px w-[41.2%]',
 ];
-const GAP = 'lg:gap-[clamp(28px,5.74vw-30.8px,56px)]';
+const GAP = 'md:gap-[clamp(14px,5.74vw-30.8px,56px)]';
 
 export function Stats() {
   return (
-    <section className="noise section-y bg-stats [--noise-alpha:0.6]">
+    <section data-rise className="noise section-y bg-stats [--noise-alpha:0.6]">
       <div className="container-page">
         <div className="relative">
           {CROSS.map((pos) => (
-            <span key={pos} aria-hidden className={cn('absolute bg-white/[0.61] lg:hidden', pos)} />
+            <span key={pos} aria-hidden className={cn('absolute bg-white/[0.61] md:hidden', pos)} />
           ))}
 
         <ul
@@ -56,12 +56,13 @@ export function Stats() {
             // a 362 column, which is what puts the right column's copy clear of
             // the centre rule rather than hard against it.
             'grid grid-cols-2 gap-x-[50px] text-white',
-            // Top-aligned: each figure starts level with the top of its rule.
-            // The artboard uses align: MAX, but there the rule is 149 against a
-            // 140 block, so bottom-aligning offset the text by only 9px. Here
-            // the rules are 158 against a ~106 block, which stranded ~52px of
-            // empty space above every figure.
-            'lg:mx-auto lg:flex lg:w-fit lg:items-start',
+            // Centred, not top- or bottom-aligned. The artboard uses align: MAX
+            // against a 149 rule and a 140 block, so its 9px of slack is
+            // invisible. Here the rules are 158 against a ~106 block, and
+            // parking all 52px of that slack at one end reads as the figure
+            // sitting outside its rule — above it when bottom-aligned, below it
+            // when top-aligned. Splitting the difference keeps it enclosed.
+            'md:mx-auto md:flex md:w-fit md:items-center',
             GAP
           )}
         >
@@ -72,7 +73,7 @@ export function Stats() {
                 className={cn(
                   // Both columns read from the left, 20 in from their own cell,
                   // as the artboard has them.
-                  'flex flex-col items-start py-5 pl-5 lg:w-[155px] lg:px-0 lg:py-0'
+                  'flex flex-col items-start py-5 pl-5 md:w-[140px] md:px-0 md:py-0 lg:w-[155px]'
                 )}
               >
                 <div className="flex flex-col gap-[8px] text-left">

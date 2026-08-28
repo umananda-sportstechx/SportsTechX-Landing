@@ -3,6 +3,21 @@
  * To re-check a value:  node scripts/fig-inspect.mjs --text "<frame name>"
  */
 
+import type { StaticImageData } from 'next/image';
+import img17495777b6f3 from '@/public/images/17495777b6f3.jpg';
+import imgb3d04779161b from '@/public/images/b3d04779161b.jpg';
+import img389d48c3df5e from '@/public/images/389d48c3df5e.jpg';
+import img94ce770cf9e8 from '@/public/images/94ce770cf9e8.jpg';
+import imgd9507786c8d8 from '@/public/images/d9507786c8d8.jpg';
+import img75683fd57261 from '@/public/images/75683fd57261.jpg';
+import img68e925ea570d from '@/public/images/68e925ea570d.jpg';
+import img4b66197f9eb7 from '@/public/images/4b66197f9eb7.jpg';
+import imgf342d6ba5294 from '@/public/images/f342d6ba5294.png';
+import img6552cb5eb340 from '@/public/images/6552cb5eb340.webp';
+import imgb8758def93ad from '@/public/images/b8758def93ad.webp';
+import img198f122078d1 from '@/public/images/198f122078d1.webp';
+import imgdd889ac2c460 from '@/public/images/dd889ac2c460.webp';
+
 export const nav = {
   links: [
     { label: 'SOLUTIONS', href: '#solutions' },
@@ -50,14 +65,14 @@ export const trustedBy = {
    * artboard, so swap these for real partner marks when they exist.
    */
   partners: [
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/17495777b6f3.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/b3d04779161b.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/389d48c3df5e.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/94ce770cf9e8.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/d9507786c8d8.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/75683fd57261.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/68e925ea570d.jpg' },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: '/images/4b66197f9eb7.jpg' },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img17495777b6f3 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: imgb3d04779161b },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img389d48c3df5e },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img94ce770cf9e8 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: imgd9507786c8d8 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img75683fd57261 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img68e925ea570d },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img4b66197f9eb7 },
   ],
 };
 
@@ -65,7 +80,7 @@ const testimonial = {
   quote: '“We walked into our raise knowing the market cold. That confidence changed every conversation.”',
   name: 'Alexander Janssen',
   role: 'CEO, Dutch SportsTech Fund',
-  avatar: '/images/f342d6ba5294.png',
+  avatar: imgf342d6ba5294,
 };
 
 export type SolutionCard = {
@@ -81,6 +96,29 @@ export type SolutionCard = {
   testimonialsLabel: string;
   testimonials: typeof testimonial[];
 };
+
+/**
+ * The card that drops from SOLUTIONS. Two columns on the board — 503x163, the
+ * rows 28 tall with a 28 circular badge and the label 38 in. The role glyphs
+ * are the same 12x12 and 14x8 vectors the hero pills use; the product rows show
+ * their initial, as the board draws them.
+ */
+export const navMenu = [
+  {
+    label: 'BY ROLE',
+    items: [
+      { label: 'FOR FOUNDERS', href: '#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12 },
+      { label: 'FOR INVESTORS', href: '#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8 },
+    ],
+  },
+  {
+    label: 'BY PRODUCT',
+    items: [
+      { label: 'ATLAS', href: '#solutions', initial: 'A' },
+      { label: 'PLAYMAKERS', href: '#solutions', initial: 'P' },
+    ],
+  },
+];
 
 export const solutions = {
   title: 'SOLUTIONS',
@@ -178,7 +216,7 @@ export type MediaItem = {
   /** Extra destinations shown as brand icons beside the category word. */
   links?: { label: string; href: string; icon: string; color: string }[];
   title: string;
-  image: string;
+  image: StaticImageData;
   href: string;
 };
 
@@ -191,7 +229,7 @@ export const media = {
       action: 'SUBSCRIBE',
       kicker: 'SPORTSTECHX WEEKLY',
       title: "#191 🤝 IG Group's $2.15B\nBet on Underdog",
-      image: '/images/6552cb5eb340.webp',
+      image: img6552cb5eb340,
       // Replaced at render time by the latest issue from the Beehiiv feed.
       href: 'https://newsletter.sportstechx.com',
     },
@@ -200,7 +238,7 @@ export const media = {
       action: 'LISTEN',
       kicker: 'STX ALLSTARS PODCAST',
       title: 'From M&A Advisory to Early Stage Sports Tech Investor - Uday Khanna',
-      image: '/images/b8758def93ad.webp',
+      image: imgb8758def93ad,
       // Spotify is the default destination for the card itself.
       href: 'https://open.spotify.com/show/2IWyvvtC2fAeRAyt55TmtF',
       links: [
@@ -223,7 +261,7 @@ export const media = {
       action: 'READ',
       // no kicker: the design hides this card's "Product Title" layer
       title: 'Football Tech Report 2006',
-      image: '/images/198f122078d1.webp',
+      image: img198f122078d1,
       href: 'https://intelligence.sportstechx.com/reports/',
     },
     {
@@ -231,7 +269,7 @@ export const media = {
       action: 'ATTEND',
       // no kicker: the design hides this card's "Product Title" layer
       title: 'The NextGen Sportstech\nSummit 2026',
-      image: '/images/dd889ac2c460.webp',
+      image: imgdd889ac2c460,
       href: '#events',
     },
   ] as MediaItem[]),

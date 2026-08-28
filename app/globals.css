@@ -41,11 +41,19 @@
 
   /* Lines / chrome — light */
   --line: #bababa;
+  /* Scrollbar: the navy the headings use, kept faint so it reads as furniture
+     rather than another pink accent competing with the CTAs. */
+  --scrollbar-thumb: rgb(9 21 57 / 0.22);
+  --scrollbar-thumb-hover: rgb(9 21 57 / 0.42);
   --nav-bg: #ffffff;
   --nav-border: rgb(0 0 0 / 0.09);   /* a 9% hairline, not solid black */
   /* Glass bar behind the nav once the page scrolls. Translucent on purpose —
    * a solid fill would have nothing for the backdrop blur to work against. */
-  --nav-scrim: rgb(255 255 255 / 0.72);
+  /* The docked bar is a gradient, not a flat wash: the interactions board fades
+   * it from 80% to 29% down the band, which is what softens its bottom edge in
+   * place of a rule. */
+  --nav-scrim-from: rgb(255 255 255 / 0.8);
+  --nav-scrim-to: rgb(255 255 255 / 0.29);
   --pill-bg: #d9d9d9;
   --pill-border: #c3c3c3;
   --pill-fg: #828282;
@@ -145,9 +153,12 @@
   --ring-stroke: rgb(255 255 255 / 0.09);
 
   --line: #353a4b;
+  --scrollbar-thumb: rgb(255 255 255 / 0.16);
+  --scrollbar-thumb-hover: rgb(255 255 255 / 0.3);
   --nav-bg: #1b202f;
   --nav-border: #2e354a;
-  --nav-scrim: rgb(18 20 27 / 0.72);   /* matches --surface */
+  --nav-scrim-from: rgb(18 20 27 / 0.8);
+  --nav-scrim-to: rgb(18 20 27 / 0.29);
   --pill-bg: #232833;
   --pill-border: #3a4152;
   --pill-fg: #a6a6a6;
@@ -182,7 +193,6 @@
   --color-line: var(--line);
   --color-nav-bg: var(--nav-bg);
   --color-nav-border: var(--nav-border);
-  --color-nav-scrim: var(--nav-scrim);
   --color-pill-bg: var(--pill-bg);
   --color-pill-border: var(--pill-border);
   --color-pill-fg: var(--pill-fg);
@@ -961,9 +971,20 @@
  * the preview panel stacks *below* the copy instead of beside it, and the
  * three use-case columns stack with a rule between them.
  * ========================================================================= */
+/* ===== Solutions between phone and desktop ================================
+ * The designer's iPad board reflows this card rather than scaling it: 802x2015
+ * against the phone's 402x2152 — wider AND shorter, so the copy re-wraps. A
+ * single-artboard scale model cannot express that, and left unbounded it ran
+ * the phone card to 3.1x by 1023.
+ *
+ * Until the 802 composition is built the scale is capped, which stops the
+ * card rendering at 3x without narrowing it: the card still fills its
+ * container, only the type and spacing inside stop growing. Everything here
+ * stays in 402 units.
+ * ========================================================================= */
 @media (width < 64rem) {
   .solutions-rig {
-    --k: calc(100cqw / 402);
+    --k: min(1.5px, calc(100cqw / 402));
   }
 
   .solution-card {
@@ -1215,6 +1236,26 @@
   }
 }
 
+/* ===== Media on a tablet ==================================================
+ * The designer's iPad board (interactions.fig, "Break points") keeps the grid
+ * two across from ~810 up, on cards of 386x298 — near enough the phone card's
+ * 362x285 that the phone composition carries over unchanged.
+ *
+ * Only --k moves. The block above is written in 362 artboard units, so basing
+ * the scale on HALF the container keeps every one of those numbers correct
+ * once each card occupies half the width. Dividing 100cqw by 362 here instead
+ * is what ran the phone artboard to 3.1x by 1023 and rendered every card at
+ * triple size.
+ * ========================================================================= */
+@media (40rem <= width < 64rem) {
+  .media-rig {
+    --k: calc(50cqw / 362);
+  }
+  .media-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
 /* ===== Footer on the 402 mobile artboard ==================================
  * The "Cloud grid" carries six horizontal lines here rather than two: one
  * above the block, one between every column, and one before the legal rows.
@@ -1222,7 +1263,8 @@
  * ========================================================================= */
 @media (width < 64rem) {
   .footer-rig {
-    --k: calc(100cqw / 362);
+    /* Capped for the same reason as .solutions-rig above. */
+    --k: min(1.5px, calc(100cqw / 362));
   }
 
   .footer-rule {
@@ -1270,6 +1312,189 @@
 
 [data-theme='dark'] .footer-col {
   border-top-color: var(--line);
+}
+
+/* The nav type ramps across the three desktop boards: 13 at w1024-1279, 14 at
+ * w1280-1511, 16 from w1512. Written as plain media queries rather than
+ * Tailwind variants because a custom breakpoint at 1512 is emitted *before*
+ * the built-in xl, so `xl:text-[14px]` won the cascade at 1512 and the last
+ * step never landed. Here the order is explicit.
+ * ========================================================================= */
+.nav-type {
+  font-size: 13px;
+}
+
+@media (width >= 80rem) {
+  .nav-type {
+    font-size: 14px;
+  }
+}
+
+@media (width >= 1512px) {
+  .nav-type {
+    font-size: 16px;
+  }
+}
+
+/* ===== Scrollbar =========================================================
+ * A slim rounded thumb on an empty track, in the heading navy at low alpha —
+ * the page's own furniture rather than a second accent colour.
+ *
+ * The two mechanisms are mutually exclusive in Blink: setting scrollbar-color
+ * switches the engine to the standard scrollbar and drops ::-webkit-scrollbar
+ * styling entirely, which would lose the rounded thumb. So the pseudo-elements
+ * are the default and the standard properties are held back for the engines
+ * that have no pseudo-elements to use.
+ *
+ * Only the page scrolls here; the carousels hide their bars with their own
+ * utilities, which are more specific than these.
+ * ========================================================================= */
+html::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+html::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+html::-webkit-scrollbar-thumb {
+  background-color: var(--scrollbar-thumb);
+  border-radius: 999px;
+  /* A transparent border plus content-box clipping insets the thumb, so it
+     reads as a pill floating in the gutter rather than filling it. */
+  border: 3px solid transparent;
+  background-clip: content-box;
+  transition: background-color 120ms ease-out;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background-color: var(--scrollbar-thumb-hover);
+}
+
+/* The corner where the two bars meet, which defaults to a grey square. */
+html::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@supports not selector(::-webkit-scrollbar) {
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+}
+
+/* ===== Entrance motion ====================================================
+ * The designer's brief: the hero title fades in and up 40px on load, the motif
+ * behind it fades more gradually, and each major section does the same 40px
+ * rise as it comes within 40px of the bottom of the window. Individual elements
+ * inside a section are deliberately left alone — animating them too reads as
+ * fussy, and he asked for restraint.
+ *
+ * The resting state is the default everywhere here. Nothing is hidden by a
+ * stylesheet alone: the load animations end visible, and the scroll ones only
+ * hide an element once Rise has armed it, so a script that never runs leaves a
+ * fully readable page rather than a blank one. That is the failure this pattern
+ * exists to avoid.
+ *
+ * One knob for the duration — the brief says 120ms, which is brisk for a 40px
+ * travel, so it is a token rather than a number sprinkled through the file.
+ * ========================================================================= */
+:root {
+  --rise-distance: 40px;
+  --rise-duration: 120ms;
+  --rise-fade: 200ms;
+}
+
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    translate: 0 var(--rise-distance);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* On load. `both` holds the opening frame until the animation starts, so
+   * there is no flash of the finished state first. */
+  .rise-load {
+    animation: rise-in var(--rise-duration) ease-out both;
+  }
+  .fade-load {
+    animation: fade-in var(--rise-fade) ease-out both;
+  }
+
+  /* On scroll. Armed by Rise, and only for sections still below the fold —
+   * anything already on screen is marked shown without ever being hidden. */
+  [data-rise-armed]:not([data-shown]) {
+    opacity: 0;
+    translate: 0 var(--rise-distance);
+  }
+  /* The transition lives on the shown state alone: declaring it on the hidden
+   * one would make arming an element visibly fade it out. */
+  [data-rise-armed][data-shown] {
+    transition:
+      opacity var(--rise-duration) ease-out,
+      translate var(--rise-duration) ease-out;
+  }
+}
+
+/* ===== Media card states ==================================================
+ * Interactions board: the card lifts to 1.05 on hover over 120ms and settles
+ * back to 1.0 on press over 80ms, its photo drops to 0.75 on hover, and the
+ * whole card drops to 0.75 on press.
+ *
+ * Written here rather than as utilities because hover and press want different
+ * durations for the same property, which one Tailwind `duration-*` cannot say.
+ * The photo's fade sits on .media-shot rather than the <img>, so it does not
+ * fight the blur-up cross-fade the image runs on the same property.
+ * ========================================================================= */
+.media-card {
+  transition:
+    scale 120ms ease-out,
+    opacity 120ms ease-out,
+    box-shadow 120ms ease-out;
+}
+
+.media-card:active {
+  opacity: 0.75;
+}
+
+.media-shot {
+  transition: opacity 120ms ease-out;
+}
+
+.media-card:hover .media-shot {
+  opacity: 0.75;
+}
+
+/* Only the movement waits on prefers-reduced-motion; the fades still land. */
+@media (prefers-reduced-motion: no-preference) {
+  .media-card:hover {
+    /* Lifted above its neighbour, which would otherwise paint over it. */
+    z-index: 1;
+    scale: 1.05;
+  }
+  .media-card:active {
+    scale: 1;
+    transition-duration: 80ms, 120ms, 120ms;
+  }
+}
+
+/* All-caps labels in the nav pills sit high when their line box is centred:
+ * the box reserves descender space that no capital uses, so the visible block
+ * of type ends up above the pill's middle. This drops it onto the optical
+ * centre. 1.8px is measured, not guessed — for Switzer at 16px/24, and it wants
+ * rechecking when New Frank lands, which scratchpad/pillink.mjs asserts.
+ * ========================================================================= */
+.optical-caps {
+  position: relative;
+  top: 1.8px;
 }
 
 /* ===== Theme ripple =======================================================

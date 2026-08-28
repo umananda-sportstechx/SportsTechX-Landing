@@ -1,7 +1,8 @@
 'use client';
 
-import { useSyncExternalStore } from 'react';
+import { useState, useSyncExternalStore } from 'react';
 import { BrandLogo } from '@/components/brand-logo';
+import { NavMenu } from '@/components/nav-menu';
 import { MobileMenuButton, useMobileMenu } from '@/components/mobile-menu';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { nav } from '@/lib/content';
@@ -38,6 +39,7 @@ const subscribe = (onChange: () => void) => {
  */
 export function NavBar() {
   const { open: drawerOpen, lockedY } = useMobileMenu();
+  const [menu, setMenu] = useState(false);
   const scrolled = useSyncExternalStore(
     subscribe,
     () => window.scrollY > 16,
@@ -61,10 +63,12 @@ export function NavBar() {
         // artboard shows the plain nav there, and leaving it on painted a
         // translucent white strip across the top of the slid page.
         scrolled && !drawerOpen
-          // Docked: a full-width glass bar. It has to sit flush at top-0 —
-          // keeping the inset would leave a transparent strip above it with
-          // page content sliding through.
-          ? 'top-0 border-b border-nav-border bg-nav-scrim py-3 shadow-nav backdrop-blur-xl'
+          // Docked: a full-width glass band. The board gives it a white
+          // gradient from 80% to 29% over an 11.6 background blur, and neither
+          // a rule nor a shadow — the fade is what ends the band. Its heights
+          // (92 band, 58 nav, 54 logo) are deliberately not followed: they were
+          // tried and read as too heavy, so the nav keeps its own 52.
+          ? 'top-0 bg-linear-to-b from-[var(--nav-scrim-from)] to-[var(--nav-scrim-to)] py-3 backdrop-blur-[11.6px]'
           : 'top-4 lg:top-6'
       )}
     >
@@ -76,32 +80,56 @@ export function NavBar() {
             Hidden while the drawer is out: the artboard's 402 board leaves a
             5px sliver of it past the slid page, but the shift is capped at 283
             so a wider phone shows a real chunk of the wordmark instead. */}
-        <a href="#top" aria-label="Back to top" className="inline-flex">
+        <a href="#top" aria-label="Back to top" className="group/logo inline-flex">
           <BrandLogo
-            className={cn('h-[48px] transition-opacity duration-200', drawerOpen && 'opacity-0 lg:opacity-100')}
+            className={cn('h-[48px] transition-[filter,opacity] duration-200 ease-out group-hover/logo:brightness-0 group-active/logo:opacity-70 dark:group-hover/logo:invert', drawerOpen && 'opacity-0 lg:opacity-100')}
             priority
           />
         </a>
 
         <div className="flex items-center gap-5">
-          <nav className="hidden items-center gap-9 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-1 pr-1 pl-[20px] shadow-nav lg:flex">
-            {nav.links.map((link) => (
-              <a
-                key={link.label}
-                href={link.href}
-                className="tracked font-sans text-[16px] font-medium text-fg transition-opacity hover:opacity-70"
-              >
-                {link.label}
-              </a>
-            ))}
+          {/* relative: the drop-down is positioned against the pill's left
+              edge, which is where the board aligns it — not against the link. */}
+          <nav
+            className="relative hidden items-center gap-4 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-1 pr-1 pl-[20px] shadow-nav lg:flex xl:gap-9"
+            onMouseLeave={() => setMenu(false)}
+            onBlur={(e) => {
+              if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Escape') setMenu(false);
+            }}
+          >
+            {nav.links.map((link) => {
+              const opens = link.label === 'SOLUTIONS';
+              return (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  // Keyboard opens it too, and any other link closes it.
+                  onMouseEnter={() => setMenu(opens)}
+                  onFocus={() => setMenu(opens)}
+                  aria-expanded={opens ? menu : undefined}
+                  className={cn(
+                    'optical-caps nav-type tracked font-sans font-medium transition-colors duration-[80ms] ease-out hover:text-accent active:opacity-70',
+                    // The board holds the trigger pink for as long as the card
+                    // is out, not just while the pointer is on the word.
+                    opens && menu ? 'text-accent' : 'text-fg'
+                  )}
+                >
+                  {link.label}
+                </a>
+              );
+            })}
             <ThemeToggle />
+            <NavMenu open={menu} />
           </nav>
 
           <a
             href={nav.cta.href}
-            className="tracked hidden items-center justify-center rounded-full border-[1.5px] border-accent-2 bg-accent/5 px-[15px] py-[12px] font-sans text-[16px] font-medium text-accent-2 transition-colors hover:bg-accent/15 lg:inline-flex dark:bg-accent/[0.13]"
+            className="group/cta tracked hidden h-[50px] items-center justify-center rounded-full border-[1.5px] border-accent-2 bg-accent/5 nav-type px-[15px] font-sans font-medium text-accent-2 transition-[background-color,color,scale] duration-200 ease-out hover:bg-accent hover:text-white active:bg-accent active:text-white active:duration-[80ms] motion-safe:hover:scale-105 motion-safe:active:scale-95 lg:inline-flex dark:bg-accent/[0.13]"
           >
-            {nav.cta.label}
+            <span className="optical-caps transition-opacity duration-[80ms] ease-out group-active/cta:opacity-70">{nav.cta.label}</span>
           </a>
 
           {/* Mobile keeps only the theme toggle — the rest lives in the drawer. */}

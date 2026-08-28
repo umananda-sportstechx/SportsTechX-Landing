@@ -1,3 +1,4 @@
+import { Rise } from '@/components/rise';
 import { Footer } from '@/components/sections/footer';
 import { Hero } from '@/components/sections/hero';
 import { Media } from '@/components/sections/media';
@@ -16,6 +17,7 @@ export default function Home() {
         <Media />
       </main>
       <Footer />
+      <Rise />
     </>
   );
 }

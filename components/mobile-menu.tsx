@@ -85,7 +85,11 @@ export function MobileMenuButton({ className }: { className?: string }) {
       aria-controls="mobile-menu"
       aria-label={open ? 'Close menu' : 'Open menu'}
       className={cn(
-        'grid size-[38px] shrink-0 place-items-center rounded-full border-[1.5px] border-black/[0.09] shadow-[0_0_39.4px_rgb(0_0_0/0.08)] transition-colors dark:border-white/[0.12]',
+        'grid size-[38px] shrink-0 place-items-center rounded-full border-[1.5px] border-black/[0.09] shadow-[0_0_39.4px_rgb(0_0_0/0.08)] dark:border-white/[0.12]',
+        'transition-colors duration-[80ms] ease-out',
+        // Pressed reads the same as open on the board — #343434 behind a white
+        // glyph — so the two states share their treatment, dark mode included.
+        'active:bg-[#343434] active:text-white dark:active:bg-white dark:active:text-[#343434]',
         open ? 'bg-[#343434] text-white dark:bg-white dark:text-[#343434]' : 'bg-surface text-fg',
         className
       )}
@@ -144,7 +148,9 @@ export function MobileMenuPanel() {
                       onClick={close}
                       tabIndex={open ? undefined : -1}
                       className={cn(
-                        'tracked block py-1 font-sans text-[16px] leading-none font-medium transition-opacity hover:opacity-70',
+                        // The board's other mobile active state: links drop to 0.5 on press.
+                        'tracked block py-1 font-sans text-[16px] leading-none font-medium',
+                        'transition-opacity duration-[80ms] ease-out hover:opacity-70 active:opacity-50',
                         'accent' in link && link.accent ? 'text-accent-2' : 'text-black dark:text-white'
                       )}
                     >

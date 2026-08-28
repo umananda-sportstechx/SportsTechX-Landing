@@ -69,7 +69,7 @@ export function Hero() {
           frame's height so the orbits keep their proportions at any viewport. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute top-[var(--motif-cy)] left-1/2 -z-30 aspect-square h-[calc(var(--motif-r)*2)] -translate-x-1/2 -translate-y-1/2"
+        className="fade-load pointer-events-none absolute top-[var(--motif-cy)] left-1/2 -z-30 aspect-square h-[calc(var(--motif-r)*2)] -translate-x-1/2 -translate-y-1/2"
       >
         <Image
           src="/icons/epicentre-motif.svg"
@@ -90,7 +90,7 @@ export function Hero() {
         <h1
           // max-width in em, not px, so the designed two-line break survives the
           // fluid type scale at every width.
-          className="tracked max-w-[11em] font-display text-headline leading-[1.08] text-fg uppercase"
+          className="rise-load tracked max-w-[11em] font-display text-headline leading-[1.08] text-fg uppercase"
         >
           {hero.headline}
         </h1>
@@ -99,18 +99,33 @@ export function Hero() {
           {hero.subhead}
         </p>
 
-        <div className="mt-[26px] flex flex-col items-center gap-5 lg:flex-row lg:gap-[30px]">
+        <div className="mt-[26px] flex flex-col items-center gap-5 sm:flex-row sm:gap-[30px] lg:gap-[30px]">
           {hero.ctas.map((cta) => (
             <a
               key={cta.label}
               href={cta.href}
               className={cn(
-                'tracked inline-flex h-[41px] w-[215px] items-center justify-center rounded-[93px] font-mono text-cta text-white',
-                'shadow-cta transition-opacity hover:opacity-90 lg:h-[54px] lg:w-[249px]',
+                'group tracked inline-flex h-[41px] w-[215px] items-center justify-center rounded-[93px] font-mono text-cta text-white',
+                'shadow-cta lg:h-[54px] lg:w-[249px]',
+                // Both buttons go black on hover, per the interactions board.
+                'hover:bg-black active:bg-black',
+                // Tailwind v4 emits scale-* to the `scale` property, not
+                // `transform`, so the transition has to name `scale` — naming
+                // `transform` leaves the button snapping between sizes.
+                'transition-[background-color,scale] duration-200 ease-out',
+                // Press is quicker than hover: 80ms against 200ms.
+                'active:duration-[80ms]',
+                // Only the movement waits on prefers-reduced-motion; the colour
+                // change still lands, so the button never stops responding.
+                'motion-safe:hover:scale-105 motion-safe:active:scale-95',
                 cta.variant === 'primary' ? 'bg-accent-2' : 'bg-slate'
               )}
             >
-              {cta.label}
+              {/* The label alone dims on press — the board keeps the background
+                  solid black and drops only the text to 0.7. */}
+              <span className="transition-opacity duration-[80ms] ease-out group-active:opacity-70">
+                {cta.label}
+              </span>
             </a>
           ))}
         </div>

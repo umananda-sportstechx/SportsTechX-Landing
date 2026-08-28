@@ -209,8 +209,14 @@ function Arrow({
       // row. Sized up to match and pushed off the track; the offset eases back
       // below xl, where the page gutter is too narrow to hold it.
       className={cn(
-        'absolute top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center text-[#606060] transition-opacity',
-        'hover:opacity-70 disabled:pointer-events-none disabled:opacity-25 dark:text-fg-muted',
+        'absolute top-1/2 z-10 grid size-12 -translate-y-1/2 place-items-center text-[#606060] dark:text-fg-muted',
+        // Interactions board: the chevron fades to 0.5 on hover, then comes
+        // back to full and shrinks to 0.85 on press.
+        'transition-[opacity,scale] duration-[80ms] ease-out',
+        'hover:opacity-50 active:opacity-100 motion-safe:active:scale-[0.85]',
+        // A disabled arrow takes no pointer events, so the states above cannot
+        // fight this.
+        'disabled:pointer-events-none disabled:opacity-25',
         side === 'left' ? '-left-1 lg:-left-[42px] xl:-left-[52px]' : '-right-1 lg:-right-[42px] xl:-right-[52px]',
         className
       )}

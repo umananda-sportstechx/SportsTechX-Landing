@@ -39,7 +39,7 @@ function Icon({ name, className }: { name: string; className?: string }) {
 
 export function Footer() {
   return (
-    <footer id="about" className="relative bg-surface">
+    <footer id="about" data-rise className="relative bg-surface">
       {/* The container query box must be the content column, not the footer:
           container-type on the <footer> made 100cqw the viewport and scaled
           every artboard unit by 1.1. */}
@@ -69,7 +69,7 @@ export function Footer() {
             <div className="flex flex-col gap-px">
               <a
                 href={`mailto:${footer.email}`}
-                className="footer-contact inline-flex items-center gap-[13px] font-sans text-body-sm text-heading transition-opacity hover:opacity-70"
+                className="footer-contact inline-flex items-center gap-[13px] font-sans text-body-sm text-heading transition-colors duration-[80ms] ease-out hover:text-black active:text-heading/50 dark:hover:text-white"
               >
                 <Icon name="mail" />
                 <span className="text-heading/70 dark:text-heading/55">{footer.email}</span>
@@ -92,7 +92,7 @@ export function Footer() {
                     <a
                       href={link.href}
                       {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-                      className="footer-link inline-flex items-center gap-[15px] font-sans text-body leading-[1.78] text-heading/70 transition-opacity hover:opacity-70 dark:text-heading/55"
+                      className="footer-link inline-flex items-center gap-[15px] font-sans text-body leading-[1.78] text-heading/70 dark:text-heading/55 transition-colors duration-[80ms] ease-out hover:text-black active:text-heading/50 dark:hover:text-white"
                     >
                       {'icon' in link && <Icon name={link.icon as string} />}
                       {link.label}
@@ -116,7 +116,7 @@ export function Footer() {
                   href={link.href}
                   target="_blank"
                   rel="noreferrer"
-                  className="transition-opacity hover:opacity-70"
+                  className="transition-colors duration-[80ms] ease-out hover:text-black active:text-heading/50 dark:hover:text-white"
                 >
                   {link.label}
                 </a>
