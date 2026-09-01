@@ -276,7 +276,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
         <p
           className={cn(
             'card-stories-label tracked text-center text-label',
-            dark ? 'font-mono text-[#e6e6ff]/70' : 'font-mono-alt text-navy'
+            dark ? 'font-mono text-[#e6e6ff]/70' : 'font-mono text-navy/85'
           )}
         >
           {card.testimonialsLabel}
@@ -320,13 +320,12 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
                     className="card-avatar size-14 rounded-[3px] object-cover"
                   />
                   <span
-                    className={cn(
-                      'card-chip-text tracked text-left font-mono-alt text-[15px] leading-[1.27]',
-                      dark ? 'text-white' : 'text-black'
-                    )}
+                    className={cn('card-chip-text text-left', dark ? 'text-white' : 'text-black')}
                   >
-                    <span className="block">{t.name}</span>
-                    <span className="block">{t.role}</span>
+                    <span className="card-chip-name block font-sans font-medium">{t.name}</span>
+                    <span className="card-chip-role block font-mono tracking-[-0.03em] opacity-60">
+                      {t.role}
+                    </span>
                   </span>
                 </figcaption>
               </figure>

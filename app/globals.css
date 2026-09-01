@@ -636,10 +636,6 @@
     height: calc(56 * var(--k));
     border-radius: calc(3 * var(--k));
   }
-  .card-chip-text {
-    font-size: max(11px, calc(15 * var(--k)));
-    line-height: calc(19 / 15);
-  }
   /* The artboard sets these 25 in from the card edge, outside the story
    * section's own 58 of padding. */
   .card-arrow {
@@ -919,6 +915,22 @@
 }
 
 
+/* The testimonial byline is two typefaces, not one. Figma stores it as a single
+ * text node whose base style is Space Mono, then overrides every character:
+ * the name runs New Frank Medium 15/19 at normal tracking, the role CommitMono
+ * 12/19 at -3% and 60% opacity. Reading only the node's base style is what put
+ * both lines in Space Mono at +10%.
+ * ========================================================================= */
+.card-chip-name {
+  font-size: max(11px, calc(15 * var(--k)));
+  line-height: calc(19 / 15);
+}
+
+.card-chip-role {
+  font-size: max(9px, calc(12 * var(--k)));
+  line-height: calc(19 / 12);
+}
+
 /* Shared between both Solutions breakpoints: the motif squares and the ring
  * art are the same drawing at either size, so they are shares of whatever box
  * the breakpoint gives them rather than absolute units. */
@@ -1119,8 +1131,6 @@
   }
   .card-chip-text {
     text-align: center;
-    font-size: max(11px, calc(15 * var(--k)));
-    line-height: calc(19 / 15);
   }
   .card-arrow {
     width: calc(27 * var(--k));

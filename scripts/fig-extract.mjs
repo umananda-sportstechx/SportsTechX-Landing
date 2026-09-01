@@ -442,6 +442,67 @@ const doc = decodeCanvas(zip.get('canvas.fig'));
 
 // `--raw <name>` dumps undigested nodeChanges while working out what the
 // format carries. Nothing downstream depends on it.
+// `--fonts` dumps the EFFECTIVE typeface of every text node as JSON: the base
+// style where a node has one face, and the per-run styles where it does not.
+// The slim tree records only the base, which is why a node styled run by run
+// reads as one font when it is really two.
+if (process.argv.includes('--fonts')) {
+  const key = (n) => `${n.guid.sessionID}:${n.guid.localID}`;
+  const out = [];
+  for (const node of doc.nodeChanges) {
+    const chars = node.textData?.characters;
+    if (!chars) continue;
+    const base = { family: node.fontName?.family, style: node.fontName?.style, size: node.fontSize };
+    const table = node.textData.styleOverrideTable ?? [];
+    const ids = node.textData.characterStyleIDs ?? [];
+    const runs = [];
+    if (table.length && ids.length) {
+      // Walk the characters so each run carries the text it actually styles.
+      let start = 0;
+      for (let i = 1; i <= ids.length; i++) {
+        if (i < ids.length && ids[i] === ids[i - 1]) continue;
+        const o = table.find((t) => t.styleID === ids[start]);
+        const text = chars.slice(start, i).trim();
+        if (text) runs.push({ text, family: o?.fontName?.family ?? base.family,
+          style: o?.fontName?.style ?? base.style, size: o?.fontSize ?? base.size });
+        start = i;
+      }
+    }
+    out.push({ id: key(node), chars, base, runs: runs.length > 1 ? runs : [] });
+  }
+  console.log(JSON.stringify(out));
+  process.exit(0);
+}
+
+// `--overrides` lists TEXT nodes whose per-character styles disagree with the
+// node's base style. The slim tree records only the base, so a node styled run
+// by run reads as one font when it is really two — which is how the testimonial
+// names came out in the wrong face.
+if (process.argv.includes('--overrides')) {
+  const key = (n) => `${n.guid.sessionID}:${n.guid.localID}`;
+  let n = 0;
+  for (const node of doc.nodeChanges) {
+    const td = node.textData;
+    if (!td?.styleOverrideTable?.length) continue;
+    const base = node.fontName ?? {};
+    const runs = td.styleOverrideTable.filter(
+      (o) => (o.fontName?.family && o.fontName.family !== base.family) || o.fontSize
+    );
+    if (!runs.length) continue;
+    n++;
+    console.log(`${key(node)}  base ${base.family} ${base.style} ${node.fontSize ?? '?'}  cardFill ${JSON.stringify(node.fillPaints?.[0]?.color ? Object.values(node.fillPaints[0].color).slice(0,3).map((v)=>Math.round(v*255)).join(',') : '?')}`);
+    console.log(`   ${JSON.stringify((td.characters ?? '').slice(0, 54))}`);
+    for (const o of runs) {
+      console.log(`   -> ${(o.fontName?.family ?? base.family)} ${o.fontName?.style ?? ''} ${o.fontSize ?? ''}` +
+        `${o.letterSpacing ? ' ls ' + o.letterSpacing.value + '%' : ''}` +
+        `${o.fillPaints?.[0] ? ' op ' + o.fillPaints[0].opacity.toFixed(2) : ''}`);
+    }
+  }
+  console.log(`
+${n} text node(s) carry style runs the slim tree cannot see`);
+  process.exit(0);
+}
+
 if (process.argv.includes('--raw')) {
   const want = process.argv[process.argv.indexOf('--raw') + 1];
   console.log('doc keys:', Object.keys(doc).map((k) => `${k}${Array.isArray(doc[k]) ? `[${doc[k].length}]` : ''}`).join(' '));
