@@ -127,13 +127,23 @@ export function ThemeToggle({ className }: { className?: string }) {
         className
       )}
     >
-      {/* The design's own crescent, 19x19 at a 1.5 stroke. It is the same glyph
-          on the dark board — stroked white there rather than black — so one
-          asset serves both themes and currentColor does the recolouring. */}
+      {/* The crescent is the design's own, 19x19 at a 1.5 stroke. The sun is
+          not: every switch in the file — "Nightmode switch" and "Sleep Button"
+          alike — is that same crescent, so the sun is drawn to match it rather
+          than extracted. Showing the theme you would switch *to* is the whole
+          point of the control, and a moon in both states says nothing.
+
+          Both are masks tinted by currentColor, so one colour moves the entire
+          glyph and the hover cannot leave an outline behind. */}
       <span
         aria-hidden
         style={{ '--m': 'url(/vectors/icon-theme-moon.svg)' } as CSSProperties}
-        className="theme-icon size-[20px]"
+        className="theme-icon theme-icon-light size-[20px]"
+      />
+      <span
+        aria-hidden
+        style={{ '--m': 'url(/vectors/icon-theme-sun.svg)' } as CSSProperties}
+        className="theme-icon theme-icon-dark size-[20px]"
       />
     </button>
   );

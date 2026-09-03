@@ -886,6 +886,14 @@
   mask: var(--m) no-repeat center / contain;
 }
 
+/* Which of the two switch glyphs shows. These have to live here rather than on
+ * `hidden`/`dark:block`: the rule above is unlayered and beats Tailwind's
+ * layered display utilities, so both glyphs rendered at once. */
+:root[data-theme='dark'] .theme-icon-light,
+:root:not([data-theme='dark']) .theme-icon-dark {
+  display: none;
+}
+
 /* The mobile drawer's concave corner, painted at the viewport's left edge so
  * the page stays curved at any scroll offset.
  *
