@@ -34,9 +34,9 @@ export const spaceMono = Space_Mono({
  * or commercial purposes, free of charge" and permits self-hosting. The licence
  * ships alongside the files at public/fonts/Switzer-LICENSE.txt.
  *
- * To swap in the real New Frank later: drop its woff2s into public/fonts/ and
- * change the two `src` paths below. Nothing else needs to move — every component
- * reads `font-sans`.
+ * New Frank now comes from the designer's Adobe Fonts kit, linked in
+ * app/layout.tsx, and leads the --font-sans stack. Switzer stays behind it as
+ * the fallback for a slow or blocked kit.
  */
 export const sans = localFont({
   src: [
@@ -47,4 +47,9 @@ export const sans = localFont({
   ],
   display: 'swap',
   variable: '--font-sans-local',
+  // Switzer is the fallback now that New Frank comes from Adobe, so it should
+  // not be fetched on every visit. Preloading it downloaded four woff2 files
+  // the page does not draw a single glyph with. It still resolves instantly if
+  // the kit is slow or blocked — the files are self-hosted, just not eager.
+  preload: false,
 });
