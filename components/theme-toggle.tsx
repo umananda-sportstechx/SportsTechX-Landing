@@ -1,8 +1,8 @@
 'use client';
 
 import { flushSync } from 'react-dom';
+import type { CSSProperties } from 'react';
 import { useTheme } from 'next-themes';
-import { Moon, Sun } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 /**
@@ -118,21 +118,22 @@ export function ThemeToggle({ className }: { className?: string }) {
       aria-label="Switch colour theme"
       className={cn(
         'group/toggle grid size-[42px] shrink-0 place-items-center rounded-full',
-        'bg-white/45 text-fg transition-colors hover:bg-white/70',
+        'bg-white/45 text-fg transition-colors duration-[80ms] ease-out hover:bg-white/70',
+        // #EC1E5F over 80ms, per the interactions board — outline included,
+        // which a fill-only rule could not reach.
+        'hover:text-accent',
         'active:opacity-70',
         'dark:bg-transparent dark:hover:bg-white/10',
         className
       )}
     >
-      {/* The board fills the glyph on hover rather than recolouring its stroke:
-          transparent to #EC1E5F over 80ms. */}
-      <Moon
-        className="size-[18px] fill-transparent transition-[fill] duration-[80ms] ease-out group-hover/toggle:fill-accent dark:hidden"
-        strokeWidth={1.5}
-      />
-      <Sun
-        className="hidden size-[18px] fill-transparent transition-[fill] duration-[80ms] ease-out group-hover/toggle:fill-accent dark:block"
-        strokeWidth={1.5}
+      {/* The design's own crescent, 19x19 at a 1.5 stroke. It is the same glyph
+          on the dark board — stroked white there rather than black — so one
+          asset serves both themes and currentColor does the recolouring. */}
+      <span
+        aria-hidden
+        style={{ '--m': 'url(/vectors/icon-theme-moon.svg)' } as CSSProperties}
+        className="theme-icon size-[20px]"
       />
     </button>
   );

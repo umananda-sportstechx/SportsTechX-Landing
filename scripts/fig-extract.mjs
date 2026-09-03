@@ -426,6 +426,10 @@ const VECTORS = [
   // Footer contact + social glyphs. Emitted opaque: the page uses them as CSS
   // masks tinted with currentColor, so the artboard's 70% rides on the text
   // colour instead of being baked in twice.
+  // The theme switch. Stroke-only in the design, so the whole glyph is one
+  // shape and takes a single colour. The dark board uses this same crescent
+  // stroked white, so one asset covers both themes.
+  { file: 'icon-theme-moon', id: '6018:2854', geom: 'stroke', color: '#000000' },
   { file: 'icon-footer-mail', id: '6018:2473', geom: 'stroke', color: '#000000' },
   { file: 'icon-footer-pin', id: '6018:2476', geom: 'stroke', color: '#000000' },
   { file: 'icon-footer-linkedin', id: '6018:2501', geom: 'fill', color: '#000000' },
@@ -435,6 +439,11 @@ const VECTORS = [
 ];
 
 
+/* CAUTION: this rewrites every file in the VECTORS table from the .fig. An icon
+ * replaced by hand — as icon-atlas-2.svg was — is silently reverted by a full
+ * run. Check `git status public/vectors/` afterwards and restore anything that
+ * was deliberately swapped.
+ */
 /* ---------- run ---------- */
 
 const zip = unzip(readFileSync(FIG));

@@ -871,8 +871,15 @@
 }
 
 /* Tinted with currentColor rather than baked in, so the artboard's 70% comes
- * from the text colour and dark mode needs no second asset. */
-.footer-icon {
+ * from the text colour and dark mode needs no second asset.
+ *
+ * .theme-icon is the same trick for the light/dark switch. Drawing it as a
+ * mask rather than an inline <svg> is what fixes its hover: as a stroked icon
+ * the outline took `stroke` and the interior took `fill`, so recolouring one
+ * left the other black. Here the glyph is a single painted shape and one
+ * colour moves all of it. */
+.footer-icon,
+.theme-icon {
   display: inline-block;
   flex: none;
   background-color: currentColor;
