@@ -35,6 +35,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       className={`${bebasNeue.variable} ${spaceMono.variable} ${sans.variable}`}
       suppressHydrationWarning
     >
+      <head>
+        {/* New Frank, served by Adobe Fonts from the designer's account. The
+            licence travels with the kit, so nothing about the typeface lives in
+            this repo. Preconnects because the CSS and the font files come from
+            two different hosts, and the second is not discovered until the
+            first has parsed. */}
+        <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
+        <link rel="preconnect" href="https://p.typekit.net" crossOrigin="" />
+        <link rel="stylesheet" href="https://use.typekit.net/jyx6vei.css" />
+      </head>
       <body>
         <Providers>
           {/* Nav and the mobile drawer live here rather than in a page, so they

@@ -207,10 +207,12 @@
   --color-mint: var(--mint);
 
   --font-display: var(--font-bebas-neue), "Bebas Neue", Impact, sans-serif;
-  /* 'New Frank Local' first, Switzer behind it: where the local files are not
+  /* The Adobe kit first, Switzer behind it: where the kit has not loaded
    * present the first name resolves to nothing and Switzer takes over, which
    * is what every machine other than this one gets. */
-  --font-sans: 'New Frank Local', var(--font-sans-local), ui-sans-serif, system-ui, "Segoe UI", Helvetica,
+  /* "new-frank" is the family name the Adobe kit declares; the local stack
+     behind it is the fallback while the kit loads or if it fails. */
+  --font-sans: 'new-frank', var(--font-sans-local), ui-sans-serif, system-ui, "Segoe UI", Helvetica,
     Arial, sans-serif;
   /* Commit Mono comes from @fontsource (imported in layout.tsx), not next/font,
    * so it is named directly rather than through a generated variable. */
@@ -1581,47 +1583,3 @@ html::-webkit-scrollbar-corner {
   mask: var(--m) no-repeat center / contain;
 }
 
-/* ===== New Frank — local preview only ====================================
- * The design specifies New Frank. These rules point at the retail files sitting
- * in public/fonnts.com-240217/, which is gitignored, so on any other machine or
- * on a deploy the URLs simply do not resolve and the stack falls through to
- * Switzer. Nothing here can ship the font.
- *
- * "New Frank Local" is OUR name for the stack, declared here — the files' own
- * name tables are untouched. A CSS family name has nothing to do with what is
- * inside the binary, so there is no reason to modify one to preview it.
- *
- * The artboard only ever uses Regular and Medium; 600/700 map to Bold so the
- * few bold utilities on the page do not synthesise.
- * ========================================================================= */
-@font-face {
-  font-family: 'New Frank Local';
-  src: url('/fonnts.com-240217/fonts/fonnts.com-New_Frank_Regular.otf') format('opentype');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'New Frank Local';
-  src: url('/fonnts.com-240217/fonts/fonnts.com-New_Frank_Regular_Italic.otf') format('opentype');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'New Frank Local';
-  src: url('/fonnts.com-240217/fonts/fonnts.com-New_Frank_Medium.otf') format('opentype');
-  font-weight: 500;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'New Frank Local';
-  src: url('/fonnts.com-240217/fonts/fonnts.com-New_Frank_Bold.otf') format('opentype');
-  font-weight: 600 700;
-  font-style: normal;
-  font-display: swap;
-}
