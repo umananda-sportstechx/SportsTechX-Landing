@@ -24,11 +24,15 @@ import { SectionIntro } from '@/components/section-intro';
  * cards, no fade at the edges and no arrows. All of that is desktop-only below.
  */
 export function TrustedBy({ partners = trustedBy.partners }: { partners?: Partner[] }) {
-  // The artboard's second row is the same eight people rotated by four. With a
-  // CMS list of any length the same idea holds: rotate by half, so a short
-  // list still reads as two different rows.
+  // The artboard's second row is the same eight people rotated by four. Below
+  // four partners Math.floor(n/2) rotates by 0 or 1, which made row 2 an exact
+  // duplicate of row 1 - two identical rails stacked on top of each other. Under
+  // four, show a single row instead.
   const half = Math.floor(partners.length / 2);
-  const rows = [partners, [...partners.slice(half), ...partners.slice(0, half)]];
+  const rows =
+    partners.length >= 4
+      ? [partners, [...partners.slice(half), ...partners.slice(0, half)]]
+      : [partners];
 
   return (
     <section data-rise className="noise section-y bg-band [--noise-alpha:0.3] dark:[--noise-alpha:0]">
