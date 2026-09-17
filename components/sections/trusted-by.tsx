@@ -84,9 +84,9 @@ export function TrustedBy({ partners = trustedBy.partners }: { partners?: Partne
                           <BlurImage
                             src={partner.logoSrc}
                             alt=""
-                            width={120}
-                            height={24}
-                            className="h-[18px] w-auto max-w-[62%] object-contain lg:h-[24px]"
+                            width={160}
+                            height={48}
+                            className="h-auto max-h-[26px] w-auto max-w-[40%] object-contain lg:max-h-[36px]"
                           />
                         </span>
                       ) : (
