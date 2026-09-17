@@ -10,6 +10,8 @@ const nextConfig: NextConfig = {
       { protocol: 'https', hostname: 'media.beehiiv.com' },
       { protocol: 'https', hostname: '**.spotifycdn.com' },
       { protocol: 'https', hostname: 'i.scdn.co' },
+      // CMS partner photos and testimonial avatars, from the admin panel.
+      { protocol: 'https', hostname: '*.supabase.co', pathname: '/storage/v1/object/public/**' },
     ],
   },
 };

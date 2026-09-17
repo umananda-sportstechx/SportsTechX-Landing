@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, Fragment, type CSSProperties } from 'react';
-import Image from 'next/image';
+import { BlurImage } from '@/components/blur-image';
 import { Carousel } from '@/components/carousel';
 import { SectionIntro } from '@/components/section-intro';
-import { solutions, type SolutionCard } from '@/lib/content';
+import { solutions, type SolutionCard, type Testimonial } from '@/lib/content';
 import { cn } from '@/lib/utils';
 import vectors from '@/design/vectors.json';
 
@@ -69,7 +69,7 @@ const VARS: Record<string, CSSProperties> = {
   } as CSSProperties,
 };
 
-export function Solutions() {
+export function Solutions({ testimonials }: { testimonials?: Testimonial[] }) {
   const [sector, setSector] = useState(solutions.sectors[0].id);
 
   return (
@@ -115,7 +115,7 @@ export function Solutions() {
           {solutions.cards
             .filter((card) => card.sectors.includes(sector))
             .map((card) => (
-              <SolutionBlock key={card.id} card={card} />
+              <SolutionBlock key={card.id} card={card} testimonials={testimonials} />
             ))}
         </div>
       </div>
@@ -123,7 +123,10 @@ export function Solutions() {
   );
 }
 
-function SolutionBlock({ card }: { card: SolutionCard }) {
+function SolutionBlock({ card, testimonials }: { card: SolutionCard; testimonials?: Testimonial[] }) {
+  // CMS testimonials, when there are any, replace the artboard's placeholder
+  // set on BOTH cards — the .fig only ever carried one quote, copied four times.
+  const quotes = testimonials?.length ? testimonials : card.testimonials;
   // Playmakers is the dark card, Atlas the pale one.
   const dark = card.id === 'playmakers';
   const mark = art(`wordmark-${card.id}`);
@@ -293,7 +296,7 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
             trackClassName="gap-0"
             arrowClassName={cn('card-arrow', dark ? 'text-white' : 'text-[#606060]')}
           >
-            {card.testimonials.map((t, i) => (
+            {quotes.map((t, i) => (
               <figure
                 key={i}
                 // No side padding on mobile: the artboard gives the quote the
@@ -311,14 +314,13 @@ function SolutionBlock({ card }: { card: SolutionCard }) {
                   {t.quote}
                 </blockquote>
                 <figcaption className="card-chip mt-6 flex items-center gap-3">
-                  <Image
-                    src={t.avatar}
-                    alt=""
-                    width={56}
-                    height={56}
-                    placeholder="blur"
-                    className="card-avatar size-14 rounded-[3px] object-cover"
-                  />
+                  {/* NOT placeholder="blur": a CMS avatar is a runtime URL
+                      with no blurDataURL, which next/image rejects outright.
+                      BlurImage derives the stand-in from a static import when
+                      there is one and simply skips it otherwise. */}
+                  <span className="card-avatar relative size-14 shrink-0 overflow-hidden rounded-[3px]">
+                    <BlurImage src={t.avatar} alt="" fill sizes="56px" className="object-cover" />
+                  </span>
                   <span
                     className={cn('card-chip-text text-left', dark ? 'text-white' : 'text-black')}
                   >

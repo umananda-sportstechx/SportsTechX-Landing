@@ -1,7 +1,7 @@
 import { BlurImage } from '@/components/blur-image';
 import { Fragment } from 'react';
 import { Carousel } from '@/components/carousel';
-import { trustedBy } from '@/lib/content';
+import { trustedBy, type Partner } from '@/lib/content';
 import { SectionIntro } from '@/components/section-intro';
 
 /**
@@ -23,8 +23,12 @@ import { SectionIntro } from '@/components/section-intro';
  * a flat 12 gutter, and none of the desktop furniture — no dividers between the
  * cards, no fade at the edges and no arrows. All of that is desktop-only below.
  */
-export function TrustedBy() {
-  const rows = [trustedBy.partners, [...trustedBy.partners.slice(4), ...trustedBy.partners.slice(0, 4)]];
+export function TrustedBy({ partners = trustedBy.partners }: { partners?: Partner[] }) {
+  // The artboard's second row is the same eight people rotated by four. With a
+  // CMS list of any length the same idea holds: rotate by half, so a short
+  // list still reads as two different rows.
+  const half = Math.floor(partners.length / 2);
+  const rows = [partners, [...partners.slice(half), ...partners.slice(0, half)]];
 
   return (
     <section data-rise className="noise section-y bg-band [--noise-alpha:0.3] dark:[--noise-alpha:0]">
@@ -69,9 +73,23 @@ export function TrustedBy() {
                       />
                       {/* Bottom scrim: #454545 transparent to #232529 opaque. */}
                       <div className="absolute inset-x-0 bottom-0 h-[55px] bg-linear-to-b from-[#454545]/0 to-[#232529] lg:h-[72px]" />
-                      <span className="absolute inset-x-0 bottom-[11px] text-center font-sans text-[14px] leading-none font-bold tracking-[-0.02em] text-white lg:bottom-[15px] lg:text-[19px]">
-                        {partner.logo}
-                      </span>
+                      {/* The company mark at the middle bottom of the photo. An
+                          uploaded logo replaces the artboard's wordmark text. */}
+                      {partner.logoSrc ? (
+                        <span className="absolute inset-x-0 bottom-[11px] flex justify-center lg:bottom-[15px]">
+                          <BlurImage
+                            src={partner.logoSrc}
+                            alt=""
+                            width={120}
+                            height={24}
+                            className="h-[18px] w-auto max-w-[62%] object-contain lg:h-[24px]"
+                          />
+                        </span>
+                      ) : (
+                        <span className="absolute inset-x-0 bottom-[11px] text-center font-sans text-[14px] leading-none font-bold tracking-[-0.02em] text-white lg:bottom-[15px] lg:text-[19px]">
+                          {partner.logo}
+                        </span>
+                      )}
                     </div>
                     <div className="mt-[6px] text-center">
                       <p className="font-sans text-[11px] leading-[16px] font-medium text-fg">{partner.name}</p>

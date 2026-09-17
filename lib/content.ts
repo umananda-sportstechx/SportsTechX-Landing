@@ -4,6 +4,30 @@
  */
 
 import type { StaticImageData } from 'next/image';
+
+/**
+ * Images are either a build-time static import (everything decoded from the
+ * .fig) or a runtime URL from the CMS (admin panel -> Site assets). Consumers
+ * pass both to next/image, which accepts either.
+ */
+export type Img = StaticImageData | string;
+
+export interface Partner {
+  name: string;
+  role: string;
+  /** Fallback wordmark drawn as text when no logo image is set. */
+  logo: string;
+  /** A real company mark from the CMS, drawn over the photo instead. */
+  logoSrc: Img | null;
+  photo: Img;
+}
+
+export interface Testimonial {
+  quote: string;
+  name: string;
+  role: string;
+  avatar: Img;
+}
 import img17495777b6f3 from '@/public/images/17495777b6f3.jpg';
 import imgb3d04779161b from '@/public/images/b3d04779161b.jpg';
 import img389d48c3df5e from '@/public/images/389d48c3df5e.jpg';
@@ -60,23 +84,24 @@ export const trustedBy = {
   title: 'TRUSTED BY',
   subtitle: 'founders, investors, sports organizations',
   /**
-   * Eight partner headshots extracted from the design. `logo` is the white
-   * wordmark the design overlays on each photo — placeholder branding in the
-   * artboard, so swap these for real partner marks when they exist.
+   * Eight partner headshots extracted from the design, used only until an
+   * admin fills Site assets -> STX landing -> Carousel gallery. `logo` is the
+   * white wordmark the artboard overlays on each photo; a CMS card supplies a
+   * real logo image instead.
    */
   partners: [
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img17495777b6f3 },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: imgb3d04779161b },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img389d48c3df5e },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img94ce770cf9e8 },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: imgd9507786c8d8 },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img75683fd57261 },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img68e925ea570d },
-    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', photo: img4b66197f9eb7 },
-  ],
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: img17495777b6f3 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: imgb3d04779161b },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: img389d48c3df5e },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: img94ce770cf9e8 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: imgd9507786c8d8 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: img75683fd57261 },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: img68e925ea570d },
+    { name: 'Alexander Janssen', role: 'CEO, Dutch SportsTech Fund', logo: 'BCG', logoSrc: null, photo: img4b66197f9eb7 },
+  ] as Partner[],
 };
 
-const testimonial = {
+export const testimonial: Testimonial = {
   quote: '“We walked into our raise knowing the market cold. That confidence changed every conversation.”',
   name: 'Alexander Janssen',
   role: 'CEO, Dutch SportsTech Fund',
@@ -94,7 +119,7 @@ export type SolutionCard = {
   cta: string;
   features: { title: string; points: string[] }[];
   testimonialsLabel: string;
-  testimonials: typeof testimonial[];
+  testimonials: Testimonial[];
 };
 
 /**
