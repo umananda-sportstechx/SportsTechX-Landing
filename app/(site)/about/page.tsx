@@ -24,7 +24,7 @@ function PersonCard({ person }: { person: Person }) {
           src={person.photo}
           alt={person.name}
           fill
-          sizes="(min-width: 1024px) 320px, (min-width: 640px) 45vw, 90vw"
+          sizes="(min-width: 1280px) 320px, (min-width: 1024px) 30vw, (min-width: 640px) 45vw, 90vw"
           className="object-cover"
         />
       </div>
@@ -53,7 +53,10 @@ function People({ title, people }: { title: string; people: Person[] }) {
       <h2 className="tracked font-display text-card-sm leading-[1.05] text-heading uppercase" data-rise>
         {title}
       </h2>
-      <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3">
+      {/* Four-up once there is room: a three-up grid across the full container
+          gives 420px portraits, which dominate the page. Going narrower with a
+          max-width instead would shrink them but leave a dead right margin. */}
+      <div className="mt-8 grid grid-cols-1 gap-x-8 gap-y-12 sm:grid-cols-2 lg:mt-12 lg:grid-cols-3 xl:grid-cols-4">
         {people.map((p) => (
           <PersonCard key={p.name} person={p} />
         ))}
@@ -65,7 +68,7 @@ function People({ title, people }: { title: string; people: Person[] }) {
 export default function AboutPage() {
   return (
     <div className="container-page section-y pt-32 lg:pt-40">
-      <div className="max-w-[70ch]" data-rise>
+      <div className="max-w-[820px]" data-rise>
         <SectionIntro title="Meet Team SportsTechX" />
         {about.intro.map((p, i) => (
           <p

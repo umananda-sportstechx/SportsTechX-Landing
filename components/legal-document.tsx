@@ -4,7 +4,7 @@ import type { LegalDoc } from '@/lib/legal';
  * Renders a structured legal document in the site's own voice.
  *
  * Long-form text wants a reading measure, not the poster width: `container-page`
- * caps at `min(90vw, 1600px)`, so the prose column is held to ~70ch inside it.
+ * caps at `min(90vw, 1600px)`, so the prose column is held to 820px inside it.
  *
  * Headings are Bebas caps rather than a large size — there are twenty h2s in the
  * Privacy Policy, and at `text-card-sm` the page would read as a stack of
@@ -14,7 +14,7 @@ import type { LegalDoc } from '@/lib/legal';
  */
 export function LegalDocument({ doc }: { doc: LegalDoc }) {
   return (
-    <article className="mx-auto max-w-[70ch]">
+    <article className="mx-auto max-w-[820px]">
       <header data-rise>
         <p className="tracked font-mono-alt text-mono-eyebrow text-accent uppercase">Legal</p>
         <h1 className="tracked mt-3 font-display text-section leading-[0.96] text-heading uppercase">
