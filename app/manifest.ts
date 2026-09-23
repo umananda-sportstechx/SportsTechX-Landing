@@ -18,8 +18,9 @@ export default function manifest(): MetadataRoute.Manifest {
     theme_color: '#ec1e5f',
     icons: [
       { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
-      { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
-      { src: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+      /* Maskable points at the OPAQUE icon on purpose: the launcher crops to its
+         own shape, and a transparent source leaves the mark floating on nothing. */
+      { src: '/apple-icon.png', sizes: '180x180', type: 'image/png', purpose: 'maskable' },
     ],
   };
 }
