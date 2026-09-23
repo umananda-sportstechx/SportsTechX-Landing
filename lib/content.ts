@@ -44,9 +44,9 @@ import imgdd889ac2c460 from '@/public/images/dd889ac2c460.webp';
 
 export const nav = {
   links: [
-    { label: 'SOLUTIONS', href: '#solutions' },
-    { label: 'MEDIA', href: '#media' },
-    { label: 'ABOUT', href: '#about' },
+    { label: 'SOLUTIONS', href: '/#solutions' },
+    { label: 'MEDIA', href: '/#media' },
+    { label: 'ABOUT', href: '/about' },
   ],
   cta: { label: 'JOIN THE NEWSLETTER', href: 'https://newsletter.sportstechx.com' },
 };
@@ -55,8 +55,8 @@ export const hero = {
   headline: 'Your Insider Access To Sports Tech & Venture',
   subhead: 'The leading people, deepest insights and\nactive capital shaping the future of sports',
   ctas: [
-    { label: 'FOR FOUNDERS', href: '#solutions', variant: 'primary' as const },
-    { label: 'FOR INVESTORS', href: '#solutions', variant: 'secondary' as const },
+    { label: 'FOR FOUNDERS', href: '/#solutions', variant: 'primary' as const },
+    { label: 'FOR INVESTORS', href: '/#solutions', variant: 'secondary' as const },
   ],
   /**
    * Orbiting category pills. Icons are the design's own vectors, exported from
@@ -132,15 +132,15 @@ export const navMenu = [
   {
     label: 'BY ROLE',
     items: [
-      { label: 'FOR FOUNDERS', href: '#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12 },
-      { label: 'FOR INVESTORS', href: '#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8 },
+      { label: 'FOR FOUNDERS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12 },
+      { label: 'FOR INVESTORS', href: '/#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8 },
     ],
   },
   {
     label: 'BY PRODUCT',
     items: [
-      { label: 'ATLAS', href: '#solutions', initial: 'A' },
-      { label: 'PLAYMAKERS', href: '#solutions', initial: 'P' },
+      { label: 'ATLAS', href: '/#solutions', initial: 'A' },
+      { label: 'PLAYMAKERS', href: '/#solutions', initial: 'P' },
     ],
   },
 ];
@@ -295,7 +295,7 @@ export const media = {
       // no kicker: the design hides this card's "Product Title" layer
       title: 'The NextGen Sportstech\nSummit 2026',
       image: imgdd889ac2c460,
-      href: '#events',
+      href: '/#events',
     },
   ] as MediaItem[]),
 };
@@ -306,13 +306,13 @@ export const footer = {
   email: 'hello@sportstechx.com',
   location: 'Berlin, Germany',
   columns: [
-    { title: 'PLAYMAKERS', links: [{ label: 'Terms of membership', href: '#' }] },
+    { title: 'PLAYMAKERS', links: [{ label: 'Terms of membership', href: '/terms-of-service' }] },
     {
       title: 'Quick Links',
       links: [
         { label: 'Intelligence Hub', href: 'https://intelligence.sportstechx.com' },
-        { label: 'Solutions', href: '#solutions' },
-        { label: 'Media', href: '#media' },
+        { label: 'Solutions', href: '/#solutions' },
+        { label: 'Media', href: '/#media' },
         { label: 'Newsletter', href: 'https://newsletter.sportstechx.com' },
       ],
     },
@@ -328,16 +328,17 @@ export const footer = {
   ],
   legal: '© 2026 SportsTechX GmbH. All rights reserved.',
   legalLinks: [
-    { label: 'Privacy', href: 'https://sportstechx.com/privacy-policy' },
-    { label: 'Imprint', href: 'https://sportstechx.com/terms-of-service' },
-    { label: 'The Inner Circle of Sports Tech', href: 'https://sportstechx.com/about' },
+    { label: 'Privacy', href: '/privacy-policy' },
+    { label: 'Terms', href: '/terms-of-service' },
+    { label: 'Imprint', href: '/imprint' },
+    { label: 'The Inner Circle of Sports Tech', href: '/about' },
   ],
 };
 
 export const mobileMenu = {
   groups: [
-    { title: 'SOLUTIONS', links: [{ label: 'FOR FOUNDERS', href: '#solutions' }, { label: 'FOR INVESTORS', href: '#solutions' }] },
-    { title: 'MENU', links: [{ label: 'MEDIA', href: '#media' }, { label: 'ABOUT', href: '#about' }] },
+    { title: 'SOLUTIONS', links: [{ label: 'FOR FOUNDERS', href: '/#solutions' }, { label: 'FOR INVESTORS', href: '/#solutions' }] },
+    { title: 'MENU', links: [{ label: 'MEDIA', href: '/#media' }, { label: 'ABOUT', href: '/about' }] },
     {
       title: 'CONNECT',
       links: [

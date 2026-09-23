@@ -112,10 +112,11 @@ export function Footer() {
             {footer.legalLinks.map((link, i) => (
               <span key={link.label}>
                 {i > 0 && <span aria-hidden> · </span>}
+                {/* Same-origin now that these pages are ours; only a genuinely
+                    external link should steal a tab. Mirrors the column links. */}
                 <a
                   href={link.href}
-                  target="_blank"
-                  rel="noreferrer"
+                  {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
                   className="transition-colors duration-[80ms] ease-out hover:text-black active:text-heading/50 dark:hover:text-white"
                 >
                   {link.label}

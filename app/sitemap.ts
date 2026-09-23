@@ -1,6 +1,14 @@
 import type { MetadataRoute } from 'next';
 
-/** One page, so one entry. Add routes here as they appear. */
+const BASE = 'https://sportstechx.com';
+
+/** Add routes here as they appear. */
 export default function sitemap(): MetadataRoute.Sitemap {
-  return [{ url: 'https://sportstechx.com', changeFrequency: 'weekly', priority: 1 }];
+  return [
+    { url: BASE, changeFrequency: 'weekly', priority: 1 },
+    { url: `${BASE}/about`, changeFrequency: 'monthly', priority: 0.6 },
+    { url: `${BASE}/terms-of-service`, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE}/privacy-policy`, changeFrequency: 'yearly', priority: 0.3 },
+    { url: `${BASE}/imprint`, changeFrequency: 'yearly', priority: 0.3 },
+  ];
 }
