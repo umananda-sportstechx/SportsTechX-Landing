@@ -73,7 +73,21 @@ export function Carousel({
       // when the content is narrower — which is exactly the stable fixed point
       // we want once the rail has gone static.
       const contentW = el.scrollWidth / (looping ? 2 : 1);
-      setFits(contentW <= el.clientWidth + 1);
+      // "Fits" has to mean there is room for ANOTHER card. A rail left with a
+      // sliver of slack still reads as full, and a full rail that refuses to
+      // move looks broken. The widest flex item stands in for one card — the
+      // hairline rules between cards are a pixel wide, so max() finds the card.
+      // (display:contents wrappers have no box, so their children are the items.)
+      const items: HTMLElement[] = [];
+      for (const child of Array.from(el.children) as HTMLElement[]) {
+        if (getComputedStyle(child).display === 'contents') {
+          items.push(...(Array.from(child.children) as HTMLElement[]));
+        } else {
+          items.push(child);
+        }
+      }
+      const cardW = items.reduce((max, i) => Math.max(max, i.offsetWidth), 0);
+      setFits(el.clientWidth - contentW >= cardW);
     };
     measure();
     const ro = new ResizeObserver(measure);
