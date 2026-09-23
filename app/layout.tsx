@@ -6,26 +6,79 @@ import { NavBar } from '@/components/sections/nav-bar';
 import { bebasNeue, sans, spaceMono } from './fonts';
 import { Providers } from './providers';
 
+/**
+ * One origin constant. It was previously repeated in layout.tsx, sitemap.ts and
+ * robots.ts with no shared source.
+ */
+export const SITE_URL = 'https://sportstechx.com';
+
+const TITLE = 'SportsTechX — Your Insider Access to Sports Tech & Venture';
+const DESCRIPTION =
+  'The leading people, deepest insights and active capital shaping the future of sports. 20K+ community members, 2,000+ investors tracked, 1,500+ companies mapped across 40+ countries.';
+const SHORT_DESCRIPTION =
+  'The leading people, deepest insights and active capital shaping the future of sports.';
+
 export const metadata: Metadata = {
-  metadataBase: new URL('https://sportstechx.com'),
-  title: 'SportsTechX — Your Insider Access to Sports Tech & Venture',
-  description:
-    'The leading people, deepest insights and active capital shaping the future of sports. 20K+ community members, 2,000+ investors tracked, 1,500+ companies mapped across 40+ countries.',
+  metadataBase: new URL(SITE_URL),
+  /* A template so sub-pages export a bare title. Without it every page had to
+     repeat the brand by hand, which is how the Atlas pages ended up with it
+     twice. */
+  title: { default: TITLE, template: '%s — SportsTechX' },
+  description: DESCRIPTION,
+  applicationName: 'SportsTechX',
+  keywords: [
+    'sports tech', 'sportstech', 'sports technology', 'sports innovation',
+    'sports tech investment', 'sports venture capital', 'sports tech startups',
+    'sports tech intelligence', 'SportsTechX',
+  ],
+  authors: [{ name: 'SportsTechX', url: SITE_URL }],
+  creator: 'SportsTechX',
+  publisher: 'SportsTechX GmbH',
+  category: 'technology',
+  alternates: { canonical: '/' },
   openGraph: {
-    title: 'SportsTechX — Your Insider Access to Sports Tech & Venture',
-    description:
-      'The leading people, deepest insights and active capital shaping the future of sports.',
     type: 'website',
     siteName: 'SportsTechX',
+    locale: 'en_US',
+    url: '/',
+    title: TITLE,
+    description: SHORT_DESCRIPTION,
   },
-  twitter: { card: 'summary_large_image' },
+  twitter: { card: 'summary_large_image', title: TITLE, description: SHORT_DESCRIPTION },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, 'max-image-preview': 'large', 'max-snippet': -1 },
+  },
+  formatDetection: { telephone: false },
 };
 
 export const viewport: Viewport = {
+  colorScheme: 'light dark',
   themeColor: [
     { media: '(prefers-color-scheme: light)', color: '#ffffff' },
     { media: '(prefers-color-scheme: dark)', color: '#000000' },
   ],
+};
+
+/** Organization schema, so search engines can tie the brand together. */
+const ORG_JSONLD = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'SportsTechX',
+  legalName: 'SportsTechX GmbH',
+  url: SITE_URL,
+  logo: `${SITE_URL}/icon.png`,
+  description: SHORT_DESCRIPTION,
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Liebigstraße 35',
+    postalCode: '10247',
+    addressLocality: 'Berlin',
+    addressCountry: 'DE',
+  },
+  email: 'hello@sportstechx.com',
+  sameAs: ['https://www.linkedin.com/company/sportstechx'],
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -44,6 +97,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="preconnect" href="https://use.typekit.net" crossOrigin="" />
         <link rel="preconnect" href="https://p.typekit.net" crossOrigin="" />
         <link rel="stylesheet" href="https://use.typekit.net/jyx6vei.css" />
+        <script
+          type="application/ld+json"
+          // eslint-disable-next-line react/no-danger -- a JSON-LD blob we author
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(ORG_JSONLD) }}
+        />
       </head>
       <body>
         <Providers>

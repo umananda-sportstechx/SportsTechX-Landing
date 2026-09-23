@@ -4,9 +4,19 @@ import { SectionIntro } from '@/components/section-intro';
 import { about, type Person } from '@/lib/about';
 
 export const metadata: Metadata = {
-  title: 'About — SportsTechX',
+  // Bare title: the root layout supplies the ' — SportsTechX' template.
+  title: 'About',
   description:
     'Based in Berlin, SportsTechX is the leading source for sports technology, innovation and investment intelligence. Meet the team.',
+  alternates: { canonical: '/about' },
+  // Without its own openGraph this page inherits the home page's, so a shared
+  // link is captioned as the homepage.
+  openGraph: {
+    title: 'About — SportsTechX',
+    description:
+      'Based in Berlin, SportsTechX is the leading source for sports technology, innovation and investment intelligence. Meet the team.',
+    url: '/about',
+  },
 };
 
 /**

@@ -1,6 +1,6 @@
 import type { MetadataRoute } from 'next';
 
-const BASE = 'https://sportstechx.com';
+import { SITE_URL as BASE } from './layout';
 
 /** Add routes here as they appear. */
 export default function sitemap(): MetadataRoute.Sitemap {

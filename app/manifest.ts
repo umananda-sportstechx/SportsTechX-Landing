@@ -1,0 +1,25 @@
+import type { MetadataRoute } from 'next';
+import { SITE_URL } from './layout';
+
+/**
+ * The web manifest. `maskable` matters on Android: without it the launcher
+ * crops the icon into its own shape and clips the mark.
+ */
+export default function manifest(): MetadataRoute.Manifest {
+  return {
+    name: 'SportsTechX',
+    short_name: 'SportsTechX',
+    description:
+      'The leading people, deepest insights and active capital shaping the future of sports.',
+    id: SITE_URL,
+    start_url: '/',
+    display: 'standalone',
+    background_color: '#ffffff',
+    theme_color: '#ec1e5f',
+    icons: [
+      { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'any' },
+      { src: '/icon.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      { src: '/apple-icon.png', sizes: '180x180', type: 'image/png' },
+    ],
+  };
+}
