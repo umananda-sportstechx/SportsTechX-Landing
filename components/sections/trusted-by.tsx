@@ -23,16 +23,37 @@ import { SectionIntro } from '@/components/section-intro';
  * a flat 12 gutter, and none of the desktop furniture — no dividers between the
  * cards, no fade at the edges and no arrows. All of that is desktop-only below.
  */
-export function TrustedBy({ partners = trustedBy.partners }: { partners?: Partner[] }) {
-  // The artboard's second row is the same eight people rotated by four. Below
-  // four partners Math.floor(n/2) rotates by 0 or 1, which made row 2 an exact
-  // duplicate of row 1 - two identical rails stacked on top of each other. Under
-  // four, show a single row instead.
+/**
+ * The artboard's second row is the same eight people rotated by four, so a row
+ * left unmanaged still reads as a different rail. Below four partners the
+ * rotation lands on 0 or 1 and the two rows come out identical, which is worse
+ * than one row — so under four, only the first is shown.
+ */
+export function rotateRow(partners: Partner[]): Partner[] | null {
+  if (partners.length < 4) return null;
   const half = Math.floor(partners.length / 2);
-  const rows =
-    partners.length >= 4
-      ? [partners, [...partners.slice(half), ...partners.slice(0, half)]]
-      : [partners];
+  return [...partners.slice(half), ...partners.slice(0, half)];
+}
+
+export function TrustedBy({
+  rowOne = trustedBy.partners,
+  rowTwo,
+  rowOneIsPlaceholder = true,
+  rowTwoIsPlaceholder = true,
+}: {
+  /** The upper rail, drifting left-to-right. */
+  rowOne?: Partner[];
+  /** The lower rail, drifting the other way. Omitted -> rowOne rotated. */
+  rowTwo?: Partner[] | null;
+  /** No CMS cards for this row, so it is the designed placeholder set. */
+  rowOneIsPlaceholder?: boolean;
+  rowTwoIsPlaceholder?: boolean;
+}) {
+  const second = rowTwo === undefined ? rotateRow(rowOne) : rowTwo;
+  const rows = (second ? [rowOne, second] : [rowOne]).map((row, i) => ({
+    row,
+    isPlaceholder: i === 0 ? rowOneIsPlaceholder : rowTwoIsPlaceholder,
+  }));
 
   return (
     <section data-rise className="noise section-y bg-band [--noise-alpha:0.3] dark:[--noise-alpha:0]">
@@ -43,11 +64,12 @@ export function TrustedBy({ partners = trustedBy.partners }: { partners?: Partne
             and row 2 off the left, so the rows break out of the page gutter
             rather than sitting inside it. */}
         <div className="mt-[21px] mx-[calc(var(--gutter)*-1)] flex flex-col gap-[11px] lg:mx-0 lg:mt-[86px] lg:gap-[38px]">
-          {rows.map((row, i) => (
+          {rows.map(({ row, isPlaceholder }, i) => (
             <Carousel
               key={i}
               label={`Trusted by, row ${i + 1}`}
               autoScroll={i === 0 ? 'ltr' : 'rtl'}
+              alwaysLoop={isPlaceholder}
               initialOffset={i === 1 ? 141 : 0}
               // The artboard gives mobile no arrows at all.
               arrowClassName="hidden lg:grid"

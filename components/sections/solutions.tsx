@@ -5,6 +5,7 @@ import { BlurImage } from '@/components/blur-image';
 import { Carousel } from '@/components/carousel';
 import { SectionIntro } from '@/components/section-intro';
 import { solutions, type SolutionCard, type Testimonial } from '@/lib/content';
+import type { SiteItem } from '@/lib/site-content';
 import { cn } from '@/lib/utils';
 import vectors from '@/design/vectors.json';
 
@@ -69,7 +70,14 @@ const VARS: Record<string, CSSProperties> = {
   } as CSSProperties,
 };
 
-export function Solutions({ testimonials }: { testimonials?: Testimonial[] }) {
+export function Solutions({
+  testimonials,
+  previews,
+}: {
+  testimonials?: Testimonial[];
+  /** Card preview panels, POSITIONAL: [0] Playmakers, [1] Atlas. */
+  previews?: SiteItem[];
+}) {
   const [sector, setSector] = useState(solutions.sectors[0].id);
 
   return (
@@ -115,7 +123,15 @@ export function Solutions({ testimonials }: { testimonials?: Testimonial[] }) {
           {solutions.cards
             .filter((card) => card.sectors.includes(sector))
             .map((card) => (
-              <SolutionBlock key={card.id} card={card} testimonials={testimonials} />
+              <SolutionBlock
+                key={card.id}
+                card={card}
+                testimonials={testimonials}
+                // Indexed against the UNFILTERED list: the sector filter can drop
+                // the first card, and a filtered index would then hand the Atlas
+                // card the Playmakers preview.
+                preview={previews?.[solutions.cards.indexOf(card)]}
+              />
             ))}
         </div>
       </div>
@@ -123,7 +139,15 @@ export function Solutions({ testimonials }: { testimonials?: Testimonial[] }) {
   );
 }
 
-function SolutionBlock({ card, testimonials }: { card: SolutionCard; testimonials?: Testimonial[] }) {
+function SolutionBlock({
+  card,
+  testimonials,
+  preview,
+}: {
+  card: SolutionCard;
+  testimonials?: Testimonial[];
+  preview?: SiteItem;
+}) {
   // CMS testimonials, when there are any, replace the artboard's placeholder
   // set on BOTH cards — the .fig only ever carried one quote, copied four times.
   const quotes = testimonials?.length ? testimonials : card.testimonials;
@@ -214,6 +238,17 @@ function SolutionBlock({ card, testimonials }: { card: SolutionCard; testimonial
               : 'border-[#bcecd4] bg-white/85 dark:border-white/50 dark:bg-[#d6dced]'
           )}
         >
+          {/* The artboard leaves this panel empty; an uploaded preview fills it.
+              Behind the badge, which keeps its own absolute position. */}
+          {preview?.url && (
+            <BlurImage
+              src={preview.url}
+              alt={preview.alt || ''}
+              fill
+              sizes="(min-width: 1024px) 676px, 100vw"
+              className="object-cover"
+            />
+          )}
           <span
             className={cn(
               'card-tag tracked absolute inline-flex items-center border font-mono-alt whitespace-nowrap',

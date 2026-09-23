@@ -505,6 +505,8 @@
     width: calc(676 * var(--k));
     height: calc(var(--panel-h) * var(--k));
     border-radius: calc(20 * var(--k)) 0 0 calc(20 * var(--k));
+    /* An uploaded preview fills this panel; clip it to the asymmetric radius. */
+    overflow: hidden;
   }
   /* The tier pill belongs inside the preview panel, not above the headline. */
   .card-tag {

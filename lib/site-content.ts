@@ -22,7 +22,12 @@ export interface SiteItem {
 }
 
 export interface SiteSections {
+  /** The upper partner rail. */
   gallery?: SiteItem[];
+  /** The lower partner rail, which drifts the other way. */
+  gallery2?: SiteItem[];
+  /** Solutions card previews. Positional: [0] Playmakers, [1] Atlas. */
+  solutions?: SiteItem[];
   testimonials?: SiteItem[];
 }
 

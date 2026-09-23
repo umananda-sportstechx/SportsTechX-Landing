@@ -29,6 +29,7 @@ export function Carousel({
   label,
   autoScroll,
   initialOffset = 0,
+  alwaysLoop,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -39,20 +40,54 @@ export function Carousel({
   autoScroll?: 'ltr' | 'rtl';
   /** Starting scroll position, used for the artboard's staggered second row. */
   initialOffset?: number;
+  /**
+   * Drift even when the cards already fit the rail.
+   *
+   * For the built-in placeholder set, which IS the designed full rail. Uploaded
+   * cards get the opposite treatment: a short list stays still, because
+   * everything is already visible and there is nothing to scroll to.
+   */
+  alwaysLoop?: boolean;
 }) {
   const track = useRef<HTMLDivElement>(null);
   const paused = useRef(false);
   const resumeAt = useRef<number | null>(null);
   const [atStart, setAtStart] = useState(true);
   const [atEnd, setAtEnd] = useState(true);
+  /**
+   * One copy of the children already fills the rail.
+   *
+   * Without this an `autoScroll` rail whose content fits still rendered two
+   * copies and still ran the rAF loop — but `scrollLeft` is clamped to 0 when
+   * there is no overflow, so the rail sat dead while duplicating every card.
+   */
+  const [fits, setFits] = useState(false);
+  const looping = Boolean(autoScroll) && (alwaysLoop || !fits);
+
+  useEffect(() => {
+    if (!autoScroll) return;
+    const el = track.current;
+    if (!el) return;
+    const measure = () => {
+      // scrollWidth covers every copy on the track, and clamps up to clientWidth
+      // when the content is narrower — which is exactly the stable fixed point
+      // we want once the rail has gone static.
+      const contentW = el.scrollWidth / (looping ? 2 : 1);
+      setFits(contentW <= el.clientWidth + 1);
+    };
+    measure();
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [autoScroll, looping]);
 
   const sync = useCallback(() => {
     const el = track.current;
-    if (!el || autoScroll) return; // the looping track has no start or end
+    if (!el || looping) return; // a looping track has no start or end
     setAtStart(el.scrollLeft <= 1);
     // 1px of slack: sub-pixel widths otherwise leave the end permanently unreached.
     setAtEnd(el.scrollLeft + el.clientWidth >= el.scrollWidth - 1);
-  }, [autoScroll]);
+  }, [looping]);
 
   useEffect(() => {
     sync();
@@ -65,7 +100,7 @@ export function Carousel({
 
   useEffect(() => {
     const el = track.current;
-    if (!el || !autoScroll) return;
+    if (!el || !looping) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     el.scrollLeft = initialOffset || 1;
@@ -96,7 +131,7 @@ export function Carousel({
     };
     raf = requestAnimationFrame(tick);
     return () => cancelAnimationFrame(raf);
-  }, [autoScroll, initialOffset]);
+  }, [looping, autoScroll, initialOffset]);
 
   const page = (dir: 1 | -1) => {
     const el = track.current;
@@ -108,7 +143,7 @@ export function Carousel({
     paused.current = true;
     if (resumeAt.current) window.clearTimeout(resumeAt.current);
     const delta = dir * el.clientWidth * 0.8;
-    if (autoScroll) {
+    if (looping) {
       // The track carries two copies, so jumping by exactly one is invisible.
       // Without this a page near either end just clamped: row 2 sits low in its
       // range, and its left arrow travelled 342px of a 1089px page before
@@ -151,13 +186,16 @@ export function Carousel({
         tabIndex={0}
         className={cn(
           'flex overflow-x-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden',
-          autoScroll ? 'overscroll-x-contain' : 'snap-x snap-mandatory scroll-smooth',
+          looping ? 'overscroll-x-contain' : 'snap-x snap-mandatory scroll-smooth',
+          // Static but still an auto-scroll rail: everything is visible, so
+          // centre it rather than leaving it hugging the left edge.
+          autoScroll && !looping && 'justify-center',
           trackClassName
         )}
       >
         {children}
         {/* Second pass makes the wrap seamless; hidden from assistive tech. */}
-        {autoScroll && (
+        {looping && (
           <div className="contents" aria-hidden>
             {children}
           </div>
@@ -167,10 +205,10 @@ export function Carousel({
       {/* Both ends at once means the content already fits, so there is nowhere
           to page — show no affordance rather than two dead arrows. The card
           testimonials hit this whenever the design's two stories both fit. */}
-      {!(atStart && atEnd && !autoScroll) && (
+      {!(atStart && atEnd && !looping) && (
         <>
-      <Arrow side="left" disabled={!autoScroll && atStart} onClick={() => page(-1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: previous`} />
-      <Arrow side="right" disabled={!autoScroll && atEnd} onClick={() => page(1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: next`} />
+      <Arrow side="left" disabled={!looping && atStart} onClick={() => page(-1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: previous`} />
+      <Arrow side="right" disabled={!looping && atEnd} onClick={() => page(1)} onHold={pause} onRelease={resume} className={arrowClassName} label={`${label}: next`} />
         </>
       )}
     </div>
