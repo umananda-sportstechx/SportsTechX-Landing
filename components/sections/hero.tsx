@@ -41,7 +41,33 @@ import { cn } from '@/lib/utils';
  * orbit's pair counter-rotating for free, since partners sit on opposite sides.
  */
 const ORBIT = { outer: 26, mid: 22, inner: 18 };
-const SWEEP = 35;
+
+/**
+ * Sweep is per-orbit, like duration, and every pill now travels AWAY from the
+ * copy rather than toward it.
+ *
+ * It used to be one constant at 35 pointing inward — inward on these arcs means
+ * up, so the outermost pill climbed from 75% of the hero to 55%, landing on the
+ * FOR INVESTORS button and reaching into the subhead. That is the "too close to
+ * the headline" half of the design note.
+ *
+ * Signs below therefore read off which side a pill sits on: angles run with y
+ * down, so on the right (LEAGUES, ATHLETES, INVESTORS) a positive sweep drops
+ * toward the horizon, while on the left (TEAMS, FOUNDERS, MEDIA) a negative one
+ * does.
+ *
+ * MEDIA gets its own, smaller figure. It rests 6.6deg from -180, and past -180
+ * the arc dives under the motif centre and off the bottom of the frame, so it
+ * has only that much room. Giving it the full sweep in the other direction was
+ * worse: it then closed on TEAMS, 16deg away on the next ring out, and the two
+ * met head-on.
+ *
+ * The magnitude came down from 35 to single digits because the boxes are fixed
+ * px inside a frame measured in percentages: at 35 the inner pair closed from
+ * 137deg apart to 67deg while staying 130/134 wide, so they overlapped below
+ * ~920px of hero height — most laptops.
+ */
+const SWEEP = { outer: 9, mid: 8, inner: 7, media: 6 };
 
 /**
  * `w` / `mw` are the artboard's own pill widths — its pills are fixed width
@@ -51,15 +77,17 @@ const SWEEP = 35;
 type Pill = { r: number; a: number; mr?: number; ma?: number; dur: number; sweep: number; w: number; mw?: number };
 
 const PILLS: Record<string, Pill> = {
-  // 57.3% orbit
-  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, sweep: -SWEEP, w: 124, mw: 90 },
-  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, sweep: SWEEP, w: 112 },
-  // 52.75% orbit
-  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, sweep: -SWEEP, w: 128 },
-  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, sweep: SWEEP, w: 102, mw: 78 },
-  // 16.85% orbit — these ride the innermost ring, radius 135 on the artboard
-  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, sweep: -SWEEP, w: 134, mw: 116 },
-  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, sweep: SWEEP, w: 130, mw: 112 },
+  // 57.3% orbit — LEAGUES drops toward the horizon on the right, MEDIA edges
+  // down the little it can on the left, so the pair opens rather than closes.
+  LEAGUES: { r: 57.1, a: -25.4, mr: 40.9, ma: -45.0, dur: ORBIT.outer, sweep: SWEEP.outer, w: 124, mw: 90 },
+  MEDIA: { r: 57.5, a: -173.4, dur: ORBIT.outer, sweep: -SWEEP.media, w: 112 },
+  // 52.75% orbit — both descend, so they open rather than close.
+  ATHLETES: { r: 52.8, a: -10.8, dur: ORBIT.mid, sweep: SWEEP.mid, w: 128 },
+  TEAMS: { r: 52.7, a: -157.0, mr: 45.5, ma: -135.8, dur: ORBIT.mid, sweep: -SWEEP.mid, w: 102, mw: 78 },
+  // 16.85% orbit — these ride the innermost ring, radius 135 on the artboard.
+  // Also descending apart: at 35deg each they used to collide on most laptops.
+  INVESTORS: { r: 16.7, a: -9.3, mr: 26.4, ma: 4.6, dur: ORBIT.inner, sweep: SWEEP.inner, w: 134, mw: 116 },
+  FOUNDERS: { r: 17.0, a: -146.4, mr: 24.0, ma: -157.2, dur: ORBIT.inner, sweep: -SWEEP.inner, w: 130, mw: 112 },
 };
 
 export function Hero() {
@@ -80,10 +108,13 @@ export function Hero() {
         />
       </div>
 
-      <div // 22.3% is the artboard's own content offset (224 of the 1004 hero); 18%
-        // sat the whole block — headline, subhead and buttons — about four
-        // points high. Mobile's 13% already matches its own board (115.8/852).
-        className="absolute inset-x-0 top-[13%] flex flex-col items-center px-5 text-center lg:top-[22.3%] lg:px-0">
+      <div // 17%, against the artboard's own 22.3% (224 of the 1004 hero). The
+        // design team asked for room under the copy for the orbit to breathe,
+        // and this is the half of it that cannot come from the animation: the
+        // block is a fixed-px stack (mt-3, mt-26, a 54 button) inside a frame
+        // measured in percentages, so it eats a growing share as the viewport
+        // shortens. Mobile's 13% already matches its own board (115.8/852).
+        className="absolute inset-x-0 top-[13%] flex flex-col items-center px-5 text-center lg:top-[17%] lg:px-0">
         {/* Mutes the orbits where they pass behind the copy. */}
         <div aria-hidden className="hero-scrim" />
 
@@ -132,9 +163,10 @@ export function Hero() {
       </div>
 
       {/* Category pills, rigged to travel along their orbit. The outer span is a
-          zero-size anchor at the motif centre that rotates; the inner one is
+          box the size of the motif, centred on it, that rotates; the inner one is
           pushed out by the pill's radius and counter-rotates so the label stays
-          upright. Both share one duration and delay so they never drift apart. */}
+          upright. Both read one animated angle, so they cannot drift apart —
+          see --live in globals.css. */}
       {hero.pills.map((pill) => {
         const p = PILLS[pill.label];
         return (

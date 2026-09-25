@@ -378,15 +378,27 @@
  * --radius is expressed as a share of the box WIDTH (= the motif diameter), so
  * a pill at r% of the motif radius is r/2 % here.
  */
-@keyframes orbit-sweep {
-  from { transform: translate(-50%, -50%) rotate(var(--angle)); }
-  to   { transform: translate(-50%, -50%) rotate(calc(var(--angle) + var(--sweep))); }
+/* The live angle, as one inheriting value.
+ *
+ * This was two animations — the ring turning +angle and the pill turning
+ * -angle, exact inverses on the same duration. The maths cancelled, but they
+ * were two clocks on two composited layers (will-change on both) that had to
+ * agree frame for frame; when one started a beat late the cancellation broke
+ * and the label tilted, which is what the design team saw.
+ *
+ * Now only --live animates, on the ring. The pill inherits it and negates it,
+ * so there is one clock and drift is not expressible. The cost is that a
+ * custom-property animation runs on the main thread rather than the
+ * compositor — six small elements, and it halves the layer count. */
+@property --live {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
 }
 
-/* Counter-turn, so the label stays upright across the sweep. */
-@keyframes orbit-sweep-upright {
-  from { transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle))); }
-  to   { transform: translate(-50%, -50%) rotate(calc(-1 * (var(--angle) + var(--sweep)))); }
+@keyframes orbit-live {
+  from { --live: var(--angle); }
+  to   { --live: calc(var(--angle) + var(--sweep)); }
 }
 
 /* Category pills travel along their orbit.
@@ -414,6 +426,8 @@
 .orbit {
   --angle: var(--a);
   --radius: var(--r);
+  /* The resting frame, and what reduced-motion falls back to. */
+  --live: var(--angle);
   position: absolute;
   top: var(--motif-cy);
   left: 50%;
@@ -421,8 +435,8 @@
   aspect-ratio: 1;
   /* The box is large and sits over the CTAs — it must never eat a click. */
   pointer-events: none;
-  transform: translate(-50%, -50%) rotate(var(--angle));
-  animation: orbit-sweep var(--dur, 26s) ease-in-out infinite alternate;
+  transform: translate(-50%, -50%) rotate(var(--live));
+  animation: orbit-live var(--dur, 26s) ease-in-out infinite alternate;
   will-change: transform;
 }
 
@@ -431,9 +445,9 @@
   top: 50%;
   left: calc(50% + var(--radius));
   pointer-events: auto;
-  transform: translate(-50%, -50%) rotate(calc(-1 * var(--angle)));
-  animation: orbit-sweep-upright var(--dur, 26s) ease-in-out infinite alternate;
-  will-change: transform;
+  /* No animation here on purpose: --live is inherited from the ring, so this
+   * negation is recomputed from the same value on the same frame. */
+  transform: translate(-50%, -50%) rotate(calc(-1 * var(--live)));
 }
 
 /* The two artboards give the motif different proportions — 858 across an
@@ -1614,8 +1628,7 @@ html::-webkit-scrollbar-corner {
 
 /* Nothing else moves while the page is being snapshotted — see the comment in
  * theme-toggle.tsx. The carousel drift watches the same attribute from JS. */
-:root[data-swapping] .orbit,
-:root[data-swapping] .orbit-pill {
+:root[data-swapping] .orbit {
   animation-play-state: paused;
 }
 
