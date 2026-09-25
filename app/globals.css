@@ -1614,3 +1614,44 @@ html::-webkit-scrollbar-corner {
   mask: var(--m) no-repeat center / contain;
 }
 
+/* ===== About: the per-person bio disclosure =================================
+ * A native <details> so the About page stays a server component and the bios
+ * are still reachable with JavaScript off. Everything here is chrome: the
+ * default marker off, a caret that turns, and one of the two labels hidden.
+ * ========================================================================= */
+.person-bio > summary::-webkit-details-marker,
+.person-bio > summary::marker {
+  display: none;
+  content: "";
+}
+
+/* A caret drawn from borders rather than a glyph, so it inherits currentColor
+ * and needs no second SVG in the page. */
+.person-bio-caret {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  border-top: 0.3em solid transparent;
+  border-bottom: 0.3em solid transparent;
+  border-left: 0.42em solid currentColor;
+  transition: rotate 150ms ease;
+}
+.person-bio[open] .person-bio-caret {
+  rotate: 90deg;
+}
+
+/* One label at a time. Both are in the markup so the summary keeps a stable
+ * width and the row does not reflow as it opens. */
+.person-bio-hide,
+.person-bio[open] .person-bio-show {
+  display: none;
+}
+.person-bio[open] .person-bio-hide {
+  display: inline;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .person-bio-caret {
+    transition: none;
+  }
+}
