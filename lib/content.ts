@@ -55,7 +55,7 @@ export const hero = {
   headline: 'Your Insider Access To Sports Tech & Venture',
   subhead: 'The leading people, deepest insights and\nactive capital shaping the future of sports',
   ctas: [
-    { label: 'FOR FOUNDERS', href: '/#solutions', variant: 'primary' as const },
+    { label: 'FOR OPERATORS', href: '/#solutions', variant: 'primary' as const },
     { label: 'FOR INVESTORS', href: '/#solutions', variant: 'secondary' as const },
   ],
   /**
@@ -132,7 +132,7 @@ export const navMenu = [
   {
     label: 'BY ROLE',
     items: [
-      { label: 'FOR FOUNDERS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12 },
+      { label: 'FOR OPERATORS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12 },
       { label: 'FOR INVESTORS', href: '/#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8 },
     ],
   },
@@ -147,10 +147,12 @@ export const navMenu = [
 
 export const solutions = {
   title: 'SOLUTIONS',
-  selectorLabel: 'Select your sector',
+  selectorLabel: 'I am a sports tech',
+  // Singular: the label above now reads into them — "I am a sports tech
+  // OPERATOR". The ids stay as they were; they key the cards' `sectors`.
   sectors: [
-    { id: 'founders', label: 'FOUNDERS' },
-    { id: 'investors', label: 'INVESTORS' },
+    { id: 'founders', label: 'OPERATOR' },
+    { id: 'investors', label: 'INVESTOR' },
   ],
   cards: [
     {
@@ -159,35 +161,42 @@ export const solutions = {
       sectors: ['founders'],
       eyebrow: 'PLAYMAKERS',
       badge: 'FOR THE PROS',
-      title: "Where sports tech's\nbest build together.",
+      // This card shipped with Atlas's feature copy pasted into it — all nine
+      // points were about pitch decks and investor pipelines. Replaced with the
+      // Playmakers copy the team supplied. Sentence case and the ALL-CAPS CTA
+      // follow the Atlas card beside it; neither has a text-transform, so the
+      // casing here is what renders.
+      // Three lines: the copy grew past the two the card was drawn for, and the
+      // breaks are explicit so it does not wrap mid-phrase.
+      title: "Where sports tech's best\nbuild smarter, faster,\ntogether.",
       blurb:
-        'Playmakers is built around trusted peer exchange, strategic support and access to the people shaping the industry.',
-      cta: 'TRY PLAYMAKERS',
+        'The private peer advisory network for high-growth sports tech founders and CEOs.',
+      cta: 'EXPLORE MEMBERSHIP',
       testimonialsLabel: 'PLAYMAKERS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
       features: [
         {
-          title: 'Your personal board\nof advisors',
+          title: 'Your personal board\nof peer advisors',
           points: [
-            'Analyze your pitch deck to assess your investor readiness',
-            'Perform competitor benchmarking and market sizing',
-            'Improve your pitch with expert feedback and iterative refinement',
+            "Skip costly trial-and-error by learning from other founders who've been there",
+            'Scale faster with advice from leaders who have navigated complex growth',
+            'Stay mentally resilient with a circle that understands your journey',
           ],
         },
         {
           title: 'Insider sports\nindustry network',
           points: [
-            'Access detailed profiles of 2+ verified sports tech investors',
-            'Get matched with investors most likely to fund your startup',
-            'Create a custom investor pipeline and manage your outreach',
+            'Join private membership events turning your peers into collaborators',
+            'Receive introductions that expand your network among top leaders in sports',
+            'Gain access to new partners, markets and investment to accelerate business growth',
           ],
         },
         {
-          title: 'Sports tech business intelligence',
+          title: 'Insider tech\nbusiness intelligence',
           points: [
-            'Build and maintain a due\ndiligence-ready data room',
-            'Access essential model documents for early stage investments',
-            'Monitor progress towards your fundraising goal and keep your raise on track',
+            'Build with anytime / anywhere access to the best knowledge in sports tech',
+            'Inform your strategy with world-class sports tech market data and research',
+            'Leverage insider expertise to obtain a competitive advantage',
           ],
         },
       ],
@@ -326,7 +335,7 @@ export const footer = {
     {
       title: 'Solutions',
       links: [
-        { label: 'For Founders', href: '/#solutions' },
+        { label: 'For Operators', href: '/#solutions' },
         { label: 'For Investors', href: '/#solutions' },
       ],
     },
@@ -373,7 +382,7 @@ export const footer = {
 
 export const mobileMenu = {
   groups: [
-    { title: 'SOLUTIONS', links: [{ label: 'FOR FOUNDERS', href: '/#solutions' }, { label: 'FOR INVESTORS', href: '/#solutions' }] },
+    { title: 'SOLUTIONS', links: [{ label: 'FOR OPERATORS', href: '/#solutions' }, { label: 'FOR INVESTORS', href: '/#solutions' }] },
     { title: 'MENU', links: [{ label: 'MEDIA', href: '/#media' }, { label: 'ABOUT', href: '/about' }] },
     {
       title: 'CONNECT',

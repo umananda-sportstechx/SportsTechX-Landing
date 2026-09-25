@@ -110,12 +110,16 @@ export function TrustedBy({
                           uploaded logo replaces the artboard's wordmark text. */}
                       {partner.logoSrc ? (
                         <span className="absolute inset-x-0 bottom-[11px] flex justify-center lg:bottom-[15px]">
+                          {/* grayscale because the marks have to read as one
+                              set. Sourcing B&W files was the standing ask, but
+                              uploads arrive in whatever the company publishes —
+                              doing it here makes the rule hold regardless. */}
                           <BlurImage
                             src={partner.logoSrc}
                             alt=""
                             width={160}
                             height={48}
-                            className="h-auto max-h-[26px] w-auto max-w-[40%] object-contain lg:max-h-[36px]"
+                            className="h-auto max-h-[26px] w-auto max-w-[40%] object-contain grayscale lg:max-h-[36px]"
                           />
                         </span>
                       ) : (
