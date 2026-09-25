@@ -8,15 +8,19 @@ import { latestEpisode } from '@/lib/youtube';
 import vectors from '@/design/vectors.json';
 
 /**
- * Four 634.29x338.93 cards on the cream band. Each is split: a 315-wide white
- * panel carrying the copy and a 319 image butted against it, with a 2px white
- * stroke at 20%. The design also rules the grid — a hairline down the middle
- * of each row and one across between them, drawn as rotated LINE nodes.
+ * Four cards across the cream band, each stacked: a 16:9 cover on top and the
+ * copy beneath it, with a 2px white stroke at 20% over the image.
  *
- * The 402 artboard rearranges it: a 362x285 card whose image is the whole top,
- * with the headline laid over it in white, and only the action label and
- * category in a 94 white strip beneath. See the media rules in globals.css —
- * the same markup serves both.
+ * The artboard drew two rows of two, each card split side by side into a 315
+ * copy panel and a 319 image, and ruled the grid with hairlines between them.
+ * A portrait slot suits none of the covers (see below), so the card now stacks
+ * the way the 402 phone artboard already did — image the whole top, copy under
+ * it — and going four across rather than two keeps it compact. The rules went
+ * with the 2x2: a gapped row of four separates itself.
+ *
+ * The phone keeps its own variant, where the headline is laid over the image
+ * in white and only the action label and category sit in the strip beneath.
+ * See the media rules in globals.css — the same markup serves both.
  *
  * The card stays pale in dark mode (#dce3f4) and its copy goes black, so this
  * is --color-card-light rather than the page surface.
@@ -82,7 +86,7 @@ export async function Media() {
             className="media-rule-h pointer-events-none absolute inset-x-0 hidden h-px bg-[#b6b6b6] lg:block"
           />
 
-          <div className="media-grid mt-[42px] grid gap-6 lg:grid-cols-2">
+          <div className="media-grid mt-[42px] grid gap-6 lg:grid-cols-4">
             {media.items.map((item) => {
               const key = item.category.toLowerCase();
               const icon = vectors[`icon-media-${key}` as keyof typeof vectors];
@@ -157,18 +161,20 @@ export async function Media() {
                     </div>
                   </div>
 
-                  {/* 16:9 on both artboards, sized in globals.css. No fixed
-                      pixel min-height here: the old lg:min-h-[339px] fought the
-                      --k scale model and drove the slot to a 0.64 aspect
-                      between 1024 and ~1350, where the cropping was worst. */}
-                  <div className="media-shot relative order-first overflow-hidden lg:order-none">
+                  {/* 16:9 and on top at every size, sized in globals.css. It is
+                      second in the DOM so the copy reads first; `order-first`
+                      lifts it. No fixed pixel min-height here: the old
+                      lg:min-h-[339px] fought the --k scale model and drove the
+                      slot to a 0.64 aspect between 1024 and ~1350, where the
+                      cropping was worst. */}
+                  <div className="media-shot relative order-first overflow-hidden">
                     <BlurImage
                       src={image}
                       alt=""
                       fill
-                      // The slot is ~26% of the content column on desktop,
-                      // which caps at 1600 — so ~420px, 840 at 2x.
-                      sizes="(min-width: 1600px) 440px, (min-width: 1024px) 28vw, 100vw"
+                      // A quarter of the content column on desktop, which caps
+                      // at 1600 — so ~370px, 740 at 2x.
+                      sizes="(min-width: 1600px) 380px, (min-width: 1024px) 22vw, 100vw"
                       // Blurred thumbnail first, then a cross-fade to the full
                       // image. The artboard photos are static imports and carry
                       // their own blur data; a live issue's hero arrives from
