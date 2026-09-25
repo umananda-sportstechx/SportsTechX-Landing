@@ -828,36 +828,41 @@
     /* Holds the artboard's 247.81 so the bottom rule lands below the vertical
      * rules rather than being crossed by them when the copy runs short. */
     min-height: calc(247.81 * var(--k));
-    /* Column 1 sits in a 545 slot, then two 303s, then the rest. */
-    grid-template-columns: calc(545 * var(--k)) calc(303 * var(--k)) calc(303 * var(--k)) 1fr;
-    gap: 0;
+    /* The artboard's 545/303/303/rest was three link columns. Four of them fit
+     * as equal tracks beside a narrower brand column, with a real gap for the
+     * rules to sit in: 450 + 4 gaps of 40 leaves 185 each. "Investors Circle"
+     * is the longest label and sets that floor. */
+    grid-template-columns: calc(450 * var(--k)) repeat(4, 1fr);
+    column-gap: calc(var(--footer-gap) * var(--k));
+    row-gap: 0;
+    --footer-gap: 40;
   }
-  /* Anchored to the details block, not the section, so they keep the
-   * artboard's overhang above and below the columns. */
-  .footer-vrule {
+  /* One rule per link column, drawn by the column itself rather than from a
+   * list of measured x positions, so the count follows the content. Centred in
+   * the gap, and keeping the artboard's overhang above and below. */
+  .footer-col::before {
+    content: "";
     position: absolute;
     top: calc(-22.98 * var(--k));
-    left: calc(var(--x) * var(--k));
+    left: calc(var(--footer-gap) * var(--k) / -2);
     width: 2px;
     height: calc(317.66 * var(--k));
+    background-color: rgb(186 186 186 / 0.5);
   }
 
   .footer-logo {
     width: calc(148.4 * var(--k));
     height: calc(40.81 * var(--k));
   }
+  /* 410, down from the artboard's 451: the brand track narrowed to make room
+   * for a fourth link column. */
   .footer-col-1 {
-    width: calc(451 * var(--k));
+    width: calc(410 * var(--k));
     gap: calc(18 * var(--k));
   }
   .footer-desc {
     font-size: max(14px, calc(18 * var(--k)));
     line-height: calc(32 / 18);
-  }
-  .footer-contact {
-    gap: calc(13 * var(--k));
-    font-size: max(13px, calc(16 * var(--k)));
-    line-height: calc(32 / 16);
   }
   .footer-col {
     gap: calc(21 * var(--k));
@@ -884,6 +889,14 @@
   .footer-icon {
     width: calc(var(--iw) * var(--k));
     height: calc(var(--ih) * var(--k));
+  }
+  .footer-join-input {
+    height: calc(46 * var(--k));
+    font-size: max(13px, calc(16 * var(--k)));
+  }
+  .footer-join-btn {
+    height: calc(46 * var(--k));
+    font-size: max(12px, calc(15 * var(--k)));
   }
 }
 
@@ -1338,11 +1351,6 @@
     font-size: max(14px, calc(18 * var(--k)));
     line-height: calc(32 / 18);
   }
-  .footer-contact {
-    gap: calc(13 * var(--k));
-    font-size: max(13px, calc(16 * var(--k)));
-    line-height: calc(32 / 16);
-  }
   .footer-legal {
     font-size: max(10px, calc(11 * var(--k)));
     line-height: calc(32 / 11);
@@ -1351,10 +1359,25 @@
     width: calc(var(--iw) * var(--k));
     height: calc(var(--ih) * var(--k));
   }
+  /* 44 rather than the desktop 46: still clears the 44px touch target. */
+  .footer-join-input,
+  .footer-join-btn {
+    height: max(44px, calc(46 * var(--k)));
+  }
+  .footer-join-input {
+    font-size: max(16px, calc(16 * var(--k)));
+  }
+  .footer-join-btn {
+    font-size: max(12px, calc(15 * var(--k)));
+  }
 }
 
 [data-theme='dark'] .footer-col {
   border-top-color: var(--line);
+}
+
+[data-theme='dark'] .footer-col::before {
+  background-color: var(--line);
 }
 
 /* The nav type ramps across the three desktop boards: 13 at w1024-1279, 14 at

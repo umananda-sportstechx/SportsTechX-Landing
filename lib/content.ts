@@ -300,38 +300,74 @@ export const media = {
   ] as MediaItem[]),
 };
 
+/** A footer link. `icon` draws a glyph; with `iconOnly` the label is the a11y name. */
+export interface FooterLink {
+  label: string;
+  href: string;
+  icon?: string;
+  iconOnly?: boolean;
+}
+
+export interface FooterColumn {
+  title: string;
+  links: FooterLink[];
+}
+
 export const footer = {
   blurb:
-    'SportsTechX helps founders and investors navigate the sports tech market through curated access, market data and practical fundraising support.',
+    'SportsTechX is the insider network for sports tech — connecting founders and investors through curated access, market data and practical fundraising support.',
   email: 'hello@sportstechx.com',
-  location: 'Berlin, Germany',
+  /** Where the brand column\'s signup hands off. There is no /api/subscribe in
+   * this app; every newsletter CTA on the site is a link to this host, and the
+   * form is a GET so the address arrives as ?email= rather than being posted
+   * somewhere that would need a secret. */
+  newsletterAction: 'https://newsletter.sportstechx.com/subscribe',
   columns: [
-    { title: 'PLAYMAKERS', links: [{ label: 'Terms of membership', href: '/terms-of-service' }] },
     {
-      title: 'Quick Links',
+      title: 'Solutions',
       links: [
-        { label: 'Intelligence Hub', href: 'https://intelligence.sportstechx.com' },
-        { label: 'Solutions', href: '/#solutions' },
-        { label: 'Media', href: '/#media' },
+        { label: 'For Founders', href: '/#solutions' },
+        { label: 'For Investors', href: '/#solutions' },
+      ],
+    },
+    {
+      title: 'Products',
+      links: [
+        { label: 'Playmakers', href: 'https://joinplaymakers.co' },
+        // The same destination as Playmakers: "Investors Circle" is another
+        // name for it, and there is no separate page.
+        { label: 'Investors Circle', href: 'https://joinplaymakers.co' },
+        { label: 'Atlas', href: 'https://atlas.sportstechx.com' },
+      ],
+    },
+    {
+      title: 'Media',
+      links: [
         { label: 'Newsletter', href: 'https://newsletter.sportstechx.com' },
+        { label: 'Podcast', href: 'https://creators.spotify.com/pod/profile/sportstechx/' },
+        // The hub, not atlas.sportstechx.com/reports — that redirects to /login.
+        { label: 'Reports', href: 'https://intelligence.sportstechx.com/reports/' },
+        { label: 'Events', href: 'https://intelligence.sportstechx.com/events/' },
       ],
     },
     {
-      title: 'CONNECT',
+      title: 'Company',
       links: [
-        { label: 'LinkedIn', href: 'https://www.linkedin.com/company/sportstechx', icon: 'linkedin' },
-        { label: 'Youtube', href: 'https://www.youtube.com/@sportstechx', icon: 'youtube' },
-        { label: 'Instagram', href: 'https://www.instagram.com/sportstechx', icon: 'instagram' },
-        { label: 'X', href: 'https://x.com/sportstechx', icon: 'x' },
+        { label: 'About', href: '/about' },
+        { label: 'Contact', href: 'mailto:hello@sportstechx.com' },
+        { label: 'LinkedIn', href: 'https://www.linkedin.com/company/sportstechx', icon: 'linkedin', iconOnly: true },
+        { label: 'YouTube', href: 'https://www.youtube.com/@sportstechx', icon: 'youtube', iconOnly: true },
       ],
     },
-  ],
-  legal: '© 2026 SportsTechX GmbH. All rights reserved.',
+  ] satisfies FooterColumn[],
+  legal: '© 2026 SportsTechX GmbH · Berlin, Germany',
   legalLinks: [
-    { label: 'Privacy', href: '/privacy-policy' },
-    { label: 'Terms', href: '/terms-of-service' },
+    { label: 'Privacy Policy', href: '/privacy-policy' },
+    { label: 'Terms of Service', href: '/terms-of-service' },
+    // The Playmakers site's own terms. This used to point at /terms-of-service,
+    // which is SportsTechX's terms, not the membership ones.
+    { label: 'Playmakers Membership Terms', href: 'https://playmakers-omega.vercel.app/terms' },
     { label: 'Imprint', href: '/imprint' },
-    { label: 'The Inner Circle of Sports Tech', href: '/about' },
   ],
 };
 
