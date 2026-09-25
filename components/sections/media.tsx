@@ -3,7 +3,8 @@ import type { CSSProperties } from 'react';
 import { SectionIntro } from '@/components/section-intro';
 import { media } from '@/lib/content';
 import { latestIssues } from '@/lib/newsletter';
-import { showArtwork } from '@/lib/podcast';
+import { latestReport } from '@/lib/reports';
+import { latestEpisode } from '@/lib/youtube';
 import vectors from '@/design/vectors.json';
 
 /**
@@ -12,18 +13,23 @@ import vectors from '@/design/vectors.json';
  * stroke at 20%. The design also rules the grid — a hairline down the middle
  * of each row and one across between them, drawn as rotated LINE nodes.
  *
- * The 402 artboard rearranges it: a 362x285 card whose image is the whole top
- * 191, with the kicker and headline laid over it in white, and only the action
- * label and category in a 94 white strip beneath. See the media rules in
- * globals.css — the same markup serves both.
+ * The 402 artboard rearranges it: a 362x285 card whose image is the whole top,
+ * with the headline laid over it in white, and only the action label and
+ * category in a 94 white strip beneath. See the media rules in globals.css —
+ * the same markup serves both.
  *
  * The card stays pale in dark mode (#dce3f4) and its copy goes black, so this
  * is --color-card-light rather than the page surface.
  *
- * The NEWSLETTER card carries the current issue, pulled from the same Beehiiv
- * feed the STX web app reads. The artboard's placeholder ("#191 IG Group's
- * $2.15B Bet on Underdog") is itself a real issue off that feed. If the feed is
- * unreachable the static copy stands in, so the card is never blank.
+ * Three of the four cards carry live content, each from its own source and each
+ * falling back to the artboard copy if its feed is down, so a card is never
+ * blank: NEWSLETTER from Beehiiv, PODCAST from the YouTube playlist, REPORTS
+ * from the hub's public /api/reports. EVENTS is static and links to the hub.
+ *
+ * The image slot is 16:9 on both artboards. It used to be a ~319x339 portrait
+ * box on desktop, which sheared the sides off every source image — all of them
+ * are landscape, and the newsletter hero has text baked into it, so the crop
+ * was legible as missing words.
  */
 /**
  * A tiny version of a remote image, to stand in while the full one loads.
@@ -37,9 +43,24 @@ import vectors from '@/design/vectors.json';
 const tiny = (url: string) => `/_next/image?url=${encodeURIComponent(url)}&w=32&q=75`;
 
 export async function Media() {
-  // Both live sources in parallel — neither should hold the other up.
-  const [issues, show] = await Promise.all([latestIssues(), showArtwork()]);
-  const [latest] = issues;
+  // All three live sources in parallel — none should hold the others up.
+  const [issues, episode, report] = await Promise.all([
+    latestIssues(),
+    latestEpisode(),
+    latestReport(),
+  ]);
+  const [issue] = issues;
+
+  /**
+   * The live stand-in per card. All three sources settled to the same
+   * { title, link, image } shape so the card body stays one branch-free block;
+   * a missing one leaves the card on its artboard copy.
+   */
+  const live: Record<string, { title: string; link: string; image: string } | null | undefined> = {
+    NEWSLETTER: issue,
+    PODCAST: episode,
+    REPORTS: report,
+  };
 
   return (
     <section id="media" data-rise className="noise section-y bg-band-2 [--noise-alpha:0.2] dark:[--noise-alpha:0.45]">
@@ -65,11 +86,10 @@ export async function Media() {
             {media.items.map((item) => {
               const key = item.category.toLowerCase();
               const icon = vectors[`icon-media-${key}` as keyof typeof vectors];
-              const live = item.category === 'NEWSLETTER' ? latest : undefined;
-              const title = live?.title ?? item.title;
-              const href = live?.link ?? item.href;
-              const image =
-                item.category === 'PODCAST' ? show?.image || item.image : live?.image || item.image;
+              const feed = live[item.category];
+              const title = feed?.title || item.title;
+              const href = feed?.link || item.href;
+              const image = feed?.image || item.image;
               return (
                 <article
                   key={item.category}
@@ -79,20 +99,13 @@ export async function Media() {
                     {/* Below lg this block is lifted over the image and set in
                         white; from lg it sits in the copy panel in colour. */}
                     <div className="media-into flex flex-col gap-3">
-                      {/* REPORTS and EVENTS hide their kicker and its rule. */}
-                      {item.kicker && (
-                        <>
-                          <p className="media-kicker font-mono text-[14px] leading-[19px] text-white/90 uppercase lg:text-green lg:dark:text-[#1f7a5c]">
-                            {item.kicker}
-                          </p>
-                          <span
-                            aria-hidden
-                            className="media-breaker block h-px w-full bg-white/70 lg:bg-[#6b6b6b]/35"
-                          />
-                        </>
-                      )}
-                      {/* Clamped: a live issue title can run far longer than
-                          the artboard's two lines. */}
+                      {/* The green kicker and its rule used to sit here, but
+                          only NEWSLETTER and PODCAST set one, so two of four
+                          cards carried a teal eyebrow and two did not. Removed
+                          outright rather than backfilled — the category word at
+                          the foot of the card already names the card. */}
+                      {/* Clamped: a live title can run far longer than the
+                          artboard's two lines. */}
                       <p className="media-title line-clamp-2 font-sans text-[18px] leading-[1.43] font-medium whitespace-pre-line text-white lg:text-heading lg:dark:text-black">
                         {title}
                       </p>
@@ -144,12 +157,18 @@ export async function Media() {
                     </div>
                   </div>
 
-                  <div className="media-shot relative order-first overflow-hidden lg:order-none lg:min-h-[339px]">
+                  {/* 16:9 on both artboards, sized in globals.css. No fixed
+                      pixel min-height here: the old lg:min-h-[339px] fought the
+                      --k scale model and drove the slot to a 0.64 aspect
+                      between 1024 and ~1350, where the cropping was worst. */}
+                  <div className="media-shot relative order-first overflow-hidden lg:order-none">
                     <BlurImage
                       src={image}
                       alt=""
                       fill
-                      sizes="(min-width: 1024px) 320px, 100vw"
+                      // The slot is ~26% of the content column on desktop,
+                      // which caps at 1600 — so ~420px, 840 at 2x.
+                      sizes="(min-width: 1600px) 440px, (min-width: 1024px) 28vw, 100vw"
                       // Blurred thumbnail first, then a cross-fade to the full
                       // image. The artboard photos are static imports and carry
                       // their own blur data; a live issue's hero arrives from

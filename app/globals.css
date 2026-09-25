@@ -701,10 +701,26 @@
 }
 
 /* ===== Media cards ========================================================
- * Four 634.29x338.93 cards on a 1350 grid, gapped 81.71 x 85.07, each split
- * into a 315 copy panel and a 319 image. Same --k scale-model trick as the
- * Solutions cards, so the type and insets hold the artboard's proportions
- * instead of each carrying its own clamp.
+ * Four cards on a 1350 grid, gapped 85.07 x 81.71, each split into a copy
+ * panel and an image. Same --k scale-model trick as the Solutions cards, so
+ * the type and insets hold the artboard's proportions instead of each carrying
+ * its own clamp.
+ *
+ * The artboard drew a 634.29x338.93 card split 315 copy / 319 image, which made
+ * the image slot a 0.94 portrait box. Every source image is landscape — the
+ * Beehiiv hero is ~1.9, the report and event covers 1.50, a YouTube thumb is
+ * 1.78 — so object-cover sheared the sides off all four, visibly so on the
+ * newsletter hero, which has its headline baked into the artwork.
+ *
+ * So the card is now sized from its image rather than the other way round:
+ * --media-h sets the row height, .media-shot takes 16/9 of it, and the copy
+ * panel gets the rest. At 185 that is a 328.9 image beside a 305.3 panel —
+ * close to the artboard's own 319/315 split — and the two rows come down from
+ * 763 tall to 455, which is the "make the blocks smaller" half of the note.
+ *
+ * 185 rather than a rounder 200 because the copy panel is the constraint: the
+ * shorter the card, the wider the panel, and the title has two clamped lines
+ * to fit a live headline into. Below ~180 the category word stops clearing it.
  * ========================================================================= */
 .media-rig {
   container-type: inline-size;
@@ -713,6 +729,8 @@
 @media (width >= 64rem) {
   .media-rig {
     --k: calc(100cqw / 1350);
+    /* Card height in artboard units. The grid rules below derive from it. */
+    --media-h: 185;
   }
 
   .media-grid {
@@ -722,24 +740,24 @@
   .media-card {
     /* r20 in the design; the site had it at 6. */
     border-radius: calc(20 * var(--k));
-    grid-template-columns: calc(315 * var(--k)) 1fr;
-    min-height: calc(338.93 * var(--k));
+    /* Copy takes what the 16:9 image leaves. */
+    grid-template-columns: 1fr auto;
+    min-height: calc(var(--media-h) * var(--k));
+  }
+  .media-shot {
+    height: calc(var(--media-h) * var(--k));
+    aspect-ratio: 16 / 9;
   }
   /* Copy sits 28 from the top and the category block 12 from the bottom,
    * which lands it on the artboard's y=251 without pinning it there. */
   .media-copy {
     padding: calc(28 * var(--k)) calc(27 * var(--k)) calc(12 * var(--k));
   }
+  /* 251, not the artboard's 260: the copy panel narrowed a little when the
+   * image took its 16:9 share. 305.3 less the 27 gutters leaves 251.3. */
   .media-into {
-    width: calc(260 * var(--k));
+    width: calc(251 * var(--k));
     gap: calc(13 * var(--k));
-  }
-  .media-kicker {
-    font-size: max(12px, calc(16 * var(--k)));
-    line-height: calc(19 / 16);
-  }
-  .media-breaker {
-    width: calc(256 * var(--k));
   }
   .media-title {
     font-size: max(16px, calc(21 * var(--k)));
@@ -764,16 +782,22 @@
   }
   /* The artboard rules the grid per row rather than end to end. Offsets are
    * measured from the rig, which starts 50 above the first card row — the
-   * artboard's own numbers are relative to the row, so each carries that 50. */
+   * artboard's own numbers are relative to the row, so each carries that 50.
+   *
+   * Derived from --media-h rather than hardcoded, so they follow the card
+   * instead of having to be re-measured whenever its height changes. The
+   * artboard's own 339 / 474 / 434 were this arithmetic at --media-h: 339. */
   .media-rule-v {
     top: calc(50 * var(--k));
-    height: calc(339 * var(--k));
+    height: calc(var(--media-h) * var(--k));
   }
   .media-rule-v-2 {
-    top: calc(474 * var(--k));
+    /* Second row: past the first card and the 85.07 row gap. */
+    top: calc((50 + var(--media-h) + 85.07) * var(--k));
   }
   .media-rule-h {
-    top: calc(434 * var(--k));
+    /* Between the rows, 45 below the first — the artboard's own offset. */
+    top: calc((50 + var(--media-h) + 45) * var(--k));
   }
 }
 
@@ -1216,8 +1240,11 @@
     position: relative;
     border-radius: calc(20 * var(--k));
   }
+  /* The artboard's 191 over a 362 card is 1.896 — near enough 16:9 that it read
+   * as correct, but still a hair of crop. Pinned to the ratio instead, which
+   * also keeps it identical to the desktop slot. Costs 12 of card height. */
   .media-shot {
-    height: calc(191 * var(--k));
+    aspect-ratio: 16 / 9;
     border-radius: calc(10 * var(--k)) calc(10 * var(--k)) 0 0;
   }
   /* #454545 transparent to #232529, so the overlaid copy stays readable. */
@@ -1240,10 +1267,6 @@
     z-index: 1;
     width: calc(321 * var(--k));
     gap: calc(13 * var(--k));
-  }
-  .media-kicker {
-    font-size: max(12px, calc(16 * var(--k)));
-    line-height: calc(19 / 16);
   }
   .media-title {
     font-size: max(14px, calc(18 * var(--k)));

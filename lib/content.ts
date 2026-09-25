@@ -236,12 +236,11 @@ export const solutions = {
 export type MediaItem = {
   category: string;
   action: string;
-  /** Absent where the design hides the card's "Product Title" layer. */
-  kicker?: string;
   /** Extra destinations shown as brand icons beside the category word. */
   links?: { label: string; href: string; icon: string; color: string }[];
   title: string;
-  image: StaticImageData;
+  /** Static stand-in. Three of the four cards replace this at render time. */
+  image: Img;
   href: string;
 };
 
@@ -252,7 +251,6 @@ export const media = {
     {
       category: 'NEWSLETTER',
       action: 'SUBSCRIBE',
-      kicker: 'SPORTSTECHX WEEKLY',
       title: "#191 🤝 IG Group's $2.15B\nBet on Underdog",
       image: img6552cb5eb340,
       // Replaced at render time by the latest issue from the Beehiiv feed.
@@ -261,7 +259,7 @@ export const media = {
     {
       category: 'PODCAST',
       action: 'LISTEN',
-      kicker: 'STX ALLSTARS PODCAST',
+      // Replaced at render time by the latest video on the YouTube playlist.
       title: 'From M&A Advisory to Early Stage Sports Tech Investor - Uday Khanna',
       image: imgb8758def93ad,
       // Spotify is the default destination for the card itself.
@@ -284,18 +282,20 @@ export const media = {
     {
       category: 'REPORTS',
       action: 'READ',
-      // no kicker: the design hides this card's "Product Title" layer
-      title: 'Football Tech Report 2006',
+      // Replaced at render time by the newest report on the hub. The artboard
+      // read "Football Tech Report 2006" — a typo for the 2025 edition.
+      title: 'Football Tech Report 2025',
       image: img198f122078d1,
       href: 'https://intelligence.sportstechx.com/reports/',
     },
     {
       category: 'EVENTS',
       action: 'ATTEND',
-      // no kicker: the design hides this card's "Product Title" layer
       title: 'The NextGen Sportstech\nSummit 2026',
       image: imgdd889ac2c460,
-      href: '/#events',
+      // The hub's events page. This was '/#events', an anchor that does not
+      // exist on this page, so the card went nowhere.
+      href: 'https://intelligence.sportstechx.com/events/',
     },
   ] as MediaItem[]),
 };
