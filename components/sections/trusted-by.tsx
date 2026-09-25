@@ -97,6 +97,13 @@ export function TrustedBy({
                         sizes="(min-width: 1280px) 210px, (min-width: 640px) 171px, 158px"
                         className="object-cover"
                       />
+                      {/* A flat dim across the whole photo. The logos that go
+                          over these are white, and a headshot can be light
+                          enough to swallow one — the scrim below only darkens
+                          the bottom strip, which is not enough once a real mark
+                          is wider than the wordmark it replaced. Ordered before
+                          the logo so it never dims the mark itself. */}
+                      <div aria-hidden className="absolute inset-0 bg-black/30" />
                       {/* Bottom scrim: #454545 transparent to #232529 opaque. */}
                       <div className="absolute inset-x-0 bottom-0 h-[55px] bg-linear-to-b from-[#454545]/0 to-[#232529] lg:h-[72px]" />
                       {/* The company mark at the middle bottom of the photo. An
@@ -117,9 +124,11 @@ export function TrustedBy({
                         </span>
                       )}
                     </div>
+                    {/* Both up 2pt on the artboard's 11/9 — they were too small
+                        to read at the card's size. */}
                     <div className="mt-[6px] text-center">
-                      <p className="font-sans text-[11px] leading-[16px] font-medium text-fg">{partner.name}</p>
-                      <p className="font-mono text-[9px] leading-[14px] text-fg-muted">{partner.role}</p>
+                      <p className="font-sans text-[13px] leading-[18px] font-medium text-fg">{partner.name}</p>
+                      <p className="font-mono text-[11px] leading-[16px] text-fg-muted">{partner.role}</p>
                     </div>
                   </article>
                 </Fragment>
