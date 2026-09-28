@@ -1,6 +1,5 @@
-import type { CSSProperties } from 'react';
 import type { Metadata } from 'next';
-import Image from 'next/image';
+import { PersonCard } from '@/components/person-card';
 import { SectionIntro } from '@/components/section-intro';
 import { about, type Person } from '@/lib/about';
 
@@ -20,87 +19,15 @@ export const metadata: Metadata = {
   },
 };
 
-/**
- * A person card: portrait, name, role, then a "Bio" toggle carrying the
- * LinkedIn link, with the bio and the favourite-teams line inside it.
- *
- * The card is a four-row subgrid — portrait / name / role / bio — so every card
- * in a row shares those tracks and each block starts on the same line as its
- * neighbours. It used to be a plain flex column, which meant a role that
- * wrapped to two lines ("Head of Communications & Operations") pushed that one
- * card's bio down, and the bio's own length then pushed the teams rule down
- * again. The rule reads as a shared baseline, so every accumulated difference
- * showed up as a line that didn't line up.
- *
- * Teams sat in a fifth track for that reason. It can live inside the toggle now
- * (asked for in feedback) precisely because collapsed content has nothing to
- * align with — only the four visible tracks have to agree.
- *
- * The portrait is a 128 circle, matching the old site. It was a full-bleed 4:5,
- * which rendered ~316x395 — but the source photos are 400x400, so that was a 2x
- * upscale on a retina screen and looked soft. At 128 the same files are sharp
- * with room to spare, and a square source no longer has to be cropped to 4:5.
- */
-function PersonCard({ person }: { person: Person }) {
-  return (
-    <article data-rise className="grid grid-rows-subgrid row-span-4 justify-items-center gap-0 text-center">
-      <div className="relative size-32 overflow-hidden rounded-full bg-band shadow-md">
-        <Image src={person.photo} alt={person.name} fill sizes="128px" className="object-cover" />
-      </div>
-
-      <h3 className="tracked mt-5 font-display text-feature leading-[1.2] text-heading uppercase">
-        {person.name}
-      </h3>
-
-      <p className="tracked mt-1 font-mono-alt text-mono-eyebrow text-accent uppercase">
-        {person.role}
-      </p>
-
-      {/* Native <details>, so this page stays a server component and the bios
-          are still reachable with JavaScript off. */}
-      <details className="person-bio mt-4 w-full">
-        <summary className="tracked flex cursor-pointer list-none items-center justify-center gap-1.5 font-mono text-legal text-fg-muted uppercase transition-colors hover:text-heading">
-          <span className="person-bio-caret" aria-hidden />
-          Bio
-          {/* Inside the summary because the layout puts it on this line. The
-              cost is that opening LinkedIn also toggles the bio behind the new
-              tab — a summary's activation fires for clicks anywhere in it, and
-              stopping that needs JS, which would make this a client component
-              and lose the no-JS fallback above. */}
-          <a
-            href={person.linkedin}
-            target="_blank"
-            rel="noreferrer"
-            aria-label={`${person.name} on LinkedIn`}
-            className="ml-1 text-fg-muted transition-colors hover:text-[#0077b5]"
-          >
-            {/* Masked so it takes currentColor. .brand-icon rather than
-                .footer-icon: the latter is re-sized by the --k scale model in
-                two media queries, which would override the size here. */}
-            <span
-              aria-hidden
-              style={{ '--m': 'url(/vectors/icon-footer-linkedin.svg)' } as CSSProperties}
-              className="brand-icon size-4"
-            />
-          </a>
-        </summary>
-        <p className="mt-3 text-left font-sans text-body-sm leading-[1.7] text-heading/70 dark:text-heading/55">
-          {person.bio}
-        </p>
-        <p className="mt-4 border-t border-line pt-3 text-left font-mono text-legal text-fg-muted">
-          {person.teams}
-        </p>
-      </details>
-    </article>
-  );
-}
-
 function People({ title, intro, people }: { title: string; intro?: string; people: Person[] }) {
   return (
     <section className="mt-16 lg:mt-24">
       <h2 className="tracked font-display text-card-sm leading-[1.05] text-heading uppercase" data-rise>
         {title}
       </h2>
+      {/* A short accent rule under each heading. The page is portraits and grey
+          type end to end; this is the one bit of brand colour holding it. */}
+      <span aria-hidden className="mt-4 block h-[3px] w-14 rounded-full bg-accent" data-rise />
       {intro && (
         <p
           className="mt-6 max-w-[820px] font-sans text-body leading-[1.78] text-heading/70 dark:text-heading/55"
