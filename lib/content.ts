@@ -174,7 +174,9 @@ export const solutions = {
       blurb:
         'The private peer advisory network for high-growth sports tech founders and CEOs.',
       cta: 'EXPLORE MEMBERSHIP',
-      ctaHref: 'https://joinplaymakers.co',
+      // TEMPORARY host, like the STX one — restore https://joinplaymakers.co
+      // when Playmakers is back on its own domain.
+      ctaHref: 'https://playmakers-omega.vercel.app/',
       testimonialsLabel: 'PLAYMAKERS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
       features: [
