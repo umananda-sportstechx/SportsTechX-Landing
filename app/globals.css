@@ -1676,15 +1676,6 @@ html::-webkit-scrollbar-corner {
   rotate: 90deg;
 }
 
-/* One label at a time. Both are in the markup so the summary keeps a stable
- * width and the row does not reflow as it opens. */
-.person-bio-hide,
-.person-bio[open] .person-bio-show {
-  display: none;
-}
-.person-bio[open] .person-bio-hide {
-  display: inline;
-}
 
 @media (prefers-reduced-motion: reduce) {
   .person-bio-caret {
