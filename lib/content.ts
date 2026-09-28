@@ -117,6 +117,8 @@ export type SolutionCard = {
   title: string;
   blurb: string;
   cta: string;
+  /** Where the CTA goes — the product's own site. */
+  ctaHref: string;
   features: { title: string; points: string[] }[];
   testimonialsLabel: string;
   testimonials: Testimonial[];
@@ -172,6 +174,7 @@ export const solutions = {
       blurb:
         'The private peer advisory network for high-growth sports tech founders and CEOs.',
       cta: 'EXPLORE MEMBERSHIP',
+      ctaHref: 'https://joinplaymakers.co',
       testimonialsLabel: 'PLAYMAKERS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
       features: [
@@ -210,6 +213,7 @@ export const solutions = {
       blurb:
         'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
       cta: 'TRY ATLAS',
+      ctaHref: 'https://atlas.sportstechx.com',
       testimonialsLabel: 'ATLAS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
       features: [

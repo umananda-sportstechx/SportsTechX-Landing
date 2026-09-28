@@ -207,8 +207,11 @@ function SolutionBlock({
             {card.blurb}
           </p>
 
-          <button
-            type="button"
+          {/* A link, not a button: it leaves for the product's own site. The
+              footer's rule for an off-site href applies here too. */}
+          <a
+            href={card.ctaHref}
+            {...(card.ctaHref.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
             className={cn(
               'card-cta group/cta tracked mt-8 inline-flex h-[42px] items-center justify-center rounded-full px-6 text-label',
               // Both cards converge on the brand pink with white type — the
@@ -228,7 +231,7 @@ function SolutionBlock({
             <span className="transition-opacity duration-[80ms] ease-out group-active/cta:opacity-70">
               {card.cta}
             </span>
-          </button>
+          </a>
         </div>
         <div
           className={cn(
