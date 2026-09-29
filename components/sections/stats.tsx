@@ -1,4 +1,5 @@
 import { Fragment } from 'react';
+import { CountUp } from '@/components/count-up';
 import { stats } from '@/lib/content';
 import { cn } from '@/lib/utils';
 
@@ -77,7 +78,7 @@ export function Stats() {
                 )}
               >
                 <div className="flex flex-col gap-[8px] text-left">
-                  <p className="font-display text-stat leading-[0.94]">{stat.value}</p>
+                  <CountUp value={stat.value} className="font-display text-stat leading-[0.94]" />
                   <p className="tracked font-sans text-stat-label leading-[1.3] whitespace-pre-line">
                     {stat.label}
                   </p>
