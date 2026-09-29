@@ -74,7 +74,8 @@ export function Solutions({
   testimonials,
   previews,
 }: {
-  testimonials?: Testimonial[];
+  /** CMS quotes per solution card, keyed by card id. */
+  testimonials?: Partial<Record<string, Testimonial[]>>;
   /** Card preview panels, POSITIONAL: [0] Playmakers, [1] Atlas. */
   previews?: SiteItem[];
 }) {
@@ -126,7 +127,7 @@ export function Solutions({
               <SolutionBlock
                 key={card.id}
                 card={card}
-                testimonials={testimonials}
+                testimonials={testimonials?.[card.id]}
                 // Indexed against the UNFILTERED list: the sector filter can drop
                 // the first card, and a filtered index would then hand the Atlas
                 // card the Playmakers preview.
@@ -148,8 +149,9 @@ function SolutionBlock({
   testimonials?: Testimonial[];
   preview?: SiteItem;
 }) {
-  // CMS testimonials, when there are any, replace the artboard's placeholder
-  // set on BOTH cards — the .fig only ever carried one quote, copied four times.
+  // This card's own CMS quotes, when the admin has uploaded any, otherwise the
+  // set in content.ts. Each card reads its own section, so filling one in the
+  // admin panel no longer changes the other.
   const quotes = testimonials?.length ? testimonials : card.testimonials;
   // Playmakers is the dark card, Atlas the pale one.
   const dark = card.id === 'playmakers';
@@ -331,6 +333,10 @@ function SolutionBlock({
           />
           <Carousel
             label={card.testimonialsLabel}
+            // Two quotes to a view, so a press has to move exactly two. The
+            // default 0.8 of a view lands mid-quote and leans on scroll-snap to
+            // tidy up, which is what left the rule cutting through a quote.
+            pageBy={1}
             trackClassName="gap-0"
             arrowClassName={cn('card-arrow', dark ? 'text-white' : 'text-[#606060]')}
           >
@@ -356,16 +362,20 @@ function SolutionBlock({
                       with no blurDataURL, which next/image rejects outright.
                       BlurImage derives the stand-in from a static import when
                       there is one and simply skips it otherwise. */}
-                  <span className="card-avatar relative size-14 shrink-0 overflow-hidden rounded-[3px]">
-                    <BlurImage src={t.avatar} alt="" fill sizes="56px" className="object-cover" />
-                  </span>
+                  {t.avatar && (
+                    <span className="card-avatar relative size-14 shrink-0 overflow-hidden rounded-[3px]">
+                      <BlurImage src={t.avatar} alt="" fill sizes="56px" className="object-cover" />
+                    </span>
+                  )}
                   <span
                     className={cn('card-chip-text text-left', dark ? 'text-white' : 'text-black')}
                   >
                     <span className="card-chip-name block font-sans font-medium">{t.name}</span>
-                    <span className="card-chip-role block font-mono tracking-[-0.03em] opacity-60">
-                      {t.role}
-                    </span>
+                    {t.role && (
+                      <span className="card-chip-role block font-mono tracking-[-0.03em] opacity-60">
+                        {t.role}
+                      </span>
+                    )}
                   </span>
                 </figcaption>
               </figure>

@@ -28,7 +28,10 @@ export interface SiteSections {
   gallery2?: SiteItem[];
   /** Solutions card previews. Positional: [0] Playmakers, [1] Atlas. */
   solutions?: SiteItem[];
+  /** Quotes on the Playmakers solution card. */
   testimonials?: SiteItem[];
+  /** Quotes on the Atlas solution card — its own section so the two differ. */
+  testimonials2?: SiteItem[];
 }
 
 export async function siteContent(): Promise<SiteSections> {

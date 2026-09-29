@@ -25,8 +25,13 @@ export interface Partner {
 export interface Testimonial {
   quote: string;
   name: string;
-  role: string;
-  avatar: Img;
+  /**
+   * Both optional: the Playmakers quotes below arrived as quote + name only.
+   * Inventing a job title or reusing a stock face for a real, named person is
+   * worse than leaving the line out, so the card renders whichever it has.
+   */
+  role?: string;
+  avatar?: Img;
 }
 import img17495777b6f3 from '@/public/images/17495777b6f3.jpg';
 import imgb3d04779161b from '@/public/images/b3d04779161b.jpg';
@@ -108,6 +113,36 @@ export const testimonial: Testimonial = {
   avatar: imgf342d6ba5294,
 };
 
+/**
+ * The real Playmakers quotes, from the team's "Solution Preview" copy.
+ *
+ * These replace four copies of a placeholder attributed to a person who does
+ * not exist. No roles or photos came with them, so neither is set — see the
+ * note on Testimonial. The admin panel can still override the whole set.
+ */
+export const playmakersTestimonials: Testimonial[] = [
+  {
+    quote:
+      '“What makes Playmakers so valuable is that everyone gets it: the pressure, the loneliness, the highs and lows of building a high-growth sports tech business. You can show up with a real challenge, ask for help, and get a meaningful answer, introduction or opportunity — often within hours.”',
+    name: 'Sowbhagya Shetty',
+  },
+  {
+    quote:
+      '“The connections I’ve made through Playmakers have already paid off in a very concrete way. They’ve led to a new partnership with NVIDIA, and we’ve started working on a joint go-to-market approach with another member whose technology and customer base complement ours.”',
+    name: 'Valterri Salomaki',
+  },
+  {
+    quote:
+      '“Within just a few months, we’ve already seen concrete collaborations emerge with other Playmakers members. There’s so much high-quality innovation within the group, and we’re now bringing some of those solutions into how we operate at Füchse Berlin. That’s when you know a network is really working.”',
+    name: 'Christopher Jahns',
+  },
+  {
+    quote:
+      '“Being part of Playmakers has helped me build meaningful connections with peers who are at the same stage, navigating similar challenges. There’s a real sense of camaraderie and an understanding that we help each other out.”',
+    name: 'Harrison Brown',
+  },
+];
+
 export type SolutionCard = {
   id: string;
   /** Which of the sector buttons show this card. */
@@ -178,7 +213,7 @@ export const solutions = {
       // when Playmakers is back on its own domain.
       ctaHref: 'https://playmakers-omega.vercel.app/',
       testimonialsLabel: 'PLAYMAKERS TESTIMONIALS',
-      testimonials: [testimonial, testimonial, testimonial, testimonial],
+      testimonials: playmakersTestimonials,
       features: [
         {
           title: 'Your personal board\nof peer advisors',

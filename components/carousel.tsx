@@ -30,6 +30,7 @@ export function Carousel({
   autoScroll,
   initialOffset = 0,
   alwaysLoop,
+  pageBy = 0.8,
 }: {
   children: React.ReactNode;
   className?: string;
@@ -48,6 +49,14 @@ export function Carousel({
    * everything is already visible and there is nothing to scroll to.
    */
   alwaysLoop?: boolean;
+  /**
+   * How far one arrow press travels, as a fraction of the visible width.
+   *
+   * 0.8 suits a continuous rail of small cards, where stopping part-way is
+   * natural. A layout with a fixed number of items per view must pass 1, or the
+   * press targets a fraction of an item and only scroll-snap saves it.
+   */
+  pageBy?: number;
 }) {
   const track = useRef<HTMLDivElement>(null);
   const paused = useRef(false);
@@ -156,7 +165,7 @@ export function Carousel({
     // resyncs its accumulator from the real position on the way out.
     paused.current = true;
     if (resumeAt.current) window.clearTimeout(resumeAt.current);
-    const delta = dir * el.clientWidth * 0.8;
+    const delta = dir * el.clientWidth * pageBy;
     if (looping) {
       // The track carries two copies, so jumping by exactly one is invisible.
       // Without this a page near either end just clamped: row 2 sits low in its

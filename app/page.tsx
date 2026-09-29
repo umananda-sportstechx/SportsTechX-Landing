@@ -6,7 +6,7 @@ import { Solutions } from '@/components/sections/solutions';
 import { Stats } from '@/components/sections/stats';
 import { TrustedBy, rotateRow } from '@/components/sections/trusted-by';
 import { siteContent, type SiteItem } from '@/lib/site-content';
-import { testimonial, trustedBy, type Partner, type Testimonial } from '@/lib/content';
+import { trustedBy, type Partner, type Testimonial } from '@/lib/content';
 
 export default async function Home() {
   /* Partner photos and testimonials come from the admin panel (Site assets ->
@@ -19,17 +19,27 @@ export default async function Home() {
   const rowOne = toPartners(cms.gallery) ?? trustedBy.partners;
   const rowTwoCms = toPartners(cms.gallery2);
   const rowTwo = rowTwoCms ?? rotateRow(rowOne);
-  const testimonials: Testimonial[] | undefined = cms.testimonials?.length
-    ? cms.testimonials.map((it) => ({
-        // Admins type a plain message; the design's curly quotes go on here.
-        quote: quoted(it.body ?? ''),
-        name: it.title ?? '',
-        role: it.subtitle ?? '',
-        // The photo is optional in the admin panel, but this design always
-        // draws one, so a quote without a photo borrows the artboard's.
-        avatar: it.url ?? testimonial.avatar,
-      }))
-    : undefined;
+  /* Each solution card has its own testimonials section, so the two can carry
+     different quotes. Keyed by card id rather than by position: the sector
+     filter can drop a card, and an index would then hand Atlas the Playmakers
+     quotes. */
+  const fromCms = (items?: SiteItem[]): Testimonial[] | undefined =>
+    items?.length
+      ? items.map((it) => ({
+          // Admins type a plain message; the design's curly quotes go on here.
+          quote: quoted(it.body ?? ''),
+          name: it.title ?? '',
+          // Both optional in the admin panel. Left unset rather than filled in
+          // with a stand-in: a borrowed stock face on a real, named person is
+          // worse than no photo.
+          role: it.subtitle || undefined,
+          avatar: it.url ?? undefined,
+        }))
+      : undefined;
+  const testimonials = {
+    playmakers: fromCms(cms.testimonials),
+    atlas: fromCms(cms.testimonials2),
+  };
 
   return (
     <>
