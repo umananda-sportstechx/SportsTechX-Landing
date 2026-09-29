@@ -103,7 +103,6 @@ export function TrustedBy({
                           the bottom strip, which is not enough once a real mark
                           is wider than the wordmark it replaced. Ordered before
                           the logo so it never dims the mark itself. */}
-                      <div aria-hidden className="absolute inset-0 bg-black/30" />
                       {/* Bottom scrim: #454545 transparent to #232529 opaque. */}
                       <div className="absolute inset-x-0 bottom-0 h-[55px] bg-linear-to-b from-[#454545]/0 to-[#232529] lg:h-[72px]" />
                       {/* The company mark at the middle bottom of the photo. An

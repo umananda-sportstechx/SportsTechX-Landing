@@ -19,7 +19,10 @@ import { cn } from '@/lib/utils';
  * so it can't fight someone reading or tabbing through, and never starts at all
  * under `prefers-reduced-motion`.
  */
-const DRIFT_PX_PER_SEC = 24;
+/* 50, not 24: at 24 the rail crawls, and a crawl driven by a per-frame
+   scrollLeft write is what reads as stutter rather than as motion. Matches
+   the Atlas marquee so the three sites drift at the same rate. */
+const DRIFT_PX_PER_SEC = 50;
 
 export function Carousel({
   children,
