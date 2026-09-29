@@ -91,7 +91,7 @@ export function NavBar() {
           {/* relative: the drop-down is positioned against the pill's left
               edge, which is where the board aligns it — not against the link. */}
           <nav
-            className="relative hidden items-center gap-4 rounded-full border-[1.5px] border-nav-border bg-nav-bg py-1 pr-1 pl-[20px] shadow-nav lg:flex xl:gap-9"
+            className="relative hidden h-[50px] items-center gap-4 rounded-full border-[1.5px] border-nav-border bg-nav-bg pr-1 pl-[20px] shadow-nav lg:flex xl:gap-9"
             onMouseLeave={() => setMenu(false)}
             onBlur={(e) => {
               if (!e.currentTarget.contains(e.relatedTarget as Node)) setMenu(false);
