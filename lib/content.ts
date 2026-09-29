@@ -129,7 +129,7 @@ export const playmakersTestimonials: Testimonial[] = [
   {
     quote:
       '“The connections I’ve made through Playmakers have already paid off in a very concrete way. They’ve led to a new partnership with NVIDIA, and we’ve started working on a joint go-to-market approach with another member whose technology and customer base complement ours.”',
-    name: 'Valterri Salomaki',
+    name: 'Valtteri Salomaki',
   },
   {
     quote:
