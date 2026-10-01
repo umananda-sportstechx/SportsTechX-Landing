@@ -121,11 +121,15 @@ export function TrustedBy({
                             className="h-auto max-h-[26px] w-auto max-w-[40%] object-contain grayscale lg:max-h-[36px]"
                           />
                         </span>
-                      ) : (
+                      ) : partner.logo ? (
+                        /* The artboard's wordmark, which only the designed
+                           placeholder rail carries. A CMS partner uploaded
+                           without a logo has `logo: ''` and gets nothing —
+                           previously that still rendered an empty span. */
                         <span className="absolute inset-x-0 bottom-[11px] text-center font-sans text-[14px] leading-none font-bold tracking-[-0.02em] text-white lg:bottom-[15px] lg:text-[19px]">
                           {partner.logo}
                         </span>
-                      )}
+                      ) : null}
                     </div>
                     {/* Both up 2pt on the artboard's 11/9 — they were too small
                         to read at the card's size. */}
