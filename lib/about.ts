@@ -77,6 +77,24 @@ export const about = {
       linkedin: 'https://www.linkedin.com/in/atiriyanarayan/',
     },
     {
+      name: 'Brendon Murzello',
+      role: 'Head of Marketing',
+      bio: 'Brendon heads up marketing and content at SportsTechX, blending strategic messaging with digital design to elevate our brand. Outside the office, he\'s usually training for his next run, shooting content or on a hike.',
+      teams: 'Sports Teams: Manchester United, Red Bull Racing',
+      photo: '/team/brendon-murzello.jpg',
+      linkedin: 'https://www.linkedin.com/in/brendon-murzello-561b6a311',
+    },
+    {
+      name: 'Umananda Siddha',
+      role: 'Software Engineer',
+      bio: 'Umananda builds and maintains the website and software architecture of SportsTechX. He plays chess.',
+      // The only profile with no clubs to list; he gave "None" rather than
+      // leave it blank, and the card always renders this row.
+      teams: 'Sports Teams: None',
+      photo: '/team/umananda-siddha.jpg',
+      linkedin: 'https://www.linkedin.com/in/umananda-siddha-399b95217/',
+    },
+    {
       name: 'Advika Ponnappa',
       role: 'Research & Data',
       bio: 'Advika is currently pursuing a BSc in Computer Studies with a keen interest in International Relations. She is an enthusiastic sportswoman, having played hockey and badminton professionally. She has a strong interest towards learning about women\'s sports and advancements in sports technology.',
@@ -91,6 +109,14 @@ export const about = {
       teams: 'Sports Teams: Rajasthan United FC, Union Bank of India, Any Indian Contingent!',
       photo: '/team/avdhut-gursale.jpg',
       linkedin: 'https://www.linkedin.com/in/avdhut-gursale-b2a2a0312/',
+    },
+    {
+      name: 'Gaurav Kr. Jha',
+      role: 'Research & Data Analyst',
+      bio: 'Gaurav holds a B.Tech in Electronics and Communication Engineering. He enjoys working with data and is also into content creation and digital storytelling. A loyal RCB fan, he is always up for learning something new.',
+      teams: 'Sports Teams: Royal Challengers Bangalore',
+      photo: '/team/gaurav-kr-jha.jpg',
+      linkedin: 'https://www.linkedin.com/in/gauravkrjha07',
     },
   ] satisfies Person[],
   advisors: [
