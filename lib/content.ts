@@ -117,29 +117,34 @@ export const testimonial: Testimonial = {
  * The real Playmakers quotes, from the team's "Solution Preview" copy.
  *
  * These replace four copies of a placeholder attributed to a person who does
- * not exist. No roles or photos came with them, so neither is set — see the
- * note on Testimonial. The admin panel can still override the whole set.
+ * not exist. Roles are set from the Solution Preview copy; no photos came with
+ * them, so avatars stay unset — see the note on Testimonial. The admin panel
+ * can still override the whole set.
  */
 export const playmakersTestimonials: Testimonial[] = [
   {
     quote:
-      '“What makes Playmakers so valuable is that everyone gets it: the pressure, the loneliness, the highs and lows of building a high-growth sports tech business. You can show up with a real challenge, ask for help, and get a meaningful answer, introduction or opportunity — often within hours.”',
+      '“I’ve built two companies without outside funding, so I know how much depends on the people around you. Playmakers gives me a circle of founders who understand the pressure without me having to explain it. When I ask for help, I get real answers and useful introductions, usually within hours.”',
     name: 'Sowbhagya Shetty',
+    role: 'Co-founder & CEO, Data Sports Group',
   },
   {
     quote:
       '“The connections I’ve made through Playmakers have already paid off in a very concrete way. They’ve led to a new partnership with NVIDIA, and we’ve started working on a joint go-to-market approach with another member whose technology and customer base complement ours.”',
     name: 'Valtteri Salomaki',
+    role: 'Co-Founder & CEO, EDGE Sound Research',
   },
   {
     quote:
       '“Within just a few months, we’ve already seen concrete collaborations emerge with other Playmakers members. There’s so much high-quality innovation within the group, and we’re now bringing some of those solutions into how we operate at Füchse Berlin. That’s when you know a network is really working.”',
     name: 'Christopher Jahns',
+    role: 'Co-founder & CEO, XU Group',
   },
   {
     quote:
-      '“Being part of Playmakers has helped me build meaningful connections with peers who are at the same stage, navigating similar challenges. There’s a real sense of camaraderie and an understanding that we help each other out.”',
+      '“Being part of Playmakers has helped me build valuable new connections with peers who are at a similar stage and navigating many of the same challenges. There’s a real sense of camaraderie, with people genuinely willing to share their experiences and help each other out.”',
     name: 'Harrison Brown',
+    role: 'Co-Founder & CEO, HeadCheck Health',
   },
 ];
 
