@@ -366,6 +366,8 @@ export interface FooterLink {
   href: string;
   icon?: string;
   iconOnly?: boolean;
+  /** Flips the Solutions sector toggle on click (see SectorLink). */
+  sector?: string;
 }
 
 export interface FooterColumn {
@@ -386,16 +388,17 @@ export const footer = {
     {
       title: 'Solutions',
       links: [
-        { label: 'For Operators', href: '/#solutions' },
-        { label: 'For Investors', href: '/#solutions' },
+        // sector flips the Solutions toggle on click as well as scrolling there.
+        { label: 'For Operators', href: '/#solutions', sector: 'founders' },
+        { label: 'For Investors', href: '/#solutions', sector: 'investors' },
       ],
     },
     {
       title: 'Products',
       links: [
-        { label: 'Playmakers', href: 'https://joinplaymakers.co' },
-        // The same destination as Playmakers: "Investors Circle" is another
-        // name for it, and there is no separate page.
+        { label: 'Playmakers', href: 'https://playmakers-omega.vercel.app/' },
+        // The Investors Circle membership page, distinct from the Playmakers
+        // landing above.
         { label: 'Investors Circle', href: 'https://joinplaymakers.co' },
         { label: 'Atlas', href: 'https://atlas.sportstechx.com' },
       ],
@@ -419,7 +422,7 @@ export const footer = {
         { label: 'YouTube', href: 'https://www.youtube.com/@sportstechx', icon: 'youtube', iconOnly: true },
       ],
     },
-  ] satisfies FooterColumn[],
+  ] as FooterColumn[],
   legal: '© 2026 SportsTechX GmbH · Berlin, Germany',
   legalLinks: [
     { label: 'Privacy Policy', href: '/privacy-policy' },

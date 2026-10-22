@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { BrandLogo } from '@/components/brand-logo';
 import { NewsletterForm } from '@/components/newsletter-form';
+import { SectorLink } from '@/components/sector-link';
 import { footer } from '@/lib/content';
 import vectors from '@/design/vectors.json';
 import { cn } from '@/lib/utils';
@@ -76,18 +77,34 @@ export function Footer() {
                   {column.title}
                 </h2>
                 <ul className="flex flex-col">
-                  {labelled.map((link) => (
-                    <li key={link.label}>
-                      <a
-                        href={link.href}
-                        {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-                        className="footer-link inline-flex items-center gap-[15px] font-sans text-body leading-[1.78] text-heading/70 dark:text-heading/55 transition-colors duration-[80ms] ease-out hover:text-black active:text-heading/50 dark:hover:text-white"
-                      >
+                  {labelled.map((link) => {
+                    const linkClass =
+                      'footer-link inline-flex items-center gap-[15px] font-sans text-body leading-[1.78] text-heading/70 dark:text-heading/55 transition-colors duration-[80ms] ease-out hover:text-black active:text-heading/50 dark:hover:text-white';
+                    const inner = (
+                      <>
                         {link.icon && <Icon name={link.icon} />}
                         {link.label}
-                      </a>
-                    </li>
-                  ))}
+                      </>
+                    );
+                    const sector = 'sector' in link ? link.sector : undefined;
+                    return (
+                      <li key={link.label}>
+                        {sector ? (
+                          <SectorLink href={link.href} sector={sector} className={linkClass}>
+                            {inner}
+                          </SectorLink>
+                        ) : (
+                          <a
+                            href={link.href}
+                            {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+                            className={linkClass}
+                          >
+                            {inner}
+                          </a>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
                 {/* Socials sit as bare glyphs on one row. The label is dropped
                     from view but carried as the accessible name — without it
