@@ -639,11 +639,12 @@
   }
   .card-quote {
     max-width: calc(485 * var(--k));
-    font-size: max(15px, calc(var(--quote) * var(--k)));
-    /* The artboard sets a 34px line box on every quote on every board and
-     * varies only the type size, so the ratio has to follow --quote — pinning
-     * it to 24 left Atlas, which sets 22, running a line short of the design. */
-    line-height: calc(34 / var(--quote));
+    /* Uniform across both cards (the design set Atlas 22 / Playmakers 24, so the
+     * two read at different sizes) and a notch smaller: CMS quotes run longer
+     * than the artboard placeholders, so the larger sizes made long ones tower
+     * over the card. One size, one line-height, both cards. */
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: 1.55;
   }
   .card-chip {
     margin-top: calc(29 * var(--k));
@@ -1175,8 +1176,8 @@
     min-height: calc(257 * var(--k));
   }
   .card-quote {
-    font-size: max(15px, calc(21 * var(--k)));
-    line-height: calc(34 / 21);
+    font-size: max(14px, calc(18 * var(--k)));
+    line-height: 1.55;
   }
   /* Mobile stacks the chip: a 70 avatar over centred details. */
   .card-chip {

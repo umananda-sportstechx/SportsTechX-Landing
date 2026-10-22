@@ -326,17 +326,16 @@ function SolutionBlock({
         </p>
 
         <div className="card-strip relative mt-6">
-          {/* 228-tall hairline between the two stories, top-aligned with them. */}
-          <span
-            aria-hidden
-            className="card-story-rule absolute top-0 left-1/2 hidden w-px -translate-x-1/2 bg-[#6b6b6b]/25 lg:block"
-          />
           <Carousel
             label={card.testimonialsLabel}
-            // Two quotes to a view, so a press has to move exactly two. The
-            // default 0.8 of a view lands mid-quote and leans on scroll-snap to
-            // tidy up, which is what left the rule cutting through a quote.
+            // Two quotes to a view, so a press moves exactly two. Auto-drift
+            // always (even when the quotes already fit) so the rail gently
+            // scrolls on its own and the arrows always work — the design's
+            // static 2-up is now a smooth marquee. No center hairline: it would
+            // cut through the moving cards.
             pageBy={1}
+            autoScroll="rtl"
+            alwaysLoop
             trackClassName="gap-0"
             arrowClassName={cn('card-arrow', dark ? 'text-white' : 'text-[#606060]')}
           >

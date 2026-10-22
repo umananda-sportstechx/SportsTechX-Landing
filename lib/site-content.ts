@@ -8,7 +8,6 @@
  * way, and one uploaded card means exactly one card renders — never one plus
  * the eight placeholders.
  */
-const SITE = 'landing';
 const REVALIDATE_SEC = 300;
 
 export interface SiteItem {
@@ -28,17 +27,22 @@ export interface SiteSections {
   gallery2?: SiteItem[];
   /** Solutions card previews. Positional: [0] Playmakers, [1] Atlas. */
   solutions?: SiteItem[];
-  /** Quotes on the Playmakers solution card. */
+  /** Landing-specific override for the Playmakers card quotes (usually empty —
+   *  the card falls back to the Playmakers site's own testimonials below). */
   testimonials?: SiteItem[];
-  /** Quotes on the Atlas solution card — its own section so the two differ. */
+  /** Landing-specific override for the Atlas card quotes. */
   testimonials2?: SiteItem[];
+  /** The Atlas site's own testimonials, reused on the STX landing Atlas card. */
+  atlasTestimonials?: SiteItem[];
+  /** The Playmakers site's own testimonials, reused on the Playmakers card. */
+  playmakersTestimonials?: SiteItem[];
 }
 
-export async function siteContent(): Promise<SiteSections> {
+async function fetchSite(site: string): Promise<SiteSections> {
   const base = process.env.BACKEND_URL;
   if (!base) return {};
   try {
-    const res = await fetch(`${base}/api/public/site-content?site=${SITE}`, {
+    const res = await fetch(`${base}/api/public/site-content?site=${site}`, {
       next: { revalidate: REVALIDATE_SEC },
       signal: AbortSignal.timeout(8000),
     });
@@ -48,4 +52,23 @@ export async function siteContent(): Promise<SiteSections> {
   } catch {
     return {};
   }
+}
+
+export async function siteContent(): Promise<SiteSections> {
+  // The STX landing reuses each product's OWN testimonials — the ones entered
+  // under the `atlas` and `playmakers` sites in the admin CMS — on its two
+  // solution cards, so the quotes never have to be re-entered under `landing`.
+  // A landing-specific section still wins when present (see page.tsx). Each
+  // fetch is independent and fail-safe, so a dead product feed can't blank the
+  // landing.
+  const [landing, atlas, playmakers] = await Promise.all([
+    fetchSite('landing'),
+    fetchSite('atlas'),
+    fetchSite('playmakers'),
+  ]);
+  return {
+    ...landing,
+    atlasTestimonials: atlas.testimonials,
+    playmakersTestimonials: playmakers.testimonials,
+  };
 }
