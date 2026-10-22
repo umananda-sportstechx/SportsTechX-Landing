@@ -212,57 +212,16 @@ export const solutions = {
     { id: 'founders', label: 'OPERATOR' },
     { id: 'investors', label: 'INVESTOR' },
   ],
-  // Toggle: OPERATOR shows Atlas Raise + Playmakers; INVESTOR shows Atlas Scout.
-  // Cards render in array order, so Atlas Raise sits above Playmakers on the
-  // operator view. Atlas Raise and Atlas Scout share the 'atlas' variant (same
-  // wordmark + feature icons + light styling); their RAISE/SCOUT tag and copy
-  // are what set them apart, matching the dashboard's product branding.
+  // Toggle: OPERATOR shows Playmakers + Atlas Raise; INVESTOR shows Atlas Scout.
+  // Cards render in array order, so Playmakers sits above Atlas Raise on the
+  // operator view (its original position). Atlas Raise and Atlas Scout share the
+  // 'atlas' variant (same wordmark + feature icons + light styling); their
+  // RAISE/SCOUT tag and copy set them apart, matching the dashboard branding.
   cards: [
-    {
-      id: 'atlas-raise',
-      variant: 'atlas',
-      sectors: ['founders'],
-      eyebrow: 'atlas',
-      badge: 'EARLY STAGE',
-      title: 'Raising your next round?',
-      blurb:
-        'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
-      cta: 'TRY ATLAS RAISE',
-      ctaHref: 'https://atlas.sportstechx.com',
-      testimonialsLabel: 'ATLAS TESTIMONIALS',
-      testimonials: [testimonial, testimonial, testimonial, testimonial],
-      tier: { label: 'RAISE', color: '#4580EC' },
-      features: [
-        {
-          title: 'Build your case',
-          points: [
-            'Analyze your pitch deck to assess your investor readiness',
-            'Perform competitor benchmarking and market sizing',
-            'Improve your pitch with expert feedback and iterative refinement',
-          ],
-        },
-        {
-          title: 'Identify the right investors',
-          points: [
-            'Access detailed profiles of 2+ verified sports tech investors',
-            'Get matched with investors most likely to fund your startup',
-            'Create a custom investor pipeline and manage your outreach',
-          ],
-        },
-        {
-          title: 'Close the deal',
-          points: [
-            'Build and maintain a due\ndiligence-ready data room',
-            'Access essential model documents for early stage investments',
-            'Monitor progress towards your fundraising goal and keep your raise on track',
-          ],
-        },
-      ],
-    },
     {
       id: 'playmakers',
       variant: 'playmakers',
-      // Now an OPERATOR card, alongside Atlas Raise.
+      // An OPERATOR card, on top of Atlas Raise.
       sectors: ['founders'],
       eyebrow: 'PLAYMAKERS',
       badge: 'FOR THE PROS',
@@ -305,6 +264,48 @@ export const solutions = {
             'Build with anytime / anywhere access to the best knowledge in sports tech',
             'Inform your strategy with world-class sports tech market data and research',
             'Leverage insider expertise to obtain a competitive advantage',
+          ],
+        },
+      ],
+    },
+    {
+      id: 'atlas-raise',
+      variant: 'atlas',
+      // An OPERATOR card, below Playmakers.
+      sectors: ['founders'],
+      eyebrow: 'atlas',
+      badge: 'EARLY STAGE',
+      title: 'Raising your next round?',
+      blurb:
+        'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
+      cta: 'TRY ATLAS RAISE',
+      ctaHref: 'https://atlas.sportstechx.com',
+      testimonialsLabel: 'ATLAS TESTIMONIALS',
+      testimonials: [testimonial, testimonial, testimonial, testimonial],
+      tier: { label: 'RAISE', color: '#4580EC' },
+      features: [
+        {
+          title: 'Build your case',
+          points: [
+            'Analyze your pitch deck to assess your investor readiness',
+            'Perform competitor benchmarking and market sizing',
+            'Improve your pitch with expert feedback and iterative refinement',
+          ],
+        },
+        {
+          title: 'Identify the right investors',
+          points: [
+            'Access detailed profiles of 2+ verified sports tech investors',
+            'Get matched with investors most likely to fund your startup',
+            'Create a custom investor pipeline and manage your outreach',
+          ],
+        },
+        {
+          title: 'Close the deal',
+          points: [
+            'Build and maintain a due\ndiligence-ready data room',
+            'Access essential model documents for early stage investments',
+            'Monitor progress towards your fundraising goal and keep your raise on track',
           ],
         },
       ],
