@@ -567,6 +567,12 @@
   .solution-card + .solution-card {
     margin-top: calc(-116 * var(--k));
   }
+  /* The upper card of an overlapping pair reserves the strip the lower card
+     slides up into (= the overlap amount). Position-based so whichever card is
+     on top gets the reserve — this used to be hardcoded into Playmakers' bottom. */
+  .solution-card:has(+ .solution-card) .card-stories {
+    padding-bottom: calc(116 * var(--k) + 18px);
+  }
 
   /* --- intro ------------------------------------------------------------ */
   .card-intro {
@@ -617,6 +623,24 @@
     width: calc(var(--mark-ow) * var(--k));
     height: calc(var(--mark-oh) * var(--k));
     max-width: none;
+  }
+  /* Italic product tag (RAISE / SCOUT) sitting up over the end of the Atlas
+     wordmark, as in the dashboard sidebar (AtlasLogo). Kepler italic, uppercase,
+     tracked; the colour is set inline per card. Scales with --k, floored so it
+     stays legible on the 402 artboard. */
+  .card-tier {
+    position: absolute;
+    left: 66%;
+    top: calc(-4 * var(--k));
+    font-family: var(--lp-serif);
+    font-style: italic;
+    font-weight: 500;
+    font-size: max(13px, calc(26 * var(--k)));
+    line-height: 1;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
   }
   .card-headline {
     margin-top: calc(var(--headline-mt) * var(--k));
@@ -1131,6 +1155,10 @@
   }
   .solution-card + .solution-card {
     margin-top: calc(-44 * var(--k));
+  }
+  /* Mobile overlap is smaller (-44), so the upper card reserves that much. */
+  .solution-card:has(+ .solution-card) .card-stories {
+    padding-bottom: calc(44 * var(--k) + 18px);
   }
 
   /* No min-height: the panel is the last thing in the block and the artboard

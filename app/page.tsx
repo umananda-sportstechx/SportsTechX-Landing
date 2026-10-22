@@ -36,9 +36,14 @@ export default async function Home() {
           avatar: it.url ?? undefined,
         }))
       : undefined;
+  // Keyed by card id. The two Atlas cards (Raise + Scout) share the Atlas quote
+  // set; Playmakers has its own. Cards fall back to their built-in quotes when a
+  // key is empty.
+  const atlasQuotes = fromCms(cms.testimonials2);
   const testimonials = {
+    'atlas-raise': atlasQuotes,
     playmakers: fromCms(cms.testimonials),
-    atlas: fromCms(cms.testimonials2),
+    'atlas-scout': atlasQuotes,
   };
 
   return (

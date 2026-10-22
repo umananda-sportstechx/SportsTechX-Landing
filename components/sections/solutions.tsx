@@ -37,7 +37,10 @@ const VARS: Record<string, CSSProperties> = {
     '--blurb-mt': 9,
     '--cta-w': 225,
     '--stories-t': 39,
-    '--stories-b': 116, // the strip Atlas overlaps
+    // Normal bottom now: Playmakers is the LOWER card of the operator pair, so
+    // it no longer reserves the overlap strip — the upper card does, via the
+    // position-based rule in globals.css (.solution-card:has(+ .solution-card)).
+    '--stories-b': 34,
     '--strip-mt': 36,
     '--quote': 24,
     // 402 artboard
@@ -164,13 +167,14 @@ function SolutionBlock({
   // set in content.ts. Each card reads its own section, so filling one in the
   // admin panel no longer changes the other.
   const quotes = testimonials?.length ? testimonials : card.testimonials;
-  // Playmakers is the dark card, Atlas the pale one.
-  const dark = card.id === 'playmakers';
-  const mark = art(`wordmark-${card.id}`);
+  // Playmakers is the dark card, Atlas (Raise/Scout) the pale one. Keyed by
+  // variant, not id: the two Atlas cards share one wordmark + asset set.
+  const dark = card.variant === 'playmakers';
+  const mark = art(`wordmark-${card.variant}`);
 
   return (
     <article
-      style={VARS[card.id]}
+      style={VARS[card.variant]}
       className={cn(
         'solution-card relative overflow-hidden rounded-[20px] shadow-panel',
         dark
@@ -199,7 +203,14 @@ function SolutionBlock({
           <span className="card-wordmark block">
             {/* eslint-disable-next-line @next/next/no-img-element -- a flat
                 artboard vector; next/image would only add a request wrapper. */}
-            <img src={`/vectors/wordmark-${card.id}.svg`} alt={card.eyebrow} className="h-full w-auto" />
+            <img src={`/vectors/wordmark-${card.variant}.svg`} alt={card.eyebrow} className="h-full w-auto" />
+            {/* Italic product tag over the "s", matching the Atlas dashboard
+                sidebar — RAISE / SCOUT in the product colour. */}
+            {card.tier && (
+              <span className="card-tier" style={{ color: card.tier.color }}>
+                {card.tier.label}
+              </span>
+            )}
           </span>
 
           <h3
@@ -283,7 +294,7 @@ function SolutionBlock({
       <div className="card-band relative bg-green">
         <div className="card-cases flex flex-col lg:flex-row lg:items-start">
           {card.features.map((feature, i) => {
-            const icon = art(`icon-${card.id}-${i + 1}`);
+            const icon = art(`icon-${card.variant}-${i + 1}`);
             return (
               <Fragment key={feature.title}>
                 {i > 0 && (
@@ -294,7 +305,7 @@ function SolutionBlock({
                     <span className="card-numbox grid size-[52px] shrink-0 place-items-center rounded-[45px] bg-white">
                       {/* eslint-disable-next-line @next/next/no-img-element -- see above */}
                       <img
-                        src={`/vectors/icon-${card.id}-${i + 1}.svg`}
+                        src={`/vectors/icon-${card.variant}-${i + 1}.svg`}
                         alt=""
                         style={{ '--iw': icon.w, '--ih': icon.h } as CSSProperties}
                         className="card-icon size-6 object-contain"

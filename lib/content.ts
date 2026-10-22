@@ -150,6 +150,12 @@ export const playmakersTestimonials: Testimonial[] = [
 
 export type SolutionCard = {
   id: string;
+  /**
+   * Visual style + which /vectors assets the card uses: 'atlas' (light card,
+   * rings, Atlas wordmark + feature icons) or 'playmakers' (dark card, motif).
+   * Two cards can share a variant — Atlas Raise and Atlas Scout are both 'atlas'.
+   */
+  variant: 'atlas' | 'playmakers';
   /** Which of the sector buttons show this card. */
   sectors: string[];
   eyebrow: string;
@@ -162,6 +168,11 @@ export type SolutionCard = {
   features: { title: string; points: string[] }[];
   testimonialsLabel: string;
   testimonials: Testimonial[];
+  /**
+   * Italic product tag on the wordmark, matching the Atlas dashboard sidebar
+   * (AtlasLogo): RAISE blue #4580EC, SCOUT green #0FB86A. Omitted for Playmakers.
+   */
+  tier?: { label: string; color: string };
 };
 
 /**
@@ -175,8 +186,8 @@ export const navMenu = [
     label: 'BY ROLE',
     items: [
       // sector: which Solutions toggle to activate on click (founders=OPERATOR,
-      // investors=INVESTOR). Atlas is the operator card, Playmakers the investor
-      // card, so the product links map to the matching role.
+      // investors=INVESTOR). Operator shows Atlas Raise + Playmakers; Investor
+      // shows Atlas Scout.
       { label: 'FOR OPERATORS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12, sector: 'founders' },
       { label: 'FOR INVESTORS', href: '/#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8, sector: 'investors' },
     ],
@@ -184,8 +195,10 @@ export const navMenu = [
   {
     label: 'BY PRODUCT',
     items: [
+      // Atlas spans both toggles (Raise on operator, Scout on investor); the
+      // generic link opens the operator view. Playmakers is an operator card.
       { label: 'ATLAS', href: '/#solutions', initial: 'A', sector: 'founders' },
-      { label: 'PLAYMAKERS', href: '/#solutions', initial: 'P', sector: 'investors' },
+      { label: 'PLAYMAKERS', href: '/#solutions', initial: 'P', sector: 'founders' },
     ],
   },
 ];
@@ -199,12 +212,58 @@ export const solutions = {
     { id: 'founders', label: 'OPERATOR' },
     { id: 'investors', label: 'INVESTOR' },
   ],
+  // Toggle: OPERATOR shows Atlas Raise + Playmakers; INVESTOR shows Atlas Scout.
+  // Cards render in array order, so Atlas Raise sits above Playmakers on the
+  // operator view. Atlas Raise and Atlas Scout share the 'atlas' variant (same
+  // wordmark + feature icons + light styling); their RAISE/SCOUT tag and copy
+  // are what set them apart, matching the dashboard's product branding.
   cards: [
     {
+      id: 'atlas-raise',
+      variant: 'atlas',
+      sectors: ['founders'],
+      eyebrow: 'atlas',
+      badge: 'EARLY STAGE',
+      title: 'Raising your next round?',
+      blurb:
+        'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
+      cta: 'TRY ATLAS RAISE',
+      ctaHref: 'https://atlas.sportstechx.com',
+      testimonialsLabel: 'ATLAS TESTIMONIALS',
+      testimonials: [testimonial, testimonial, testimonial, testimonial],
+      tier: { label: 'RAISE', color: '#4580EC' },
+      features: [
+        {
+          title: 'Build your case',
+          points: [
+            'Analyze your pitch deck to assess your investor readiness',
+            'Perform competitor benchmarking and market sizing',
+            'Improve your pitch with expert feedback and iterative refinement',
+          ],
+        },
+        {
+          title: 'Identify the right investors',
+          points: [
+            'Access detailed profiles of 2+ verified sports tech investors',
+            'Get matched with investors most likely to fund your startup',
+            'Create a custom investor pipeline and manage your outreach',
+          ],
+        },
+        {
+          title: 'Close the deal',
+          points: [
+            'Build and maintain a due\ndiligence-ready data room',
+            'Access essential model documents for early stage investments',
+            'Monitor progress towards your fundraising goal and keep your raise on track',
+          ],
+        },
+      ],
+    },
+    {
       id: 'playmakers',
-      // Toggle: INVESTOR shows Playmakers, OPERATOR shows Atlas. Each card maps
-      // to exactly one sector so the selector swaps between them (one at a time).
-      sectors: ['investors'],
+      variant: 'playmakers',
+      // Now an OPERATOR card, alongside Atlas Raise.
+      sectors: ['founders'],
       eyebrow: 'PLAYMAKERS',
       badge: 'FOR THE PROS',
       // This card shipped with Atlas's feature copy pasted into it — all nine
@@ -251,41 +310,44 @@ export const solutions = {
       ],
     },
     {
-      id: 'atlas',
-      // OPERATOR shows Atlas only (see the playmakers card note above).
-      sectors: ['founders'],
+      id: 'atlas-scout',
+      variant: 'atlas',
+      // The INVESTOR card. Copy from the "STX WEBSITE INVESTOR TOGGLE CONTENT"
+      // feedback (Website Feedback Tracker, 2026-10-21).
+      sectors: ['investors'],
       eyebrow: 'atlas',
-      badge: 'EARLY STAGE',
-      title: 'Raising your next round?',
+      badge: 'INVESTORS',
+      title: 'Sourcing your next investment?',
       blurb:
-        'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
-      cta: 'TRY ATLAS',
-      ctaHref: 'https://atlas.sportstechx.com',
+        'Find relevant deals, assess companies and strengthen your due diligence with SportsTechX market data and analysis.',
+      cta: 'TRY ATLAS SCOUT',
+      ctaHref: 'https://atlas.sportstechx.com/',
       testimonialsLabel: 'ATLAS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
+      tier: { label: 'SCOUT', color: '#0FB86A' },
       features: [
         {
-          title: 'Build your case',
+          title: 'Source the right deals',
           points: [
-            'Analyze your pitch deck to assess your investor readiness',
-            'Perform competitor benchmarking and market sizing',
-            'Improve your pitch with expert feedback and iterative refinement',
+            'Search sports tech companies by sector, stage and geography',
+            'Get recommendations matched to your investment thesis',
+            'Discover verified raises and opportunities from the SportsTechX network',
           ],
         },
         {
-          title: 'Identify the right investors',
+          title: 'Strengthen your due diligence',
           points: [
-            'Access detailed profiles of 2+ verified sports tech investors',
-            'Get matched with investors most likely to fund your startup',
-            'Create a custom investor pipeline and manage your outreach',
+            'Review company traction, teams and funding history',
+            'Assess opportunities using market data and funding trends',
+            'Access round details and available fundraising documents',
           ],
         },
         {
-          title: 'Close the deal',
+          title: 'Manage your deal flow',
           points: [
-            'Build and maintain a due\ndiligence-ready data room',
-            'Access essential model documents for early stage investments',
-            'Monitor progress towards your fundraising goal and keep your raise on track',
+            'Build watchlists and track companies through investment stages',
+            'Monitor funding, growth and partnership signals',
+            'Request introductions to founders through SportsTechX',
           ],
         },
       ],
