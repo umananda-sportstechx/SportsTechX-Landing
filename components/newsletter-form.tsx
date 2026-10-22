@@ -72,7 +72,7 @@ export function NewsletterForm({ tone = 'footer', autoFocus }: { tone?: 'footer'
           placeholder="you@company.com"
           className={cn(
             'footer-join-input min-w-0 flex-1 bg-transparent px-[18px] font-sans text-heading outline-none placeholder:text-fg-muted',
-            tone === 'modal' ? 'h-11 text-base' : 'text-body-sm'
+            tone === 'modal' ? 'h-12 text-base' : 'text-body-sm'
           )}
         />
         <button

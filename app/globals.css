@@ -270,6 +270,69 @@
     outline-offset: 2px;
   }
 
+  /* Chrome/Safari paint a solid square behind an autofilled (or autofill-
+     previewed) value that ignores the pill's rounded corners. Parking the
+     background transition 9999s out keeps that square from ever rendering, so
+     the rounded pill shows through; the fill-color keeps the text legible. */
+  .footer-join-input:-webkit-autofill,
+  .footer-join-input:-webkit-autofill:hover,
+  .footer-join-input:-webkit-autofill:focus,
+  .footer-join-input:-webkit-autofill:active {
+    -webkit-text-fill-color: var(--heading);
+    caret-color: var(--heading);
+    transition: background-color 9999s ease-in-out 0s;
+  }
+
+  /* Newsletter dialog: scale/fade the card in, fade the scrim. @starting-style
+     + allow-discrete let a native <dialog> animate both open and close without
+     any JS. The scrim (::backdrop) carries its own blur. */
+  .newsletter-dialog {
+    opacity: 0;
+    scale: 0.97;
+    translate: 0 8px;
+    transition:
+      opacity 220ms ease-out,
+      scale 220ms ease-out,
+      translate 220ms ease-out,
+      overlay 220ms ease-out allow-discrete,
+      display 220ms ease-out allow-discrete;
+  }
+  .newsletter-dialog[open] {
+    opacity: 1;
+    scale: 1;
+    translate: 0 0;
+  }
+  @starting-style {
+    .newsletter-dialog[open] {
+      opacity: 0;
+      scale: 0.97;
+      translate: 0 8px;
+    }
+  }
+  .newsletter-dialog::backdrop {
+    background: rgb(0 0 0 / 0.55);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition:
+      opacity 220ms ease-out,
+      overlay 220ms ease-out allow-discrete,
+      display 220ms ease-out allow-discrete;
+  }
+  .newsletter-dialog[open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    .newsletter-dialog[open]::backdrop {
+      opacity: 0;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .newsletter-dialog,
+    .newsletter-dialog::backdrop {
+      transition: none;
+    }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     html {
       scroll-behavior: auto;
