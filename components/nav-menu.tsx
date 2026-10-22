@@ -50,6 +50,13 @@ export function NavMenu({ open }: { open: boolean }) {
                   <li key={item.label}>
                     <a
                       href={item.href}
+                      // Also flips the Solutions sector toggle; the href still
+                      // scrolls the section into view. Solutions listens for this.
+                      onClick={() =>
+                        window.dispatchEvent(
+                          new CustomEvent('stx:sector', { detail: item.sector })
+                        )
+                      }
                       className="group/row flex h-[28px] items-center gap-[10px] text-fg transition-colors duration-[80ms] ease-out hover:text-accent active:opacity-70"
                     >
                       <span

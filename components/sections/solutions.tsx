@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, Fragment, type CSSProperties } from 'react';
+import { useEffect, useState, Fragment, type CSSProperties } from 'react';
 import { BlurImage } from '@/components/blur-image';
 import { Carousel } from '@/components/carousel';
 import { SectionIntro } from '@/components/section-intro';
@@ -80,6 +80,17 @@ export function Solutions({
   previews?: SiteItem[];
 }) {
   const [sector, setSector] = useState(solutions.sectors[0].id);
+
+  // The nav's Solutions dropdown (Atlas/Playmakers/Operators/Investors) sets
+  // the toggle as well as scrolling here. Ignore any id the toggle doesn't have.
+  useEffect(() => {
+    const onSector = (e: Event) => {
+      const id = (e as CustomEvent<string>).detail;
+      if (solutions.sectors.some((s) => s.id === id)) setSector(id);
+    };
+    window.addEventListener('stx:sector', onSector);
+    return () => window.removeEventListener('stx:sector', onSector);
+  }, []);
 
   return (
     <section id="solutions" data-rise className="section-y bg-surface">

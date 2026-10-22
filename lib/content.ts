@@ -174,15 +174,18 @@ export const navMenu = [
   {
     label: 'BY ROLE',
     items: [
-      { label: 'FOR OPERATORS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12 },
-      { label: 'FOR INVESTORS', href: '/#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8 },
+      // sector: which Solutions toggle to activate on click (founders=OPERATOR,
+      // investors=INVESTOR). Atlas is the operator card, Playmakers the investor
+      // card, so the product links map to the matching role.
+      { label: 'FOR OPERATORS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12, sector: 'founders' },
+      { label: 'FOR INVESTORS', href: '/#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8, sector: 'investors' },
     ],
   },
   {
     label: 'BY PRODUCT',
     items: [
-      { label: 'ATLAS', href: '/#solutions', initial: 'A' },
-      { label: 'PLAYMAKERS', href: '/#solutions', initial: 'P' },
+      { label: 'ATLAS', href: '/#solutions', initial: 'A', sector: 'founders' },
+      { label: 'PLAYMAKERS', href: '/#solutions', initial: 'P', sector: 'investors' },
     ],
   },
 ];
@@ -403,8 +406,8 @@ export const footer = {
         { label: 'Newsletter', href: 'https://newsletter.sportstechx.com' },
         { label: 'Podcast', href: 'https://creators.spotify.com/pod/profile/sportstechx/' },
         // The hub, not atlas.sportstechx.com/reports — that redirects to /login.
-        { label: 'Reports', href: 'https://intelligence.sportstechx.com/reports/' },
-        { label: 'Events', href: 'https://intelligence.sportstechx.com/events/' },
+        { label: 'Reports', href: 'https://atlas.sportstechx.com/reports' },
+        { label: 'Events', href: 'https://atlas.sportstechx.com/events' },
       ],
     },
     {

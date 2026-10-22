@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from 'next';
 import '@fontsource/commit-mono/400.css';
 import './globals.css';
 import { MobileMenuPanel, MobileMenuProvider, MobileMenuShell } from '@/components/mobile-menu';
+import { NewsletterModal } from '@/components/newsletter-modal';
 import { NavBar } from '@/components/sections/nav-bar';
 import { bebasNeue, sans, spaceMono } from './fonts';
 import { Providers } from './providers';
@@ -113,6 +114,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 behind it, and the close button must stay crisp. */}
             <MobileMenuShell nav={<NavBar />}>{children}</MobileMenuShell>
           </MobileMenuProvider>
+          {/* One shared newsletter dialog for the whole site; opened by the
+              nav CTA via the stx:newsletter-open event. */}
+          <NewsletterModal />
         </Providers>
       </body>
     </html>

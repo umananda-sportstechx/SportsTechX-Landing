@@ -1,5 +1,6 @@
 import type { CSSProperties } from 'react';
 import { BrandLogo } from '@/components/brand-logo';
+import { NewsletterForm } from '@/components/newsletter-form';
 import { footer } from '@/lib/content';
 import vectors from '@/design/vectors.json';
 import { cn } from '@/lib/utils';
@@ -60,49 +61,10 @@ export function Footer() {
               {footer.blurb}
             </p>
 
-            {/* A GET form, not a POST: the newsletter is Beehiiv and nothing in
-                this monorepo holds a Beehiiv key or publication id — the legacy
-                app only ever read the RSS feed and linked out to subscribe.
-                This carries the address over as ?email= so the visitor lands on
-                the hosted form with it filled in, and needs no JavaScript, no
-                route and no secret.
-
-                The pill takes the nav CTA's border and the submit takes the
-                hero button's accent, hover-to-black and press behaviour, so it
-                reads as the same family of control rather than a new one. */}
-            <form
-              action={footer.newsletterAction}
-              method="get"
-              target="_blank"
-              rel="noreferrer"
-              className="footer-join flex w-full items-center rounded-full border-[1.5px] border-nav-border bg-nav-bg p-[5px] shadow-nav"
-            >
-              <label htmlFor="footer-email" className="sr-only">
-                Email address
-              </label>
-              <input
-                id="footer-email"
-                type="email"
-                name="email"
-                required
-                autoComplete="email"
-                placeholder="you@company.com"
-                className="footer-join-input min-w-0 flex-1 bg-transparent px-[18px] font-sans text-body-sm text-heading outline-none placeholder:text-fg-muted"
-              />
-              <button
-                type="submit"
-                className={cn(
-                  'footer-join-btn group tracked shrink-0 rounded-full bg-accent-2 px-[26px] font-mono text-cta text-white shadow-cta',
-                  'hover:bg-black active:bg-black',
-                  'transition-[background-color,scale] duration-200 ease-out active:duration-[80ms]',
-                  'motion-safe:hover:scale-105 motion-safe:active:scale-95'
-                )}
-              >
-                <span className="transition-opacity duration-[80ms] ease-out group-active:opacity-70">
-                  JOIN
-                </span>
-              </button>
-            </form>
+            {/* Subscribes through /api/newsletter (Beehiiv), falling back to the
+                hosted subscribe page when no Beehiiv key is configured. Same
+                control as the nav CTA's modal — see newsletter-form.tsx. */}
+            <NewsletterForm tone="footer" />
           </div>
 
           {footer.columns.map((column) => {

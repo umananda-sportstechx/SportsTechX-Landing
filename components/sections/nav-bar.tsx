@@ -125,12 +125,15 @@ export function NavBar() {
             <NavMenu open={menu} />
           </nav>
 
-          <a
-            href={nav.cta.href}
+          {/* Opens the newsletter modal (newsletter-modal.tsx listens) rather
+              than leaving for the hosted page. */}
+          <button
+            type="button"
+            onClick={() => window.dispatchEvent(new CustomEvent('stx:newsletter-open'))}
             className="group/cta tracked hidden h-[50px] items-center justify-center rounded-full border-[1.5px] border-accent-2 bg-accent/5 nav-type px-[15px] font-sans font-medium text-accent-2 transition-[background-color,color,scale] duration-200 ease-out hover:bg-accent hover:text-white active:bg-accent active:text-white active:duration-[80ms] motion-safe:hover:scale-105 motion-safe:active:scale-95 lg:inline-flex dark:bg-accent/[0.13]"
           >
             <span className="optical-caps transition-opacity duration-[80ms] ease-out group-active/cta:opacity-70">{nav.cta.label}</span>
-          </a>
+          </button>
 
           {/* Mobile keeps only the theme toggle — the rest lives in the drawer. */}
           <ThemeToggle
