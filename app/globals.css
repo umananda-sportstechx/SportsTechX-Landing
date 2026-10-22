@@ -632,12 +632,15 @@
     position: absolute;
     left: 66%;
     top: calc(-4 * var(--k));
-    font-family: var(--lp-serif);
+    /* The SAME stack as the dashboard sidebar tag (atlas-logo__product): neither
+       app loads Kepler Std, so both fall to Georgia italic and now match. NOT
+       --lp-serif, which resolves to the landing's self-hosted Newsreader. */
+    font-family: 'Kepler Std', Georgia, 'Times New Roman', serif;
     font-style: italic;
-    font-weight: 500;
+    font-weight: normal;
     font-size: max(13px, calc(26 * var(--k)));
     line-height: 1;
-    letter-spacing: 0.06em;
+    letter-spacing: 0.1em;
     text-transform: uppercase;
     white-space: nowrap;
     pointer-events: none;
