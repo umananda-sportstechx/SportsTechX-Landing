@@ -346,16 +346,16 @@ export const media = {
       // read "Football Tech Report 2006" — a typo for the 2025 edition.
       title: 'Football Tech Report 2025',
       image: img198f122078d1,
-      href: 'https://intelligence.sportstechx.com/reports/',
+      href: 'https://atlas.sportstechx.com/reports',
     },
     {
       category: 'EVENTS',
       action: 'ATTEND',
       title: 'The NextGen Sportstech\nSummit 2026',
       image: imgdd889ac2c460,
-      // The hub's events page. This was '/#events', an anchor that does not
+      // Atlas events page. This was '/#events', an anchor that does not
       // exist on this page, so the card went nowhere.
-      href: 'https://intelligence.sportstechx.com/events/',
+      href: 'https://atlas.sportstechx.com/events',
     },
   ] as MediaItem[]),
 };
