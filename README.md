@@ -92,11 +92,15 @@ paths in the `sans` export in `app/fonts.ts`. Nothing else moves — every compo
 
 ## Newsletter
 
-`POST /api/subscribe` validates the address, then forwards `{email, source}` to
-`NEWSLETTER_WEBHOOK_URL` (see `.env.example`). There is no newsletter endpoint on the STX
-backend — everything named "subscription" there is Stripe billing — so this points at
-whichever ESP you use. With the variable unset the route returns **501**, deliberately,
-rather than pretending the address was stored.
+The nav CTA opens a sign-up modal and the footer has an inline field; both use the same
+`NewsletterForm`, which `POST`s the address to `POST /api/newsletter`. That route subscribes
+it through the **Beehiiv API** (`send_welcome_email` + `reactivate_existing`) using
+`BEEHIIV_API_KEY` and `BEEHIIV_PUBLICATION_ID` (see `.env.example`). Beehiiv — not this app —
+sends the welcome / double-opt-in email, per the publication's settings.
+
+With those variables unset the route returns **503** and the form falls back to opening the
+hosted Beehiiv subscribe page (`newsletter.sportstechx.com/subscribe`) with the email
+pre-filled, so a signup is never silently dropped.
 
 ## Known gaps
 
