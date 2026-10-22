@@ -199,8 +199,9 @@ export const solutions = {
   cards: [
     {
       id: 'playmakers',
-      // Playmakers is the founder product — picking INVESTORS drops it.
-      sectors: ['founders'],
+      // Toggle: INVESTOR shows Playmakers, OPERATOR shows Atlas. Each card maps
+      // to exactly one sector so the selector swaps between them (one at a time).
+      sectors: ['investors'],
       eyebrow: 'PLAYMAKERS',
       badge: 'FOR THE PROS',
       // This card shipped with Atlas's feature copy pasted into it — all nine
@@ -248,7 +249,8 @@ export const solutions = {
     },
     {
       id: 'atlas',
-      sectors: ['founders', 'investors'],
+      // OPERATOR shows Atlas only (see the playmakers card note above).
+      sectors: ['founders'],
       eyebrow: 'atlas',
       badge: 'EARLY STAGE',
       title: 'Raising your next round?',

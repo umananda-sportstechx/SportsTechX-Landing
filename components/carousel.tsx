@@ -135,7 +135,9 @@ export function Carousel({
 
   useEffect(() => {
     const el = track.current;
-    if (!el || !looping) return;
+    // Continuous drift only — autoAdvance also loops, but it steps on a timer
+    // (below) rather than crawling every frame, so it must NOT run here.
+    if (!el || !looping || !autoScroll) return;
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     el.scrollLeft = initialOffset || 1;
