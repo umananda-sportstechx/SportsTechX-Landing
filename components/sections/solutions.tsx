@@ -231,31 +231,55 @@ function SolutionBlock({
             {card.blurb}
           </p>
 
-          {/* A link, not a button: it leaves for the product's own site. The
-              footer's rule for an off-site href applies here too. */}
-          <a
-            href={card.ctaHref}
-            {...(card.ctaHref.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
-            className={cn(
-              'card-cta group/cta tracked mt-8 inline-flex h-[42px] items-center justify-center rounded-full px-6 text-label',
-              // Both cards converge on the brand pink with white type — the
-              // dark card's label starts black, so colour animates too.
-              // bg-accent-2 is #ED1A5E, the value on the board.
-              'hover:bg-accent-2 hover:text-white active:bg-accent-2 active:text-white',
-              // scale, not transform: Tailwind v4 emits scale-* to the `scale`
-              // property, and a transition naming `transform` never fires.
-              'transition-[background-color,color,scale] duration-200 ease-out',
-              'active:duration-[80ms]',
-              // Only the movement waits on prefers-reduced-motion.
-              'motion-safe:hover:scale-105 motion-safe:active:scale-95',
-              dark ? 'bg-white font-mono text-black' : 'bg-black font-mono-alt text-white'
+          {/* Primary CTA plus an optional secondary ("Book a call"). A link, not
+              a button: it leaves for the product's own site. The card-ctas
+              wrapper lays them in a row; .card-cta's own top margin is zeroed
+              there (globals.css) since the wrapper supplies the spacing. */}
+          <div className="card-ctas mt-8 flex flex-wrap items-center gap-3">
+            <a
+              href={card.ctaHref}
+              {...(card.ctaHref.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+              className={cn(
+                'card-cta group/cta tracked inline-flex h-[42px] items-center justify-center rounded-full px-6 text-label',
+                // Both cards converge on the brand pink with white type — the
+                // dark card's label starts black, so colour animates too.
+                // bg-accent-2 is #ED1A5E, the value on the board.
+                'hover:bg-accent-2 hover:text-white active:bg-accent-2 active:text-white',
+                // scale, not transform: Tailwind v4 emits scale-* to the `scale`
+                // property, and a transition naming `transform` never fires.
+                'transition-[background-color,color,scale] duration-200 ease-out',
+                'active:duration-[80ms]',
+                // Only the movement waits on prefers-reduced-motion.
+                'motion-safe:hover:scale-105 motion-safe:active:scale-95',
+                dark ? 'bg-white font-mono text-black' : 'bg-black font-mono-alt text-white'
+              )}
+            >
+              {/* Only the label dims on press; the board keeps the fill solid. */}
+              <span className="transition-opacity duration-[80ms] ease-out group-active/cta:opacity-70">
+                {card.cta}
+              </span>
+            </a>
+
+            {card.cta2 && (
+              <a
+                href={card.cta2.href}
+                {...(card.cta2.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+                className={cn(
+                  'card-cta group/cta2 tracked inline-flex h-[42px] items-center justify-center rounded-full border-[1.5px] px-6 text-label',
+                  'transition-[background-color,color,scale] duration-200 ease-out active:duration-[80ms]',
+                  'motion-safe:hover:scale-105 motion-safe:active:scale-95',
+                  // Outline/secondary: the card's ink, filling to solid on hover.
+                  dark
+                    ? 'border-white/70 font-mono text-white hover:bg-white hover:text-black active:bg-white active:text-black'
+                    : 'border-black/60 font-mono-alt text-black hover:bg-black hover:text-white active:bg-black active:text-white'
+                )}
+              >
+                <span className="transition-opacity duration-[80ms] ease-out group-active/cta2:opacity-70">
+                  {card.cta2.label}
+                </span>
+              </a>
             )}
-          >
-            {/* Only the label dims on press; the board keeps the fill solid. */}
-            <span className="transition-opacity duration-[80ms] ease-out group-active/cta:opacity-70">
-              {card.cta}
-            </span>
-          </a>
+          </div>
         </div>
         <div
           className={cn(

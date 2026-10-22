@@ -40,7 +40,9 @@ import { cn } from '@/lib/utils';
  * a symmetric oscillation would have to be tiny for them. It also keeps each
  * orbit's pair counter-rotating for free, since partners sit on opposite sides.
  */
-const ORBIT = { outer: 26, mid: 22, inner: 18 };
+/* Durations per orbit (seconds) — lower is faster. Sped up ~30% from 26/22/18
+   for a more dynamic ecosystem, keeping the outer-slowest / inner-fastest feel. */
+const ORBIT = { outer: 18, mid: 15, inner: 12 };
 
 /**
  * Sweep is per-orbit, like duration, and every pill now travels AWAY from the

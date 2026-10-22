@@ -663,6 +663,9 @@
     padding-inline: calc(15 * var(--k));
     font-size: max(11px, calc(16 * var(--k)));
   }
+  /* The CTA row owns the top gap; the buttons inside do not add their own. */
+  .card-ctas { margin-top: calc(25 * var(--k)); }
+  .card-ctas .card-cta { margin-top: 0; }
 
   /* --- green band ------------------------------------------------------- */
   .card-band {
@@ -1196,6 +1199,8 @@
     padding-inline: calc(15 * var(--k));
     font-size: max(11px, calc(14 * var(--k)));
   }
+  .card-ctas { margin-top: calc(9 * var(--k)); }
+  .card-ctas .card-cta { margin-top: 0; }
   /* Full width and below the copy — the artboard's "Demo" frame. */
   .card-panel {
     order: 1;

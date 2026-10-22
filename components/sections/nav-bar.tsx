@@ -80,7 +80,9 @@ export function NavBar() {
             Hidden while the drawer is out: the artboard's 402 board leaves a
             5px sliver of it past the slid page, but the shift is capped at 283
             so a wider phone shows a real chunk of the wordmark instead. */}
-        <a href="#top" aria-label="Back to top" className="group/logo inline-flex">
+        {/* Home, not "#top": from a sub-page (e.g. /about) a hash goes nowhere —
+            the logo must land on the homepage from anywhere. */}
+        <a href="/" aria-label="SportsTechX home" className="group/logo inline-flex">
           <BrandLogo
             className={cn('h-[48px] transition-[filter,opacity] duration-200 ease-out group-hover/logo:brightness-0 group-active/logo:opacity-70 dark:group-hover/logo:invert', drawerOpen && 'opacity-0 lg:opacity-100')}
             priority

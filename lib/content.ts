@@ -60,7 +60,7 @@ export const hero = {
   headline: 'Your Insider Access To Sports Tech & Venture',
   subhead: 'The leading people, deepest insights and\nactive capital shaping the future of sports',
   ctas: [
-    { label: 'FOR OPERATORS', href: '/#solutions', variant: 'primary' as const },
+    { label: 'FOR FOUNDERS', href: '/#solutions', variant: 'primary' as const },
     { label: 'FOR INVESTORS', href: '/#solutions', variant: 'secondary' as const },
   ],
   /**
@@ -165,6 +165,8 @@ export type SolutionCard = {
   cta: string;
   /** Where the CTA goes — the product's own site. */
   ctaHref: string;
+  /** Optional secondary CTA beside the primary one (e.g. "Book a call"). */
+  cta2?: { label: string; href: string };
   features: { title: string; points: string[] }[];
   testimonialsLabel: string;
   testimonials: Testimonial[];
@@ -188,7 +190,7 @@ export const navMenu = [
       // sector: which Solutions toggle to activate on click (founders=OPERATOR,
       // investors=INVESTOR). Operator shows Atlas Raise + Playmakers; Investor
       // shows Atlas Scout.
-      { label: 'FOR OPERATORS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12, sector: 'founders' },
+      { label: 'FOR FOUNDERS', href: '/#solutions', icon: '/icons/pill-founders.svg', w: 12, h: 12, sector: 'founders' },
       { label: 'FOR INVESTORS', href: '/#solutions', icon: '/icons/pill-investors.svg', w: 14, h: 8, sector: 'investors' },
     ],
   },
@@ -209,7 +211,7 @@ export const solutions = {
   // Singular: the label above now reads into them — "I am a sports tech
   // OPERATOR". The ids stay as they were; they key the cards' `sectors`.
   sectors: [
-    { id: 'founders', label: 'OPERATOR' },
+    { id: 'founders', label: 'FOUNDER' },
     { id: 'investors', label: 'INVESTOR' },
   ],
   // Toggle: OPERATOR shows Playmakers + Atlas Raise; INVESTOR shows Atlas Scout.
@@ -224,7 +226,7 @@ export const solutions = {
       // An OPERATOR card, on top of Atlas Raise.
       sectors: ['founders'],
       eyebrow: 'PLAYMAKERS',
-      badge: 'FOR THE PROS',
+      badge: 'FOR SCALE-UP FOUNDERS',
       // This card shipped with Atlas's feature copy pasted into it — all nine
       // points were about pitch decks and investor pipelines. Replaced with the
       // Playmakers copy the team supplied. Sentence case and the ALL-CAPS CTA
@@ -232,7 +234,9 @@ export const solutions = {
       // casing here is what renders.
       // Three lines: the copy grew past the two the card was drawn for, and the
       // breaks are explicit so it does not wrap mid-phrase.
-      title: "Where sports tech's best\nbuild smarter, faster,\ntogether.",
+      // "best" moved to line 2 (feedback #5) — a taller headline opens up the
+      // space between it and the card's preview image.
+      title: "Where sports tech's\nbest build smarter, faster,\ntogether.",
       blurb:
         'The private peer advisory network for high-growth sports tech founders and CEOs.',
       cta: 'EXPLORE MEMBERSHIP',
@@ -255,7 +259,7 @@ export const solutions = {
           points: [
             'Join private membership events turning your peers into collaborators',
             'Receive introductions that expand your network among top leaders in sports',
-            'Gain access to new partners, markets and investment to accelerate business growth',
+            'Access new partners, markets and investment to accelerate business growth',
           ],
         },
         {
@@ -274,12 +278,13 @@ export const solutions = {
       // An OPERATOR card, below Playmakers.
       sectors: ['founders'],
       eyebrow: 'atlas',
-      badge: 'EARLY STAGE',
+      badge: 'FOR EARLY-STAGE FOUNDERS',
       title: 'Raising your next round?',
       blurb:
         'Find the right investors, benchmark your company and sharpen your pitch with the SportsTechX intelligence layer.',
       cta: 'TRY ATLAS RAISE',
       ctaHref: 'https://atlas.sportstechx.com',
+      cta2: { label: 'BOOK A CALL', href: 'https://cal.com/khyati/sportstechx' },
       testimonialsLabel: 'ATLAS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
       tier: { label: 'RAISE', color: '#4580EC' },
@@ -305,7 +310,7 @@ export const solutions = {
           points: [
             'Build and maintain a due\ndiligence-ready data room',
             'Access essential model documents for early stage investments',
-            'Monitor progress towards your fundraising goal and keep your raise on track',
+            'Monitor fundraising progress and keep your raise on track',
           ],
         },
       ],
@@ -323,6 +328,7 @@ export const solutions = {
         'Find relevant deals, assess companies and strengthen your due diligence with SportsTechX market data and analysis.',
       cta: 'TRY ATLAS SCOUT',
       ctaHref: 'https://atlas.sportstechx.com/',
+      cta2: { label: 'BOOK A CALL', href: 'https://cal.com/khyati/sportstechx' },
       testimonialsLabel: 'ATLAS TESTIMONIALS',
       testimonials: [testimonial, testimonial, testimonial, testimonial],
       tier: { label: 'SCOUT', color: '#0FB86A' },
@@ -452,7 +458,7 @@ export const footer = {
       title: 'Solutions',
       links: [
         // sector flips the Solutions toggle on click as well as scrolling there.
-        { label: 'For Operators', href: '/#solutions', sector: 'founders' },
+        { label: 'For Founders', href: '/#solutions', sector: 'founders' },
         { label: 'For Investors', href: '/#solutions', sector: 'investors' },
       ],
     },
@@ -481,8 +487,8 @@ export const footer = {
       links: [
         { label: 'About', href: '/about' },
         { label: 'Contact', href: 'mailto:hello@sportstechx.com' },
-        { label: 'LinkedIn', href: 'https://www.linkedin.com/company/sportstechx', icon: 'linkedin', iconOnly: true },
-        { label: 'YouTube', href: 'https://www.youtube.com/@sportstechx', icon: 'youtube', iconOnly: true },
+        { label: 'LinkedIn', href: 'https://www.linkedin.com/company/sportstechx/', icon: 'linkedin', iconOnly: true },
+        { label: 'YouTube', href: 'https://www.youtube.com/@SportsTechX', icon: 'youtube', iconOnly: true },
       ],
     },
   ] as FooterColumn[],
@@ -499,16 +505,14 @@ export const footer = {
 
 export const mobileMenu = {
   groups: [
-    { title: 'SOLUTIONS', links: [{ label: 'FOR OPERATORS', href: '/#solutions' }, { label: 'FOR INVESTORS', href: '/#solutions' }] },
+    { title: 'SOLUTIONS', links: [{ label: 'FOR FOUNDERS', href: '/#solutions' }, { label: 'FOR INVESTORS', href: '/#solutions' }] },
     { title: 'MENU', links: [{ label: 'MEDIA', href: '/#media' }, { label: 'ABOUT', href: '/about' }] },
     {
       title: 'CONNECT',
       links: [
         { label: 'JOIN THE NEWSLETTER', href: 'https://newsletter.sportstechx.com', accent: true },
-        { label: 'LINKEDIN', href: 'https://www.linkedin.com/company/sportstechx' },
-        { label: 'YOUTUBE', href: 'https://www.youtube.com/@sportstechx' },
-        { label: 'INSTAGRAM', href: 'https://www.instagram.com/sportstechx' },
-        { label: 'X', href: 'https://x.com/sportstechx' },
+        { label: 'LINKEDIN', href: 'https://www.linkedin.com/company/sportstechx/' },
+        { label: 'YOUTUBE', href: 'https://www.youtube.com/@SportsTechX' },
       ],
     },
   ],
