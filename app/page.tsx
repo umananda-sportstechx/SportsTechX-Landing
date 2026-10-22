@@ -36,12 +36,9 @@ export default async function Home() {
           avatar: it.url ?? undefined,
         }))
       : undefined;
-  // Each card: a landing-specific override if the admin filled one, otherwise
-  // the product site's own testimonials (what the admin already entered under
-  // the Atlas / Playmakers sites).
   const testimonials = {
-    playmakers: fromCms(cms.testimonials?.length ? cms.testimonials : cms.playmakersTestimonials),
-    atlas: fromCms(cms.testimonials2?.length ? cms.testimonials2 : cms.atlasTestimonials),
+    playmakers: fromCms(cms.testimonials),
+    atlas: fromCms(cms.testimonials2),
   };
 
   return (

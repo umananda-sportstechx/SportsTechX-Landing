@@ -328,13 +328,12 @@ function SolutionBlock({
         <div className="card-strip relative mt-6">
           <Carousel
             label={card.testimonialsLabel}
-            // Two quotes to a view, so a press moves exactly two. Auto-drift
-            // always (even when the quotes already fit) so the rail gently
-            // scrolls on its own and the arrows always work — the design's
-            // static 2-up is now a smooth marquee. No center hairline: it would
-            // cut through the moving cards.
+            // Two quotes to a view, so a press moves exactly two. Steps forward
+            // one view every 6s (not a continuous drift) and loops, so it reads
+            // like the arrows firing on a timer; the arrows always work too. No
+            // center hairline: it would cut through the stepping cards.
             pageBy={1}
-            autoScroll="rtl"
+            autoAdvance={6000}
             alwaysLoop
             trackClassName="gap-0"
             arrowClassName={cn('card-arrow', dark ? 'text-white' : 'text-[#606060]')}
@@ -344,7 +343,10 @@ function SolutionBlock({
                 key={i}
                 // No side padding on mobile: the artboard gives the quote the
                 // full 362, and 32 either side forced it onto a fourth line.
-                className="flex w-full shrink-0 snap-start flex-col items-center text-center lg:w-1/2 lg:px-8"
+                // justify-between pins the avatar/name chip to the bottom of the
+                // (equal-height) card, so it sits at ONE fixed position regardless
+                // of quote length — a short quote just leaves a gap above the chip.
+                className="flex w-full shrink-0 snap-start flex-col items-center justify-between text-center lg:w-1/2 lg:px-8"
               >
                 <blockquote
                   className={cn(
@@ -362,7 +364,7 @@ function SolutionBlock({
                       BlurImage derives the stand-in from a static import when
                       there is one and simply skips it otherwise. */}
                   {t.avatar && (
-                    <span className="card-avatar relative size-14 shrink-0 overflow-hidden rounded-[3px]">
+                    <span className="card-avatar relative size-14 shrink-0 overflow-hidden rounded-full">
                       <BlurImage src={t.avatar} alt="" fill sizes="56px" className="object-cover" />
                     </span>
                   )}

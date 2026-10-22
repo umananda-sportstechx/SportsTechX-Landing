@@ -31,6 +31,7 @@ export function Carousel({
   arrowClassName,
   label,
   autoScroll,
+  autoAdvance,
   initialOffset = 0,
   alwaysLoop,
   pageBy = 0.8,
@@ -42,6 +43,14 @@ export function Carousel({
   label: string;
   /** 'ltr' drifts the cards left-to-right, 'rtl' the other way. */
   autoScroll?: 'ltr' | 'rtl';
+  /**
+   * Discrete auto-advance instead of a continuous drift: every N ms the rail
+   * pages forward by one view (the same move an arrow press makes), smoothly,
+   * and loops. Pauses on hover/focus. For the testimonials, which should step
+   * one story-pair at a time rather than crawl. Mutually exclusive with
+   * `autoScroll`.
+   */
+  autoAdvance?: number;
   /** Starting scroll position, used for the artboard's staggered second row. */
   initialOffset?: number;
   /**
@@ -74,10 +83,10 @@ export function Carousel({
    * there is no overflow, so the rail sat dead while duplicating every card.
    */
   const [fits, setFits] = useState(false);
-  const looping = Boolean(autoScroll) && (alwaysLoop || !fits);
+  const looping = Boolean(autoScroll || autoAdvance) && (alwaysLoop || !fits);
 
   useEffect(() => {
-    if (!autoScroll) return;
+    if (!autoScroll && !autoAdvance) return;
     const el = track.current;
     if (!el) return;
     const measure = () => {
@@ -159,30 +168,45 @@ export function Carousel({
     return () => cancelAnimationFrame(raf);
   }, [looping, autoScroll, initialOffset]);
 
-  const page = (dir: 1 | -1) => {
+  const page = useCallback((dir: 1 | -1) => {
     const el = track.current;
     if (!el) return;
-    // The drift rewrites scrollLeft every frame, so a smooth scroll started here
-    // was overwritten before it could travel — the arrows did nothing on the
-    // auto-scrolling rows. Hold the drift while the scroll settles; the loop
-    // resyncs its accumulator from the real position on the way out.
-    paused.current = true;
-    if (resumeAt.current) window.clearTimeout(resumeAt.current);
+    // The continuous drift rewrites scrollLeft every frame, so a smooth scroll
+    // started here would be overwritten before it travelled — hold the drift
+    // while it settles. There is no drift under autoAdvance, so nothing to hold.
+    if (autoScroll) {
+      paused.current = true;
+      if (resumeAt.current) window.clearTimeout(resumeAt.current);
+      resumeAt.current = window.setTimeout(() => {
+        paused.current = false;
+      }, 800);
+    }
     const delta = dir * el.clientWidth * pageBy;
     if (looping) {
       // The track carries two copies, so jumping by exactly one is invisible.
-      // Without this a page near either end just clamped: row 2 sits low in its
-      // range, and its left arrow travelled 342px of a 1089px page before
-      // hitting scrollLeft 0.
+      // Without this a page near either end just clamped.
       const half = el.scrollWidth / 2;
       if (el.scrollLeft + delta < 0) el.scrollLeft += half;
       else if (el.scrollLeft + delta > el.scrollWidth - el.clientWidth) el.scrollLeft -= half;
     }
     el.scrollBy({ left: delta, behavior: 'smooth' });
-    resumeAt.current = window.setTimeout(() => {
-      paused.current = false;
-    }, 800);
-  };
+  }, [autoScroll, looping, pageBy]);
+
+  // Discrete auto-advance: page forward one view on a timer (the same move an
+  // arrow press makes), pausing on hover/focus and under reduced motion. This is
+  // the "step by step, not continuous" testimonial behaviour.
+  useEffect(() => {
+    if (!autoAdvance || !looping) return;
+    const el = track.current;
+    if (!el) return;
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (el.scrollLeft <= 0) el.scrollLeft = 1; // seed so the loop can wrap left too
+    const id = window.setInterval(() => {
+      if (paused.current || document.documentElement.hasAttribute('data-swapping')) return;
+      page(1);
+    }, autoAdvance);
+    return () => window.clearInterval(id);
+  }, [autoAdvance, looping, page]);
 
   // Plain callbacks rather than a curried hold(true) factory: that factory was
   // *called* during render, so react-hooks/refs flagged it as a ref access in

@@ -622,8 +622,10 @@
 
   /* --- testimonials ------------------------------------------------------ */
   .card-stories {
-    padding: calc(var(--stories-t) * var(--k)) calc(58 * var(--k))
-      calc(var(--stories-b) * var(--k));
+    /* +18px top/bottom over the artboard values: the testimonials sat a touch
+       tight against the band above and the card edge below. */
+    padding: calc(var(--stories-t) * var(--k) + 18px) calc(58 * var(--k))
+      calc(var(--stories-b) * var(--k) + 18px);
   }
   .card-stories-label {
     font-size: max(11px, calc(16 * var(--k)));
@@ -653,7 +655,7 @@
   .card-avatar {
     width: calc(56 * var(--k));
     height: calc(56 * var(--k));
-    border-radius: calc(3 * var(--k));
+    border-radius: 50%; /* avatars are always circular */
   }
   /* The artboard sets these 25 in from the card edge, outside the story
    * section's own 58 of padding. */
@@ -1168,7 +1170,7 @@
   }
 
   .card-stories {
-    padding: calc(49 * var(--k)) calc(20 * var(--k)) calc(100 * var(--k));
+    padding: calc(49 * var(--k) + 18px) calc(20 * var(--k)) calc(100 * var(--k) + 18px);
   }
   /* Story Example is 257 on the artboard; the strip was collapsing to its copy. */
   .card-strip {
@@ -1189,7 +1191,7 @@
   .card-avatar {
     width: calc(70 * var(--k));
     height: calc(70 * var(--k));
-    border-radius: calc(3 * var(--k));
+    border-radius: 50%; /* avatars are always circular */
   }
   .card-chip-text {
     text-align: center;

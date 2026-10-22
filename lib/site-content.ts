@@ -27,22 +27,21 @@ export interface SiteSections {
   gallery2?: SiteItem[];
   /** Solutions card previews. Positional: [0] Playmakers, [1] Atlas. */
   solutions?: SiteItem[];
-  /** Landing-specific override for the Playmakers card quotes (usually empty —
-   *  the card falls back to the Playmakers site's own testimonials below). */
+  /** Quotes on the Playmakers solution card (landing/testimonials). */
   testimonials?: SiteItem[];
-  /** Landing-specific override for the Atlas card quotes. */
+  /** Quotes on the Atlas solution card — its own section (landing/testimonials2). */
   testimonials2?: SiteItem[];
-  /** The Atlas site's own testimonials, reused on the STX landing Atlas card. */
-  atlasTestimonials?: SiteItem[];
-  /** The Playmakers site's own testimonials, reused on the Playmakers card. */
-  playmakersTestimonials?: SiteItem[];
 }
 
-async function fetchSite(site: string): Promise<SiteSections> {
+export async function siteContent(): Promise<SiteSections> {
+  // This site reads its OWN sections only. The Atlas / Playmakers quotes shown
+  // on the two solution cards live under landing/testimonials2 + testimonials in
+  // the admin CMS (copied from each product site), so they are editable here and
+  // nothing fetches cross-site.
   const base = process.env.BACKEND_URL;
   if (!base) return {};
   try {
-    const res = await fetch(`${base}/api/public/site-content?site=${site}`, {
+    const res = await fetch(`${base}/api/public/site-content?site=landing`, {
       next: { revalidate: REVALIDATE_SEC },
       signal: AbortSignal.timeout(8000),
     });
@@ -52,23 +51,4 @@ async function fetchSite(site: string): Promise<SiteSections> {
   } catch {
     return {};
   }
-}
-
-export async function siteContent(): Promise<SiteSections> {
-  // The STX landing reuses each product's OWN testimonials — the ones entered
-  // under the `atlas` and `playmakers` sites in the admin CMS — on its two
-  // solution cards, so the quotes never have to be re-entered under `landing`.
-  // A landing-specific section still wins when present (see page.tsx). Each
-  // fetch is independent and fail-safe, so a dead product feed can't blank the
-  // landing.
-  const [landing, atlas, playmakers] = await Promise.all([
-    fetchSite('landing'),
-    fetchSite('atlas'),
-    fetchSite('playmakers'),
-  ]);
-  return {
-    ...landing,
-    atlasTestimonials: atlas.testimonials,
-    playmakersTestimonials: playmakers.testimonials,
-  };
 }
