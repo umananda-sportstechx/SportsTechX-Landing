@@ -437,6 +437,8 @@ export interface FooterLink {
   iconOnly?: boolean;
   /** Flips the Solutions sector toggle on click (see SectorLink). */
   sector?: string;
+  /** Open in a new tab even though it's on-site (http links always do). */
+  newTab?: boolean;
 }
 
 export interface FooterColumn {
@@ -485,8 +487,8 @@ export const footer = {
     {
       title: 'Company',
       links: [
-        { label: 'About', href: '/about' },
-        { label: 'Contact', href: 'mailto:hello@sportstechx.com' },
+        { label: 'About', href: '/about', newTab: true },
+        { label: 'Contact', href: 'mailto:hello@sportstechx.com', newTab: true },
         { label: 'LinkedIn', href: 'https://www.linkedin.com/company/sportstechx/', icon: 'linkedin', iconOnly: true },
         { label: 'YouTube', href: 'https://www.youtube.com/@SportsTechX', icon: 'youtube', iconOnly: true },
       ],

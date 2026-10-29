@@ -96,7 +96,7 @@ export function Footer() {
                         ) : (
                           <a
                             href={link.href}
-                            {...(link.href.startsWith('http') ? { target: '_blank', rel: 'noreferrer' } : {})}
+                            {...(link.href.startsWith('http') || link.newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                             className={linkClass}
                           >
                             {inner}

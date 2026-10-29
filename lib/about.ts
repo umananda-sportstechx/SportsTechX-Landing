@@ -69,14 +69,6 @@ export const about = {
       linkedin: 'https://www.linkedin.com/in/khyati-choudhary/',
     },
     {
-      name: 'Atiriya Narayan',
-      role: 'Head of Data & Product',
-      bio: 'Atiriya is a semi-professional footballer who has played for teams like FC Goa. With a BSc in Computer Science, she has developed a keen interest in data and machine learning. In the sports industry, her passion lies in women\'s sports, innovation, and the startup ecosystem.',
-      teams: 'Sports Teams: Mumbai Indians (WPL), FC Goa, Any Indian Contingent!',
-      photo: '/team/atiriya-narayan.jpg',
-      linkedin: 'https://www.linkedin.com/in/atiriyanarayan/',
-    },
-    {
       name: 'Brendon Murzello',
       role: 'Head of Marketing',
       bio: 'Brendon heads up marketing and content at SportsTechX, blending strategic messaging with digital design to elevate our brand. Outside the office, he\'s usually training for his next run, shooting content or on a hike.',
