@@ -108,6 +108,7 @@ export function NavBar() {
                 <a
                   key={link.label}
                   href={link.href}
+                  {...('newTab' in link && link.newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                   // Keyboard opens it too, and any other link closes it.
                   onMouseEnter={() => setMenu(opens)}
                   onFocus={() => setMenu(opens)}

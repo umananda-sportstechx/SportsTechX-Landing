@@ -145,6 +145,7 @@ export function MobileMenuPanel() {
                   <li key={link.label}>
                     <a
                       href={link.href}
+                      {...('newTab' in link && link.newTab ? { target: '_blank', rel: 'noreferrer' } : {})}
                       onClick={close}
                       tabIndex={open ? undefined : -1}
                       className={cn(

@@ -1889,3 +1889,13 @@ html::-webkit-scrollbar-corner {
   }
 }
 
+/* The newsletter modal reuses the footer's join form, but the footer's artboard-scaled
+   heights (46 * --k) left the modal's field cramped. Fixed, roomier sizes here. */
+.newsletter-dialog .footer-join-input {
+  height: 52px;
+  font-size: 16px;
+}
+.newsletter-dialog .footer-join-btn {
+  height: 46px;
+  font-size: 14px;
+}

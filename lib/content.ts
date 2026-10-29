@@ -51,7 +51,7 @@ export const nav = {
   links: [
     { label: 'SOLUTIONS', href: '/#solutions' },
     { label: 'MEDIA', href: '/#media' },
-    { label: 'ABOUT', href: '/about' },
+    { label: 'ABOUT', href: '/about', newTab: true },
   ],
   cta: { label: 'JOIN THE NEWSLETTER', href: 'https://newsletter.sportstechx.com' },
 };
@@ -508,7 +508,7 @@ export const footer = {
 export const mobileMenu = {
   groups: [
     { title: 'SOLUTIONS', links: [{ label: 'FOR FOUNDERS', href: '/#solutions' }, { label: 'FOR INVESTORS', href: '/#solutions' }] },
-    { title: 'MENU', links: [{ label: 'MEDIA', href: '/#media' }, { label: 'ABOUT', href: '/about' }] },
+    { title: 'MENU', links: [{ label: 'MEDIA', href: '/#media' }, { label: 'ABOUT', href: '/about', newTab: true }] },
     {
       title: 'CONNECT',
       links: [
