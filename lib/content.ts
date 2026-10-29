@@ -242,7 +242,7 @@ export const solutions = {
       cta: 'EXPLORE MEMBERSHIP',
       // TEMPORARY host, like the STX one — restore https://joinplaymakers.co
       // when Playmakers is back on its own domain.
-      ctaHref: 'https://playmakers.sportstechx.com/',
+      ctaHref: 'https://playmakers-omega.vercel.app/',
       testimonialsLabel: 'PLAYMAKERS TESTIMONIALS',
       testimonials: playmakersTestimonials,
       features: [
@@ -465,7 +465,7 @@ export const footer = {
     {
       title: 'Products',
       links: [
-        { label: 'Playmakers', href: 'https://playmakers.sportstechx.com/' },
+        { label: 'Playmakers', href: 'https://playmakers-omega.vercel.app/' },
         // The Investors Circle membership page, distinct from the Playmakers
         // landing above.
         { label: 'Investors Circle', href: 'https://joinplaymakers.co' },
@@ -498,7 +498,7 @@ export const footer = {
     { label: 'Terms of Service', href: '/terms-of-service' },
     // The Playmakers site's own terms. This used to point at /terms-of-service,
     // which is SportsTechX's terms, not the membership ones.
-    { label: 'Playmakers Membership Terms', href: 'https://playmakers.sportstechx.com/terms' },
+    { label: 'Playmakers Membership Terms', href: 'https://playmakers-omega.vercel.app/terms' },
     { label: 'Imprint', href: '/imprint' },
   ],
 };
